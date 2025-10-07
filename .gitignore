@@ -1,0 +1,26 @@
+# Node / Next.js
+**/node_modules/
+**/.next/
+**/.turbo/
+**/out/
+**/.vercel/
+
+# Env files
+*.env
+*.env.*
+!.env.example
+**/*.env.local
+
+# Do not track service account keys or credentials
+documents/*.json
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+
+

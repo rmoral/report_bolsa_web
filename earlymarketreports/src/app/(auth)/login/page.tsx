@@ -1,0 +1,48 @@
+"use client";
+
+import { useState } from "react";
+import { saveToken } from "@/lib/clientAuth";
+import { useRouter } from "next/navigation";
+
+export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Error de acceso");
+      saveToken(data.token);
+      router.replace("/dashboard");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="container-page py-10 max-w-md">
+      <h1 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">Acceder</h1>
+      <form onSubmit={onSubmit} className="mt-6 grid gap-4 bg-white p-6 rounded-lg shadow">
+        <input type="email" className="border rounded px-3 py-2" placeholder="tu@email.com" value={email} onChange={(e)=>setEmail(e.target.value)} required />
+        <input type="password" className="border rounded px-3 py-2" placeholder="Contraseña" value={password} onChange={(e)=>setPassword(e.target.value)} required />
+        <button className="btn-accent" disabled={loading} type="submit">{loading ? "Entrando…" : "Entrar"}</button>
+        {error && <p className="text-sm text-red-600">{error}</p>}
+      </form>
+    </div>
+  );
+}
+
+
