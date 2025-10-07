@@ -32,22 +32,23 @@ echo "[2/4] Copiando paquete al servidor"
 scp -o StrictHostKeyChecking=accept-new -i "$KEY" earlymarketreports.tgz "$SERVER:$REMOTE_DIR/"
 
 echo "[3/4] Desplegando en el servidor"
-ssh -o StrictHostKeyChecking=accept-new -i "$KEY" $SERVER bash -lc "'
-  set -euo pipefail
-  cd $REMOTE_DIR
-  rm -rf earlymarketreports
-  tar -xzf earlymarketreports.tgz && rm earlymarketreports.tgz
-  cd earlymarketreports
-  command -v node >/dev/null 2>&1 || { echo "ERROR: Node.js no está instalado en el servidor" >&2; exit 2; }
-  command -v pm2 >/dev/null 2>&1 || { echo "ERROR: PM2 no está instalado en el servidor (sudo npm i -g pm2)" >&2; exit 2; }
-  # Instala dependencias (fallback a npm install si no hay lock)
-  if [[ -f package-lock.json ]]; then npm ci; else npm install; fi
-  npm run build
-  pm2 delete earlymarketreports || true
-  pm2 start npm --name earlymarketreports -- run start -- -p 3000
-  pm2 save
-  sudo systemctl reload apache2 || true
-'"
+ssh -o StrictHostKeyChecking=accept-new -i "$KEY" $SERVER 'bash -s' <<'REMOTE'
+set -euo pipefail
+REMOTE_DIR="/home/ubuntu/web/dailyreportweb"
+cd "$REMOTE_DIR"
+rm -rf earlymarketreports
+tar -xzf earlymarketreports.tgz && rm earlymarketreports.tgz
+cd earlymarketreports
+if ! command -v node >/dev/null 2>&1; then echo "ERROR: Node.js no está instalado en el servidor" >&2; exit 2; fi
+if ! command -v pm2 >/dev/null 2>&1; then echo "ERROR: PM2 no está instalado en el servidor (sudo npm i -g pm2)" >&2; exit 2; fi
+# Instala dependencias (fallback a npm install si no hay lock)
+if [ -f package-lock.json ]; then npm ci; else npm install; fi
+npm run build
+pm2 delete earlymarketreports || true
+pm2 start npm --name earlymarketreports -- run start -- -p 3000
+pm2 save
+sudo systemctl reload apache2 || true
+REMOTE
 
 echo "[4/4] Limpieza local"
 rm -f earlymarketreports.tgz
