@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+EarlyMarketReports – Web App
+============================
 
-## Getting Started
+Aplicación web en Next.js orientada a captar suscriptores para informes bursátiles diarios. Incluye landing responsive, registro de leads en Firestore, autenticación JWT, área privada y backoffice básico.
 
-First, run the development server:
+Requisitos
+---------
+- Node.js 18+
+- Cuenta de Firebase con Firestore habilitado
+- (Opcional) MongoDB si quieres usar los modelos existentes de ejemplo
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Variables de entorno (`.env.local`)
+-----------------------------------
+Colocar este archivo en `earlymarketreports/.env.local` (no se sube a git):
+
+```
+# Firebase Admin (Firestore)
+FIREBASE_PROJECT_ID=tu-project-id
+FIREBASE_CLIENT_EMAIL=service-account@tu-project-id.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+# Si usas multi-base, especifica el ID; si no, omite para usar (default)
+FIREBASE_DATABASE_ID=(default)
+
+# Auth (JWT) y ejemplo Mongo (opcional)
+JWT_SECRET=cambia-esto
+MONGODB_URI=mongodb+srv://user:pass@cluster/db?retryWrites=true&w=majority
+MONGODB_DB=earlymarketreports
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Instalación y desarrollo
+------------------------
+```
+npm install
+npm run dev
+```
+Abrir `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Endpoints útiles
+----------------
+- POST `/api/subscribe` → guarda lead en Firestore.
+- POST `/api/auth/register` y `/api/auth/login` → usuarios (Mongo de ejemplo).
+- GET `/api/me` → perfil con JWT.
+- GET `/api/health/firebase` → chequeo de Firestore.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Despliegue en Vercel
+--------------------
+1. Conecta el repo a Vercel.
+2. En Project Settings → Environment Variables, añade todas las variables anteriores.
+3. Deploy. La app usa App Router y funciona en environments serverless.
 
-## Learn More
+Estructura principal
+--------------------
+- `src/app/page.tsx` landing y CTA.
+- `src/components/LeadCapture.tsx` formulario lead → Firestore.
+- `src/app/(auth)/*` login.
+- `src/app/(private)/dashboard` área privada.
+- `src/app/(admin)/admin/subscriptions` listado y export CSV.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Seguridad
+---------
+- Las claves de servicio no deben subirse. Añadidas reglas en `.gitignore`.
+- GitHub Push Protection bloquea secretos; evita incluir JSON de cuentas de servicio.
