@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Configuración
 SERVER="ubuntu@18.217.132.43"
-KEY="certs/personal.pem"
+KEY="/Users/rubenmoral/certs/personal.pem"
 REMOTE_DIR="/home/ubuntu/web/dailyreportweb"
 APP_DIR="$REMOTE_DIR/earlymarketreports"
 
