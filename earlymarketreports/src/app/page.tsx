@@ -140,7 +140,7 @@ export default function Home() {
       {/* FAQs con schema.org */}
       <section className="container-page py-12" id="faq">
         <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary] text-center mb-8">{t("faq_title")}</h2>
-        <div className="mt-6 grid gap-4 max-w-4xl mx-auto">
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-7xl mx-auto">
           <details className="bg-white p-4 rounded border shadow-sm hover:shadow-md transition-shadow">
             <summary className="font-semibold cursor-pointer text-[--color-primary] hover:text-[--color-accent] transition-colors">{t("faq_q1")}</summary>
             <p className="mt-2 text-gray-700">{t("faq_a1")}</p>
