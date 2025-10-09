@@ -1,23 +1,23 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import LeadCapture from "@/components/LeadCapture";
+import Testimonials from "@/components/Testimonials";
+import { useI18n } from "@/i18n/I18nProvider";
 
 export default function Home() {
+  const { t } = useI18n();
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
       {/* Header global renderizado desde layout */}
 
       {/* Hero */}
-      <section className="bg-white">
+      <section className="bg-hero-gradient">
         <div className="container-page py-10 sm:py-16 grid grid-cols-1 sm:grid-cols-2 gap-8 items-center">
           <div>
-            <h1 className="text-3xl sm:text-5xl font-bold text-[--color-primary] leading-tight font-[var(--font-montserrat)]">
-              Informes bursátiles diarios, antes que nadie.
-            </h1>
-            <p className="mt-4 text-base sm:text-lg text-gray-700">
-              Resúmenes accionables al amanecer y el informe completo para profesionales.
-            </p>
+            <h1 className="text-3xl sm:text-5xl font-bold text-[--color-primary] leading-tight font-[var(--font-montserrat)]">{t("hero_title")}</h1>
+            <p className="mt-4 text-base sm:text-lg text-gray-700">{t("hero_subtitle")}</p>
             <LeadCapture className="mt-6" />
           </div>
           <div className="flex sm:justify-end">
@@ -28,34 +28,33 @@ export default function Home() {
 
       {/* Qué ofrecemos */}
       <section id="que-ofrecemos" className="container-page py-12">
-        <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">Qué ofrecemos</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">{t("section_offering_title")}</h2>
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg p-6 shadow flex gap-4">
+          <div className="bg-white rounded-lg p-6 shadow card-accent flex gap-4">
             <Image src="/illustrations/report-doc.svg" alt="Informe Lite" width={72} height={72} />
             <div>
-              <h3 className="text-xl font-semibold">Lite (gratis)</h3>
-              <p className="mt-2 text-gray-700">Extracto diario con puntos clave y oportunidades destacadas, directo a tu email.</p>
+              <h3 className="text-xl font-semibold">{t("plan_lite_title")}</h3>
+              <p className="mt-2 text-gray-700">{t("plan_lite_bullet_1")}</p>
               <ul className="mt-3 text-sm text-gray-600 space-y-1">
-                <li>• Resumen de apertura de mercados</li>
-                <li>• 3-5 oportunidades destacadas</li>
-                <li>• Niveles clave de soporte/resistencia</li>
-                <li>• Eventos macro del día</li>
+                <li>• {t("plan_lite_bullet_2")}</li>
+                <li>• {t("plan_lite_bullet_3")}</li>
+                <li>• {t("plan_lite_bullet_4")}</li>
               </ul>
             </div>
           </div>
-          <div className="bg-white rounded-lg p-6 shadow border border-[--color-accent] flex gap-4">
+          <div className="bg-white rounded-lg p-6 shadow border border-[--color-accent] card-accent flex gap-4">
             <Image src="/illustrations/report-doc.svg" alt="Informe Pro" width={72} height={72} />
             <div>
-              <h3 className="text-xl font-semibold">Pro (de pago)</h3>
-              <p className="mt-2 text-gray-700">Informe completo con análisis de mercado, macro, earnings, niveles y watchlist.</p>
+              <h3 className="text-xl font-semibold">{t("plan_pro_title")}</h3>
+              <p className="mt-2 text-gray-700">{t("plan_pro_desc")}</p>
               <ul className="mt-3 text-sm text-gray-600 space-y-1">
-                <li>• Análisis técnico detallado</li>
-                <li>• Watchlist con 15+ valores</li>
-                <li>• Análisis de flujos institucionales</li>
-                <li>• Estrategias de trading</li>
-                <li>• Acceso a comunidad Pro</li>
+                <li>• {t("plan_pro_bullet_1")}</li>
+                <li>• {t("plan_pro_bullet_2")}</li>
+                <li>• {t("plan_pro_bullet_3")}</li>
+                <li>• {t("plan_pro_bullet_4")}</li>
+                <li>• {t("plan_pro_bullet_5")}</li>
               </ul>
-              <Link href="/subscribe" className="btn-accent mt-4 inline-block">Elegir Pro</Link>
+              <Link href="/subscribe" className="btn-accent mt-4 inline-block">{t("choose_pro")}</Link>
             </div>
           </div>
         </div>
@@ -64,22 +63,22 @@ export default function Home() {
       {/* Ejemplo */}
       <section id="ejemplo" className="bg-white">
         <div className="container-page py-12">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">Ejemplo del último informe</h2>
-          <p className="mt-2 text-gray-700">Vista previa del reporte del 03/10/2025 (versión US).</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">{t("section_example_title")}</h2>
+          <p className="mt-2 text-gray-700">{t("section_example_note")}</p>
           <div className="mt-6 grid gap-6 sm:grid-cols-2">
             <article className="bg-[--emr-gray] p-4 rounded-lg border">
-              <h4 className="font-semibold">Resumen</h4>
+              <h4 className="font-semibold">{t("section_example_summary")}</h4>
               <ul className="list-disc pl-5 text-sm text-gray-800 mt-2 space-y-1">
-                <li>Futuros en verde impulsados por tecnología y moderación en yields.</li>
-                <li>Mercado pendiente de NFP y PMI servicios.</li>
-                <li>Watchlist: mega-cap tech, semis y consumo discrecional.</li>
+                <li>{t("example_point_1")}</li>
+                <li>{t("example_point_2")}</li>
+                <li>{t("example_point_3")}</li>
               </ul>
             </article>
             <div className="bg-[--emr-gray] p-4 rounded-lg border">
               <p className="text-sm text-gray-800">Descarga el PDF completo o ábrelo en una nueva pestaña.</p>
               <div className="mt-3 flex gap-3">
-                <a className="btn-outline-primary" href="/reports/US_FULL_20251003.pdf" target="_blank">Abrir PDF</a>
-                <a className="btn-accent" href="/reports/US_FULL_20251003.pdf" download>Descargar</a>
+                <a className="btn-outline-primary" href="/reports/US_FULL_20251003.pdf" target="_blank">{t("open_pdf")}</a>
+                <a className="btn-accent" href="/reports/US_FULL_20251003.pdf" download>{t("download_pdf")}</a>
               </div>
             </div>
           </div>
@@ -89,28 +88,28 @@ export default function Home() {
       {/* Cómo funciona */}
       <section className="bg-white">
         <div className="container-page py-12">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary] text-center">Cómo funciona</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary] text-center">{t("how_title")}</h2>
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-[--color-accent] rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl font-bold text-white">1</span>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Te suscribes gratis</h3>
-              <p className="text-gray-600">Regístrate en 30 segundos y recibe el primer informe Lite al día siguiente.</p>
+              <h3 className="text-lg font-semibold mb-2">{t("how_step_1_title")}</h3>
+              <p className="text-gray-600">{t("how_step_1_desc")}</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-[--color-accent] rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl font-bold text-white">2</span>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Recibes análisis diario</h3>
-              <p className="text-gray-600">Cada mañana, antes de la apertura, recibes tu informe con oportunidades del día.</p>
+              <h3 className="text-lg font-semibold mb-2">{t("how_step_2_title")}</h3>
+              <p className="text-gray-600">{t("how_step_2_desc")}</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-[--color-accent] rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl font-bold text-white">3</span>
               </div>
-              <h3 className="text-lg font-semibold mb-2">Tomas decisiones informadas</h3>
-              <p className="text-gray-600">Con datos profesionales, identificas oportunidades y gestionas mejor tu cartera.</p>
+              <h3 className="text-lg font-semibold mb-2">{t("how_step_3_title")}</h3>
+              <p className="text-gray-600">{t("how_step_3_desc")}</p>
             </div>
           </div>
         </div>
@@ -119,19 +118,19 @@ export default function Home() {
       {/* Beneficios para SEO */}
       <section className="bg-[--emr-gray]">
         <div className="container-page py-12 grid gap-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">Por qué EarlyMarketReports</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">{t("why_title")}</h2>
           <div className="grid sm:grid-cols-3 gap-6">
             <div className="p-6 rounded-lg border bg-white">
-              <div className="flex items-center gap-2"><Image src="/icons/clock-open.svg" alt="Antes de apertura" width={24} height={24} /><h3 className="font-semibold">Antes de la apertura</h3></div>
-              <p className="text-gray-700 mt-2">Recibe cada mañana un resumen accionable del mercado para tomar decisiones informadas.</p>
+              <div className="flex items-center gap-2"><Image src="/icons/clock-open.svg" alt="Antes de apertura" width={24} height={24} /><h3 className="font-semibold">{t("why_card_1_title")}</h3></div>
+              <p className="text-gray-700 mt-2">{t("why_card_1_desc")}</p>
             </div>
             <div className="p-6 rounded-lg border bg-white">
-              <div className="flex items-center gap-2"><Image src="/icons/analysis.svg" alt="Análisis" width={24} height={24} /><h3 className="font-semibold">Análisis profesional</h3></div>
-              <p className="text-gray-700 mt-2">Cobertura macro, flujos, resultados y niveles clave elaborados por analistas.</p>
+              <div className="flex items-center gap-2"><Image src="/icons/analysis.svg" alt="Análisis" width={24} height={24} /><h3 className="font-semibold">{t("why_card_2_title")}</h3></div>
+              <p className="text-gray-700 mt-2">{t("why_card_2_desc")}</p>
             </div>
             <div className="p-6 rounded-lg border bg-white">
-              <div className="flex items-center gap-2"><Image src="/icons/upgrade.svg" alt="Upgrade" width={24} height={24} /><h3 className="font-semibold">Lite o Pro</h3></div>
-              <p className="text-gray-700 mt-2">Empieza sin coste y evoluciona a Pro cuando necesites el informe completo.</p>
+              <div className="flex items-center gap-2"><Image src="/icons/upgrade.svg" alt="Upgrade" width={24} height={24} /><h3 className="font-semibold">{t("why_card_3_title")}</h3></div>
+              <p className="text-gray-700 mt-2">{t("why_card_3_desc")}</p>
             </div>
           </div>
           <LeadCapture className="mt-2" />
@@ -171,10 +170,7 @@ export default function Home() {
           }}
         />
       </section>
-      <section className="container-page py-12" id="testimonios">
-        <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">Testimonios</h2>
-        <p className="text-gray-600 mt-3">Pronto compartiremos opiniones de gestores y traders profesionales.</p>
-      </section>
+      <Testimonials />
 
       {/* Footer */}
       <footer className="mt-auto bg-[--color-primary] text-white">

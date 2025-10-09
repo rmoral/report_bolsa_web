@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat, Inter } from "next/font/google";
 import "./globals.css";
+import { I18nProvider } from "@/i18n/I18nProvider";
 import Header from "@/components/Header";
 
 const montserrat = Montserrat({
@@ -38,8 +39,10 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body suppressHydrationWarning className={`${montserrat.variable} ${inter.variable} antialiased`}>
-        <Header />
-        {children}
+        <I18nProvider>
+          <Header />
+          {children}
+        </I18nProvider>
       </body>
     </html>
   );
