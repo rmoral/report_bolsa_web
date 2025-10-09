@@ -35,6 +35,12 @@ export default function Home() {
             <div>
               <h3 className="text-xl font-semibold">Lite (gratis)</h3>
               <p className="mt-2 text-gray-700">Extracto diario con puntos clave y oportunidades destacadas, directo a tu email.</p>
+              <ul className="mt-3 text-sm text-gray-600 space-y-1">
+                <li>• Resumen de apertura de mercados</li>
+                <li>• 3-5 oportunidades destacadas</li>
+                <li>• Niveles clave de soporte/resistencia</li>
+                <li>• Eventos macro del día</li>
+              </ul>
             </div>
           </div>
           <div className="bg-white rounded-lg p-6 shadow border border-[--color-accent] flex gap-4">
@@ -42,6 +48,13 @@ export default function Home() {
             <div>
               <h3 className="text-xl font-semibold">Pro (de pago)</h3>
               <p className="mt-2 text-gray-700">Informe completo con análisis de mercado, macro, earnings, niveles y watchlist.</p>
+              <ul className="mt-3 text-sm text-gray-600 space-y-1">
+                <li>• Análisis técnico detallado</li>
+                <li>• Watchlist con 15+ valores</li>
+                <li>• Análisis de flujos institucionales</li>
+                <li>• Estrategias de trading</li>
+                <li>• Acceso a comunidad Pro</li>
+              </ul>
               <Link href="/subscribe" className="btn-accent mt-4 inline-block">Elegir Pro</Link>
             </div>
           </div>
@@ -73,20 +86,50 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Beneficios para SEO */}
+      {/* Cómo funciona */}
       <section className="bg-white">
+        <div className="container-page py-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary] text-center">Cómo funciona</h2>
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-[--color-accent] rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-white">1</span>
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Te suscribes gratis</h3>
+              <p className="text-gray-600">Regístrate en 30 segundos y recibe el primer informe Lite al día siguiente.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-[--color-accent] rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-white">2</span>
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Recibes análisis diario</h3>
+              <p className="text-gray-600">Cada mañana, antes de la apertura, recibes tu informe con oportunidades del día.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-[--color-accent] rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-white">3</span>
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Tomas decisiones informadas</h3>
+              <p className="text-gray-600">Con datos profesionales, identificas oportunidades y gestionas mejor tu cartera.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Beneficios para SEO */}
+      <section className="bg-[--emr-gray]">
         <div className="container-page py-12 grid gap-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">Por qué EarlyMarketReports</h2>
           <div className="grid sm:grid-cols-3 gap-6">
-            <div className="p-6 rounded-lg border bg-[--emr-gray]">
+            <div className="p-6 rounded-lg border bg-white">
               <div className="flex items-center gap-2"><Image src="/icons/clock-open.svg" alt="Antes de apertura" width={24} height={24} /><h3 className="font-semibold">Antes de la apertura</h3></div>
               <p className="text-gray-700 mt-2">Recibe cada mañana un resumen accionable del mercado para tomar decisiones informadas.</p>
             </div>
-            <div className="p-6 rounded-lg border bg-[--emr-gray]">
+            <div className="p-6 rounded-lg border bg-white">
               <div className="flex items-center gap-2"><Image src="/icons/analysis.svg" alt="Análisis" width={24} height={24} /><h3 className="font-semibold">Análisis profesional</h3></div>
               <p className="text-gray-700 mt-2">Cobertura macro, flujos, resultados y niveles clave elaborados por analistas.</p>
             </div>
-            <div className="p-6 rounded-lg border bg-[--emr-gray]">
+            <div className="p-6 rounded-lg border bg-white">
               <div className="flex items-center gap-2"><Image src="/icons/upgrade.svg" alt="Upgrade" width={24} height={24} /><h3 className="font-semibold">Lite o Pro</h3></div>
               <p className="text-gray-700 mt-2">Empieza sin coste y evoluciona a Pro cuando necesites el informe completo.</p>
             </div>
