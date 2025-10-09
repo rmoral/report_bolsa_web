@@ -6,12 +6,16 @@ export const dictionaries: Record<Locale, Dict> = {
   es: {
     brand_name: "EarlyMarketReports",
     nav_offering: "Qué ofrecemos",
+    nav_pricing: "Precios",
     nav_example: "Ejemplo",
     nav_login: "Acceder",
     cta_subscribe_now: "Suscríbete ya",
 
     hero_title: "Informes bursátiles diarios, antes que nadie.",
     hero_subtitle: "Resúmenes accionables al amanecer y el informe completo para profesionales.",
+    hero_delivery_time: "Llega a tu bandeja antes de las 9:00 ET.",
+    hero_cta_example: "Ver ejemplo",
+    hero_cta_plans: "Ver planes",
 
     section_offering_title: "Qué ofrecemos",
     plan_lite_title: "Lite (gratis)",
@@ -81,6 +85,14 @@ export const dictionaries: Record<Locale, Dict> = {
 
     footer_terms: "Términos",
     footer_privacy: "Política de privacidad",
+    
+    // Legal pages
+    terms_title: "Términos y Condiciones",
+    privacy_title: "Política de Privacidad",
+    
+    // Pricing page
+    pricing_title: "Planes y Precios",
+    pricing_subtitle: "Elige el plan que mejor se adapte a tus necesidades de inversión",
 
     // Auth / Subscribe
     subscribe_title: "Crea tu cuenta",
@@ -125,12 +137,16 @@ export const dictionaries: Record<Locale, Dict> = {
   en: {
     brand_name: "EarlyMarketReports",
     nav_offering: "What we offer",
+    nav_pricing: "Pricing",
     nav_example: "Example",
     nav_login: "Sign in",
     cta_subscribe_now: "Subscribe now",
 
     hero_title: "Daily market reports, before anyone else.",
     hero_subtitle: "Actionable summaries at dawn and the full report for professionals.",
+    hero_delivery_time: "Delivered to your inbox before 9:00 AM ET.",
+    hero_cta_example: "View example",
+    hero_cta_plans: "View plans",
 
     section_offering_title: "What we offer",
     plan_lite_title: "Lite (free)",
@@ -200,6 +216,14 @@ export const dictionaries: Record<Locale, Dict> = {
 
     footer_terms: "Terms",
     footer_privacy: "Privacy policy",
+    
+    // Legal pages
+    terms_title: "Terms and Conditions",
+    privacy_title: "Privacy Policy",
+    
+    // Pricing page
+    pricing_title: "Plans and Pricing",
+    pricing_subtitle: "Choose the plan that best fits your investment needs",
 
     // Auth / Subscribe
     subscribe_title: "Create your account",

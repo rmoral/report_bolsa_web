@@ -18,6 +18,7 @@ export default function Header() {
         </div>
         <nav className="hidden sm:flex items-center gap-6 text-sm">
           <Link href="/#que-ofrecemos" className="hover:underline">{t("nav_offering")}</Link>
+          <Link href="/precios" className="hover:underline">{t("nav_pricing")}</Link>
           <Link href="/#ejemplo" className="hover:underline">{t("nav_example")}</Link>
           <Link href="/login" className="hover:underline">{t("nav_login")}</Link>
           <LanguageSwitcher />

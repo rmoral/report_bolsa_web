@@ -18,7 +18,16 @@ export default function Home() {
           <div>
             <h1 className="text-3xl sm:text-5xl font-bold text-[--color-primary] leading-tight font-[var(--font-montserrat)]">{t("hero_title")}</h1>
             <p className="mt-4 text-base sm:text-lg text-gray-700">{t("hero_subtitle")}</p>
+            <p className="mt-2 text-sm text-gray-600 italic">{t("hero_delivery_time")}</p>
             <LeadCapture className="mt-6" />
+            <div className="mt-4 flex flex-col sm:flex-row gap-3">
+              <Link href="/#ejemplo" className="btn-outline-primary text-center">
+                {t("hero_cta_example")}
+              </Link>
+              <Link href="/precios" className="btn-outline-accent text-center">
+                {t("hero_cta_plans")}
+              </Link>
+            </div>
           </div>
           <div className="flex sm:justify-end">
             <Image src="/illustrations/chart-up.svg" alt="Gráfico alcista" width={480} height={270} priority className="rounded-lg shadow" />
