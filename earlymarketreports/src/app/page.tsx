@@ -139,19 +139,55 @@ export default function Home() {
 
       {/* FAQs con schema.org */}
       <section className="container-page py-12" id="faq">
-        <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">{t("faq_title")}</h2>
-        <div className="mt-6 grid gap-4">
-          <details className="bg-white p-4 rounded border">
-            <summary className="font-semibold">{t("faq_q1")}</summary>
+        <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary] text-center mb-8">{t("faq_title")}</h2>
+        <div className="mt-6 grid gap-4 max-w-4xl mx-auto">
+          <details className="bg-white p-4 rounded border shadow-sm hover:shadow-md transition-shadow">
+            <summary className="font-semibold cursor-pointer text-[--color-primary] hover:text-[--color-accent] transition-colors">{t("faq_q1")}</summary>
             <p className="mt-2 text-gray-700">{t("faq_a1")}</p>
           </details>
-          <details className="bg-white p-4 rounded border">
-            <summary className="font-semibold">{t("faq_q2")}</summary>
+          <details className="bg-white p-4 rounded border shadow-sm hover:shadow-md transition-shadow">
+            <summary className="font-semibold cursor-pointer text-[--color-primary] hover:text-[--color-accent] transition-colors">{t("faq_q2")}</summary>
             <p className="mt-2 text-gray-700">{t("faq_a2")}</p>
           </details>
-          <details className="bg-white p-4 rounded border">
-            <summary className="font-semibold">{t("faq_q3")}</summary>
+          <details className="bg-white p-4 rounded border shadow-sm hover:shadow-md transition-shadow">
+            <summary className="font-semibold cursor-pointer text-[--color-primary] hover:text-[--color-accent] transition-colors">{t("faq_q3")}</summary>
             <p className="mt-2 text-gray-700">{t("faq_a3")}</p>
+          </details>
+          <details className="bg-white p-4 rounded border shadow-sm hover:shadow-md transition-shadow">
+            <summary className="font-semibold cursor-pointer text-[--color-primary] hover:text-[--color-accent] transition-colors">{t("faq_q4")}</summary>
+            <p className="mt-2 text-gray-700">{t("faq_a4")}</p>
+          </details>
+          <details className="bg-white p-4 rounded border shadow-sm hover:shadow-md transition-shadow">
+            <summary className="font-semibold cursor-pointer text-[--color-primary] hover:text-[--color-accent] transition-colors">{t("faq_q5")}</summary>
+            <p className="mt-2 text-gray-700">{t("faq_a5")}</p>
+          </details>
+          <details className="bg-white p-4 rounded border shadow-sm hover:shadow-md transition-shadow">
+            <summary className="font-semibold cursor-pointer text-[--color-primary] hover:text-[--color-accent] transition-colors">{t("faq_q6")}</summary>
+            <p className="mt-2 text-gray-700">{t("faq_a6")}</p>
+          </details>
+          <details className="bg-white p-4 rounded border shadow-sm hover:shadow-md transition-shadow">
+            <summary className="font-semibold cursor-pointer text-[--color-primary] hover:text-[--color-accent] transition-colors">{t("faq_q7")}</summary>
+            <p className="mt-2 text-gray-700">{t("faq_a7")}</p>
+          </details>
+          <details className="bg-white p-4 rounded border shadow-sm hover:shadow-md transition-shadow">
+            <summary className="font-semibold cursor-pointer text-[--color-primary] hover:text-[--color-accent] transition-colors">{t("faq_q8")}</summary>
+            <p className="mt-2 text-gray-700">{t("faq_a8")}</p>
+          </details>
+          <details className="bg-white p-4 rounded border shadow-sm hover:shadow-md transition-shadow">
+            <summary className="font-semibold cursor-pointer text-[--color-primary] hover:text-[--color-accent] transition-colors">{t("faq_q9")}</summary>
+            <p className="mt-2 text-gray-700">{t("faq_a9")}</p>
+          </details>
+          <details className="bg-white p-4 rounded border shadow-sm hover:shadow-md transition-shadow">
+            <summary className="font-semibold cursor-pointer text-[--color-primary] hover:text-[--color-accent] transition-colors">{t("faq_q10")}</summary>
+            <p className="mt-2 text-gray-700">{t("faq_a10")}</p>
+          </details>
+          <details className="bg-white p-4 rounded border shadow-sm hover:shadow-md transition-shadow">
+            <summary className="font-semibold cursor-pointer text-[--color-primary] hover:text-[--color-accent] transition-colors">{t("faq_q11")}</summary>
+            <p className="mt-2 text-gray-700">{t("faq_a11")}</p>
+          </details>
+          <details className="bg-white p-4 rounded border shadow-sm hover:shadow-md transition-shadow">
+            <summary className="font-semibold cursor-pointer text-[--color-primary] hover:text-[--color-accent] transition-colors">{t("faq_q12")}</summary>
+            <p className="mt-2 text-gray-700">{t("faq_a12")}</p>
           </details>
         </div>
         {/* JSON-LD */}
@@ -164,7 +200,16 @@ export default function Home() {
               mainEntity: [
                 { "@type": "Question", name: t("faq_q1"), acceptedAnswer: { "@type": "Answer", text: t("faq_a1") } },
                 { "@type": "Question", name: t("faq_q2"), acceptedAnswer: { "@type": "Answer", text: t("faq_a2") } },
-                { "@type": "Question", name: t("faq_q3"), acceptedAnswer: { "@type": "Answer", text: t("faq_a3") } }
+                { "@type": "Question", name: t("faq_q3"), acceptedAnswer: { "@type": "Answer", text: t("faq_a3") } },
+                { "@type": "Question", name: t("faq_q4"), acceptedAnswer: { "@type": "Answer", text: t("faq_a4") } },
+                { "@type": "Question", name: t("faq_q5"), acceptedAnswer: { "@type": "Answer", text: t("faq_a5") } },
+                { "@type": "Question", name: t("faq_q6"), acceptedAnswer: { "@type": "Answer", text: t("faq_a6") } },
+                { "@type": "Question", name: t("faq_q7"), acceptedAnswer: { "@type": "Answer", text: t("faq_a7") } },
+                { "@type": "Question", name: t("faq_q8"), acceptedAnswer: { "@type": "Answer", text: t("faq_a8") } },
+                { "@type": "Question", name: t("faq_q9"), acceptedAnswer: { "@type": "Answer", text: t("faq_a9") } },
+                { "@type": "Question", name: t("faq_q10"), acceptedAnswer: { "@type": "Answer", text: t("faq_a10") } },
+                { "@type": "Question", name: t("faq_q11"), acceptedAnswer: { "@type": "Answer", text: t("faq_a11") } },
+                { "@type": "Question", name: t("faq_q12"), acceptedAnswer: { "@type": "Answer", text: t("faq_a12") } }
               ],
             }),
           }}
