@@ -10,7 +10,7 @@ export async function GET(req: Request) {
   await connectToDatabase();
   const user = await User.findById(payload.sub).lean();
   if (!user) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-  return NextResponse.json({ id: user._id, email: user.email, name: user.name, plan: user.plan, role: user.role });
+  return NextResponse.json({ id: user._id.toString(), email: user.email, name: user.name, plan: user.plan, role: user.role });
 }
 
 
