@@ -139,19 +139,19 @@ export default function Home() {
 
       {/* FAQs con schema.org */}
       <section className="container-page py-12" id="faq">
-        <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">Preguntas frecuentes</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">{t("faq_title")}</h2>
         <div className="mt-6 grid gap-4">
           <details className="bg-white p-4 rounded border">
-            <summary className="font-semibold">¿A qué hora enviáis el informe?</summary>
-            <p className="mt-2 text-gray-700">El resumen Lite sale antes de la apertura en EEUU y el Pro incluye el PDF completo.</p>
+            <summary className="font-semibold">{t("faq_q1")}</summary>
+            <p className="mt-2 text-gray-700">{t("faq_a1")}</p>
           </details>
           <details className="bg-white p-4 rounded border">
-            <summary className="font-semibold">¿Qué incluye la versión Pro?</summary>
-            <p className="mt-2 text-gray-700">Análisis macro, sectores, earnings del día, niveles técnicos, flujos y watchlist.</p>
+            <summary className="font-semibold">{t("faq_q2")}</summary>
+            <p className="mt-2 text-gray-700">{t("faq_a2")}</p>
           </details>
           <details className="bg-white p-4 rounded border">
-            <summary className="font-semibold">¿Puedo cancelar cuando quiera?</summary>
-            <p className="mt-2 text-gray-700">Sí, puedes cancelar o cambiar de plan en cualquier momento.</p>
+            <summary className="font-semibold">{t("faq_q3")}</summary>
+            <p className="mt-2 text-gray-700">{t("faq_a3")}</p>
           </details>
         </div>
         {/* JSON-LD */}
@@ -162,9 +162,9 @@ export default function Home() {
               "@context": "https://schema.org",
               "@type": "FAQPage",
               mainEntity: [
-                { "@type": "Question", name: "¿A qué hora enviáis el informe?", acceptedAnswer: { "@type": "Answer", text: "El resumen Lite sale antes de la apertura en EEUU y el Pro incluye el PDF completo." } },
-                { "@type": "Question", name: "¿Qué incluye la versión Pro?", acceptedAnswer: { "@type": "Answer", text: "Análisis macro, sectores, earnings del día, niveles técnicos, flujos y watchlist." } },
-                { "@type": "Question", name: "¿Puedo cancelar cuando quiera?", acceptedAnswer: { "@type": "Answer", text: "Sí, puedes cancelar o cambiar de plan en cualquier momento." } }
+                { "@type": "Question", name: t("faq_q1"), acceptedAnswer: { "@type": "Answer", text: t("faq_a1") } },
+                { "@type": "Question", name: t("faq_q2"), acceptedAnswer: { "@type": "Answer", text: t("faq_a2") } },
+                { "@type": "Question", name: t("faq_q3"), acceptedAnswer: { "@type": "Answer", text: t("faq_a3") } }
               ],
             }),
           }}
