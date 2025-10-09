@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import LeadCapture from "@/components/LeadCapture";
 import Testimonials from "@/components/Testimonials";
+import SocialProof from "@/components/SocialProof";
 import { useI18n } from "@/i18n/I18nProvider";
 
 export default function Home() {
@@ -283,6 +284,9 @@ export default function Home() {
         />
       </section>
       <Testimonials />
+
+      {/* Social Proof */}
+      <SocialProof />
     </div>
   );
 }
