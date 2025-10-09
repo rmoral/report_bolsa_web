@@ -26,7 +26,8 @@ ssh -o StrictHostKeyChecking=accept-new -i "$KEY" $SERVER 'echo "SSH OK"' || {
 }
 
 echo "[1/4] Empaquetando proyecto (earlymarketreports)"
-tar -czf earlymarketreports.tgz earlymarketreports
+# Excluir archivos temporales de macOS y otros archivos innecesarios
+tar --exclude='._*' --exclude='.DS_Store' --exclude='node_modules' --exclude='.next' -czf earlymarketreports.tgz earlymarketreports
 
 echo "[2/4] Copiando paquete al servidor"
 scp -o StrictHostKeyChecking=accept-new -i "$KEY" earlymarketreports.tgz "$SERVER:$REMOTE_DIR/"
@@ -39,6 +40,8 @@ cd "$REMOTE_DIR"
 rm -rf earlymarketreports
 tar -xzf earlymarketreports.tgz && rm earlymarketreports.tgz
 cd earlymarketreports
+# Limpiar archivos temporales de macOS si existen
+find . -name "._*" -type f -delete 2>/dev/null || true
 if ! command -v node >/dev/null 2>&1; then echo "ERROR: Node.js no está instalado en el servidor" >&2; exit 2; fi
 if ! command -v pm2 >/dev/null 2>&1; then echo "ERROR: PM2 no está instalado en el servidor (sudo npm i -g pm2)" >&2; exit 2; fi
 # Instala dependencias (fallback a npm install si no hay lock)
