@@ -4,6 +4,7 @@ import Link from "next/link";
 import LeadCapture from "@/components/LeadCapture";
 import Testimonials from "@/components/Testimonials";
 import SocialProof from "@/components/SocialProof";
+import ReportPreview from "@/components/ReportPreview";
 import { useI18n } from "@/i18n/I18nProvider";
 
 export default function Home() {
@@ -106,7 +107,7 @@ export default function Home() {
                   <a 
                     className="btn-outline-primary text-center" 
                     href="/reports/US_SAMPLE_20251003.pdf" 
-                    target="_blank"
+            target="_blank"
                   >
                     {t("open_pdf")} (Muestra)
                   </a>
@@ -284,6 +285,9 @@ export default function Home() {
         />
       </section>
       <Testimonials />
+
+      {/* Report Preview */}
+      <ReportPreview />
 
       {/* Social Proof */}
       <SocialProof />
