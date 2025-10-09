@@ -4,6 +4,8 @@ import "./globals.css";
 import { I18nProvider } from "@/i18n/I18nProvider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { locales, defaultLocale } from "@/i18n/config";
+import { getAlternateLocales } from "@/i18n/routing";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -38,7 +40,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang={defaultLocale}>
+      <head>
+        {/* Hreflang tags */}
+        {locales.map((locale) => (
+          <link
+            key={locale}
+            rel="alternate"
+            hrefLang={locale}
+            href={`https://earlymarketreports.com/${locale === defaultLocale ? '' : locale}`}
+          />
+        ))}
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://earlymarketreports.com"
+        />
+      </head>
       <body suppressHydrationWarning className={`${montserrat.variable} ${inter.variable} antialiased`}>
         <I18nProvider>
           <div className="min-h-screen flex flex-col">
