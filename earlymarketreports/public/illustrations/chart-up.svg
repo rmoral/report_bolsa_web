@@ -1,13 +1,79 @@
 <svg width="640" height="360" viewBox="0 0 640 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="640" height="360" rx="16" fill="#F5F6FA"/>
-  <g opacity="0.6">
-    <path d="M40 300 L120 240 L200 260 L280 210 L360 230 L440 180 L520 200 L600 140" stroke="#1B263B" stroke-width="6" fill="none" stroke-linecap="round"/>
-    <circle cx="600" cy="140" r="9" fill="#2ECC71"/>
+  <!-- Fondo con gradiente -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F8FAFC;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F1F5F9;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2ECC71;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#2ECC71;stop-opacity:0.05" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="640" height="360" rx="16" fill="url(#bgGradient)"/>
+  
+  <!-- Grid lines -->
+  <g opacity="0.1">
+    <line x1="60" y1="60" x2="60" y2="300" stroke="#1B263B" stroke-width="1"/>
+    <line x1="60" y1="300" x2="580" y2="300" stroke="#1B263B" stroke-width="1"/>
+    <line x1="60" y1="240" x2="580" y2="240" stroke="#1B263B" stroke-width="1"/>
+    <line x1="60" y1="180" x2="580" y2="180" stroke="#1B263B" stroke-width="1"/>
+    <line x1="60" y1="120" x2="580" y2="120" stroke="#1B263B" stroke-width="1"/>
   </g>
-  <g opacity="0.2">
-    <line x1="40" y1="300" x2="600" y2="300" stroke="#1B263B"/>
-    <line x1="40" y1="240" x2="600" y2="240" stroke="#1B263B"/>
-    <line x1="40" y1="180" x2="600" y2="180" stroke="#1B263B"/>
+  
+  <!-- Área del gráfico con gradiente -->
+  <path d="M80 280 L160 220 L240 240 L320 190 L400 210 L480 160 L560 180 L560 300 L80 300 Z" fill="url(#chartGradient)"/>
+  
+  <!-- Línea principal del gráfico -->
+  <path d="M80 280 L160 220 L240 240 L320 190 L400 210 L480 160 L560 180" stroke="#2ECC71" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Puntos de datos -->
+  <circle cx="80" cy="280" r="4" fill="#2ECC71"/>
+  <circle cx="160" cy="220" r="4" fill="#2ECC71"/>
+  <circle cx="240" cy="240" r="4" fill="#2ECC71"/>
+  <circle cx="320" cy="190" r="4" fill="#2ECC71"/>
+  <circle cx="400" cy="210" r="4" fill="#2ECC71"/>
+  <circle cx="480" cy="160" r="4" fill="#2ECC71"/>
+  <circle cx="560" cy="180" r="6" fill="#2ECC71" stroke="#FFFFFF" stroke-width="2"/>
+  
+  <!-- Indicadores de volumen (barras pequeñas) -->
+  <rect x="75" y="290" width="10" height="15" fill="#1B263B" opacity="0.3"/>
+  <rect x="155" y="285" width="10" height="20" fill="#1B263B" opacity="0.3"/>
+  <rect x="235" y="290" width="10" height="15" fill="#1B263B" opacity="0.3"/>
+  <rect x="315" y="280" width="10" height="25" fill="#1B263B" opacity="0.3"/>
+  <rect x="395" y="285" width="10" height="20" fill="#1B263B" opacity="0.3"/>
+  <rect x="475" y="275" width="10" height="30" fill="#1B263B" opacity="0.3"/>
+  <rect x="555" y="270" width="10" height="35" fill="#1B263B" opacity="0.3"/>
+  
+  <!-- Etiquetas de ejes -->
+  <text x="30" y="305" font-family="Arial, sans-serif" font-size="12" fill="#64748B" text-anchor="middle">0</text>
+  <text x="30" y="245" font-family="Arial, sans-serif" font-size="12" fill="#64748B" text-anchor="middle">50</text>
+  <text x="30" y="185" font-family="Arial, sans-serif" font-size="12" fill="#64748B" text-anchor="middle">100</text>
+  <text x="30" y="125" font-family="Arial, sans-serif" font-size="12" fill="#64748B" text-anchor="middle">150</text>
+  
+  <!-- Indicador de tendencia alcista -->
+  <g transform="translate(520, 120)">
+    <path d="M0 20 L15 5 L30 20" stroke="#2ECC71" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="35" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#2ECC71">+12.5%</text>
   </g>
+  
+  <!-- Iconos de mercado -->
+  <g transform="translate(80, 40)">
+    <!-- Ícono de gráfico de velas -->
+    <rect x="0" y="8" width="3" height="12" fill="#2ECC71"/>
+    <line x1="1.5" y1="4" x2="1.5" y2="24" stroke="#1B263B" stroke-width="1"/>
+    <rect x="0" y="4" width="3" height="4" fill="#2ECC71"/>
+  </g>
+  
+  <g transform="translate(100, 40)">
+    <!-- Ícono de tendencia -->
+    <path d="M0 20 L8 12 L16 16 L24 8 L32 12" stroke="#1B263B" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="32" cy="12" r="3" fill="#2ECC71"/>
+  </g>
+  
+  <!-- Título del gráfico -->
+  <text x="320" y="30" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1B263B" text-anchor="middle">Análisis de Mercado</text>
+  <text x="320" y="50" font-family="Arial, sans-serif" font-size="12" fill="#64748B" text-anchor="middle">Rendimiento diario - Early Market Reports</text>
 </svg>
 
