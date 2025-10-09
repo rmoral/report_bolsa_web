@@ -74,20 +74,78 @@ export default function Home() {
         <div className="container-page py-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">{t("section_example_title")}</h2>
           <p className="mt-2 text-gray-700">{t("section_example_note")}</p>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
-            <article className="bg-[--emr-gray] p-4 rounded-lg border">
-              <h4 className="font-semibold">{t("section_example_summary")}</h4>
-              <ul className="list-disc pl-5 text-sm text-gray-800 mt-2 space-y-1">
-                <li>{t("example_point_1")}</li>
-                <li>{t("example_point_2")}</li>
-                <li>{t("example_point_3")}</li>
-              </ul>
-            </article>
-            <div className="bg-[--emr-gray] p-4 rounded-lg border">
-              <p className="text-sm text-gray-800">Descarga el PDF completo o ábrelo en una nueva pestaña.</p>
-              <div className="mt-3 flex gap-3">
-                <a className="btn-outline-primary" href="/reports/US_FULL_20251003.pdf" target="_blank">{t("open_pdf")}</a>
-                <a className="btn-accent" href="/reports/US_FULL_20251003.pdf" download>{t("download_pdf")}</a>
+          
+          {/* Muestra limitada */}
+          <div className="mt-8 bg-gradient-to-r from-[--emr-blue-10] to-[--emr-green-10] p-6 rounded-lg border border-[--color-accent]">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 bg-[--color-accent] rounded-full flex items-center justify-center">
+                <span className="text-white text-sm font-bold">📊</span>
+              </div>
+              <h3 className="text-lg font-semibold text-[--color-primary]">Muestra del Informe Diario</h3>
+            </div>
+            <p className="text-gray-700 mb-4">
+              Esta es una muestra limitada de nuestro informe completo. El informe Pro incluye análisis técnico detallado, 
+              watchlist con 15+ valores, flujos institucionales y estrategias de trading.
+            </p>
+            
+            <div className="grid gap-4 sm:grid-cols-2">
+              <article className="bg-white p-4 rounded-lg border">
+                <h4 className="font-semibold text-[--color-primary] mb-2">{t("section_example_summary")}</h4>
+                <ul className="list-disc pl-5 text-sm text-gray-800 space-y-1">
+                  <li>{t("example_point_1")}</li>
+                  <li>{t("example_point_2")}</li>
+                  <li>{t("example_point_3")}</li>
+                </ul>
+              </article>
+              
+              <div className="bg-white p-4 rounded-lg border">
+                <h4 className="font-semibold text-[--color-primary] mb-2">Acceso al Informe</h4>
+                <p className="text-sm text-gray-800 mb-3">Descarga la muestra o suscríbete para el informe completo.</p>
+                <div className="flex flex-col gap-2">
+                  <a 
+                    className="btn-outline-primary text-center" 
+                    href="/reports/US_SAMPLE_20251003.pdf" 
+                    target="_blank"
+                  >
+                    {t("open_pdf")} (Muestra)
+                  </a>
+                  <Link 
+                    href="/subscribe?plan=pro" 
+                    className="btn-accent text-center"
+                  >
+                    Ver Informe Completo (Pro)
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Características del informe completo */}
+          <div className="mt-8">
+            <h3 className="text-xl font-semibold text-[--color-primary] mb-4">¿Qué incluye el informe completo?</h3>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="text-center p-4 bg-white rounded-lg border">
+                <div className="w-12 h-12 bg-[--color-accent] rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-white text-lg">📈</span>
+                </div>
+                <h4 className="font-semibold mb-2">Análisis Técnico</h4>
+                <p className="text-sm text-gray-600">Gráficos detallados, niveles de soporte/resistencia y indicadores técnicos</p>
+              </div>
+              
+              <div className="text-center p-4 bg-white rounded-lg border">
+                <div className="w-12 h-12 bg-[--color-accent] rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-white text-lg">🎯</span>
+                </div>
+                <h4 className="font-semibold mb-2">Watchlist Pro</h4>
+                <p className="text-sm text-gray-600">15+ valores seleccionados con análisis de entrada y salida</p>
+              </div>
+              
+              <div className="text-center p-4 bg-white rounded-lg border">
+                <div className="w-12 h-12 bg-[--color-accent] rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-white text-lg">💼</span>
+                </div>
+                <h4 className="font-semibold mb-2">Flujos Institucionales</h4>
+                <p className="text-sm text-gray-600">Seguimiento de movimientos de fondos y grandes inversores</p>
               </div>
             </div>
           </div>
