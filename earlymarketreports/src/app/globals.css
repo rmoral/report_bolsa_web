@@ -6,6 +6,8 @@
   --emr-blue-dark: #111a29; /* primario más oscuro para cabecera */
   --emr-green: #2ECC71; /* acento */
   --emr-gray: #F5F6FA; /* fondos */
+  --emr-blue-10: #E8EEF7; /* azul muy claro para fondos */
+  --emr-green-10: #EAF7F1; /* verde muy claro para fondos */
 }
 
 @theme inline {
@@ -23,6 +25,13 @@ body {
 }
 
 /* Utilidades */
+.bg-hero-gradient {
+  background: linear-gradient(180deg, var(--emr-blue-10) 0%, var(--emr-green-10) 100%);
+}
+
+.card-accent {
+  border-top: 4px solid var(--color-accent);
+}
 .site-header {
   position: sticky;
   top: 0;

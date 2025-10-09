@@ -177,8 +177,8 @@ export default function Home() {
         <div className="container-page py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm">© {new Date().getFullYear()} EarlyMarketReports</p>
           <div className="flex gap-4 text-sm">
-            <Link href="/legal/terminos" className="hover:underline">Términos</Link>
-            <Link href="/legal/privacidad" className="hover:underline">Política de privacidad</Link>
+            <Link href="/legal/terminos" className="hover:underline">{t("footer_terms")}</Link>
+            <Link href="/legal/privacidad" className="hover:underline">{t("footer_privacy")}</Link>
           </div>
         </div>
       </footer>
