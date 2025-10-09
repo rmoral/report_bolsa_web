@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";
-import { User } from "@/models/User";
-import bcrypt from "bcryptjs";
+import { createUser } from "@/lib/firebaseAuth";
 import { z } from "zod";
 
 const RegisterSchema = z.object({
@@ -16,21 +14,17 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { name, email, password, plan } = RegisterSchema.parse(body);
 
-    await connectToDatabase();
+    const user = await createUser({ name, email, password, plan });
 
-    const existing = await User.findOne({ email });
-    if (existing) {
-      return NextResponse.json({ error: "Email ya registrado" }, { status: 409 });
-    }
-
-    const passwordHash = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, passwordHash, plan });
-
-    return NextResponse.json({ id: user._id, email: user.email, plan: user.plan }, { status: 201 });
+    return NextResponse.json({ id: user.id, email: user.email, plan: user.plan }, { status: 201 });
   } catch (err: any) {
     if (err.name === "ZodError") {
       return NextResponse.json({ error: err.issues?.[0]?.message || "Datos inválidos" }, { status: 400 });
     }
+    if (err.message === "Email ya registrado") {
+      return NextResponse.json({ error: "Email ya registrado" }, { status: 409 });
+    }
+    console.error("/api/auth/register error", err);
     return NextResponse.json({ error: "Error de servidor" }, { status: 500 });
   }
 }

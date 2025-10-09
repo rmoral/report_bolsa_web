@@ -1,8 +1,5 @@
 import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";
-import { User } from "@/models/User";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { authenticateUser } from "@/lib/firebaseAuth";
 import { z } from "zod";
 
 const LoginSchema = z.object({
@@ -15,22 +12,25 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { email, password } = LoginSchema.parse(body);
 
-    await connectToDatabase();
-    const user = await User.findOne({ email, isActive: true });
-    if (!user) return NextResponse.json({ error: "Credenciales inválidas" }, { status: 401 });
+    const result = await authenticateUser(email, password);
 
-    const ok = await bcrypt.compare(password, user.passwordHash);
-    if (!ok) return NextResponse.json({ error: "Credenciales inválidas" }, { status: 401 });
-
-    const token = jwt.sign({ sub: user._id.toString(), role: user.role, plan: user.plan }, process.env.JWT_SECRET as string, {
-      expiresIn: "7d",
+    return NextResponse.json({ 
+      token: result.token, 
+      user: { 
+        id: result.user.id, 
+        email: result.user.email, 
+        plan: result.user.plan,
+        role: result.user.role 
+      } 
     });
-
-    return NextResponse.json({ token, user: { id: user._id, email: user.email, plan: user.plan } });
   } catch (err: any) {
     if (err.name === "ZodError") {
       return NextResponse.json({ error: err.issues?.[0]?.message || "Datos inválidos" }, { status: 400 });
     }
+    if (err.message === "Credenciales inválidas") {
+      return NextResponse.json({ error: "Credenciales inválidas" }, { status: 401 });
+    }
+    console.error("/api/auth/login error", err);
     return NextResponse.json({ error: "Error de servidor" }, { status: 500 });
   }
 }
