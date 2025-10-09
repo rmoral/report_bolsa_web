@@ -116,6 +116,23 @@ export async function getUserById(userId: string): Promise<FirestoreUser | null>
   } as FirestoreUser;
 }
 
+export async function getUserByEmail(email: string): Promise<FirestoreUser | null> {
+  const users = await db.collection("users")
+    .where("email", "==", email.toLowerCase())
+    .limit(1)
+    .get();
+    
+  if (users.empty) {
+    return null;
+  }
+  
+  const userDoc = users.docs[0];
+  return {
+    id: userDoc.id,
+    ...userDoc.data(),
+  } as FirestoreUser;
+}
+
 export async function updateUserRole(userId: string, role: UserRole): Promise<void> {
   await db.collection("users").doc(userId).update({
     role,

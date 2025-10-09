@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@/i18n/I18nProvider";
 import Link from "next/link";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useI18n();
@@ -187,5 +187,20 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-[--emr-blue-10] to-[--emr-green-10] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[--color-primary] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Cargando...</p>
+        </div>
+      </div>
+    }>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }
