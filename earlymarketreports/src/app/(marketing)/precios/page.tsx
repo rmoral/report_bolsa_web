@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useI18n } from "@/i18n/I18nProvider";
+import { CheckCircleIcon, XMarkIcon } from "@heroicons/react/24/solid";
 
 export default function PreciosPage() {
   const { t } = useI18n();
@@ -50,6 +51,48 @@ export default function PreciosPage() {
       bestFor: "Traders activos, gestores de fondos, inversores profesionales"
     }
   };
+
+  const comparisonFeatures = [
+    {
+      category: "Informes Básicos",
+      features: [
+        { name: "Resumen diario por email", lite: true, pro: true },
+        { name: "3-5 oportunidades destacadas", lite: true, pro: true },
+        { name: "Niveles clave soporte/resistencia", lite: true, pro: true },
+        { name: "Eventos macro del día", lite: true, pro: true },
+        { name: "Envío antes de las 9:00 ET", lite: true, pro: true }
+      ]
+    },
+    {
+      category: "Análisis Avanzado",
+      features: [
+        { name: "PDF completo del informe", lite: false, pro: true },
+        { name: "Análisis técnico detallado", lite: false, pro: true },
+        { name: "Gráficos y niveles técnicos", lite: false, pro: true },
+        { name: "Análisis de flujos institucionales", lite: false, pro: true },
+        { name: "Estrategias de trading", lite: false, pro: true }
+      ]
+    },
+    {
+      category: "Herramientas Pro",
+      features: [
+        { name: "Watchlist con 15+ valores", lite: false, pro: true },
+        { name: "Acceso a comunidad Pro", lite: false, pro: true },
+        { name: "Informes históricos completos", lite: false, pro: true },
+        { name: "Alertas personalizadas", lite: false, pro: true },
+        { name: "Análisis de earnings", lite: false, pro: true }
+      ]
+    },
+    {
+      category: "Soporte",
+      features: [
+        { name: "Soporte por email", lite: true, pro: true },
+        { name: "Soporte prioritario", lite: false, pro: true },
+        { name: "Chat en vivo", lite: false, pro: true },
+        { name: "Garantía de satisfacción 7 días", lite: false, pro: true }
+      ]
+    }
+  ];
 
   return (
     <div className="container-page py-10">
@@ -99,59 +142,64 @@ export default function PreciosPage() {
             }`}
           >
             {plan.popular && (
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-[--color-accent] text-white text-sm px-4 py-1 rounded-full">
-                  Más popular
-                </span>
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[--color-accent] text-white text-xs font-semibold px-3 py-1 rounded-full">
+                Más Popular
               </div>
             )}
             
             <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold text-[--color-primary] mb-2">
-                {plan.name}
-              </h3>
+              <h2 className="text-2xl font-bold text-[--color-primary] mb-2">{plan.name}</h2>
               <p className="text-gray-600 mb-4">{plan.description}</p>
+              
               <div className="mb-4">
                 <span className="text-4xl font-bold text-[--color-primary]">
-                  {billingCycle === "monthly" ? plan.monthlyPrice : plan.yearlyPrice}
+                  {billingCycle === "yearly" ? plan.yearlyPrice : plan.monthlyPrice}
                 </span>
+                {plan.monthlyPrice !== "Gratis" && (
+                  <span className="text-gray-600">
+                    /{billingCycle === "yearly" ? "año" : "mes"}
+                  </span>
+                )}
                 {billingCycle === "yearly" && plan.yearlySavings && (
-                  <div className="text-sm text-[--color-accent] font-semibold">
+                  <div className="text-sm text-green-600 font-medium mt-1">
                     {plan.yearlySavings}
                   </div>
                 )}
-                {billingCycle === "monthly" && plan.monthlyPrice !== "Gratis" && (
-                  <span className="text-gray-500">/mes</span>
-                )}
-                {billingCycle === "yearly" && plan.yearlyPrice !== "Gratis" && (
-                  <span className="text-gray-500">/año</span>
-                )}
+              </div>
+              
+              <div className={`p-3 rounded-lg border ${
+                plan.popular 
+                  ? "bg-blue-50 border-blue-200" 
+                  : "bg-green-50 border-green-200"
+              }`}>
+                <p className={`text-sm font-medium ${
+                  plan.popular ? "text-blue-800" : "text-green-800"
+                }`}>
+                  {plan.popular ? "🚀 Mejor para traders serios" : "✅ Mejor para principiantes"}
+                </p>
+                <p className={`text-xs ${
+                  plan.popular ? "text-blue-600" : "text-green-600"
+                }`}>
+                  {plan.bestFor}
+                </p>
               </div>
             </div>
 
             <ul className="space-y-3 mb-8">
               {plan.features.map((feature, index) => (
-                <li key={index} className="flex items-start">
-                  <svg className="w-5 h-5 text-[--color-accent] mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  <span className="text-gray-700">{feature}</span>
+                <li key={index} className="flex items-start text-gray-700">
+                  <CheckCircleIcon className="h-5 w-5 text-[--color-accent] mr-2 mt-0.5 flex-shrink-0" />
+                  <span className="text-sm">{feature}</span>
                 </li>
               ))}
             </ul>
 
-            <div className="text-center mb-4">
-              <p className="text-sm text-gray-600 mb-2">
-                <strong>Mejor para:</strong> {plan.bestFor}
-              </p>
-            </div>
-
-            <Link
-              href={plan.ctaLink}
-              className={`block w-full text-center py-3 px-6 rounded-md font-semibold transition-colors ${
-                plan.popular
-                  ? "bg-[--color-accent] text-white hover:bg-opacity-90"
-                  : "bg-[--color-primary] text-white hover:bg-opacity-90"
+            <Link 
+              href={plan.ctaLink} 
+              className={`w-full text-center py-3 px-4 rounded-lg font-medium transition-colors ${
+                plan.popular 
+                  ? "bg-[--color-accent] text-white hover:bg-[--color-accent]/90" 
+                  : "bg-[--color-primary] text-white hover:bg-[--color-primary]/90"
               }`}
             >
               {plan.cta}
@@ -160,88 +208,114 @@ export default function PreciosPage() {
         ))}
       </div>
 
-      {/* FAQ Section */}
-      <div className="max-w-3xl mx-auto">
-        <h2 className="text-2xl font-bold text-[--color-primary] text-center mb-8">
+      {/* Tabla Comparativa Detallada */}
+      <div className="max-w-6xl mx-auto">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="bg-[--color-primary] text-white p-6">
+            <h3 className="text-xl font-bold text-center">Comparación Detallada de Características</h3>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Características</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">Lite (Gratis)</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-[--color-primary]">Pro (€29/mes)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {comparisonFeatures.map((category, categoryIndex) => (
+                  <React.Fragment key={categoryIndex}>
+                    <tr className="bg-gray-100">
+                      <td colSpan={3} className="px-6 py-3 text-sm font-semibold text-[--color-primary]">
+                        {category.category}
+                      </td>
+                    </tr>
+                    {category.features.map((feature, featureIndex) => (
+                      <tr key={featureIndex} className={featureIndex % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                        <td className="px-6 py-4 text-sm text-gray-900">{feature.name}</td>
+                        <td className="px-6 py-4 text-center">
+                          {feature.lite ? (
+                            <CheckCircleIcon className="h-5 w-5 text-green-500 mx-auto" />
+                          ) : (
+                            <XMarkIcon className="h-5 w-5 text-gray-400 mx-auto" />
+                          )}
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          {feature.pro ? (
+                            <CheckCircleIcon className="h-5 w-5 text-[--color-accent] mx-auto" />
+                          ) : (
+                            <XMarkIcon className="h-5 w-5 text-gray-400 mx-auto" />
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* Pricing FAQs */}
+      <section className="py-12">
+        <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary] text-center mb-8">
           Preguntas frecuentes sobre precios
         </h2>
-        
-        <div className="space-y-6">
-          <div className="bg-white p-6 rounded-lg border">
-            <h3 className="font-semibold text-[--color-primary] mb-2">
+        <div className="mt-8 max-w-2xl mx-auto space-y-4">
+          <details className="group bg-[--emr-gray] p-4 rounded-lg shadow-sm">
+            <summary className="flex justify-between items-center font-semibold cursor-pointer text-[--color-primary]">
+              ¿Cómo funciona la prueba gratuita de 7 días?
+              <span className="group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p className="mt-2 text-gray-700">
+              Puedes probar el plan Pro durante 7 días sin compromiso. Si no cancelas antes de que termine la prueba, 
+              se te cobrará automáticamente la primera cuota.
+            </p>
+          </details>
+          <details className="group bg-[--emr-gray] p-4 rounded-lg shadow-sm">
+            <summary className="flex justify-between items-center font-semibold cursor-pointer text-[--color-primary]">
               ¿Puedo cambiar de plan en cualquier momento?
-            </h3>
-            <p className="text-gray-700">
-              Sí, puedes cambiar de plan en cualquier momento desde tu panel de usuario. 
-              Los cambios se aplicarán en el próximo ciclo de facturación.
+              <span className="group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p className="mt-2 text-gray-700">
+              Sí, puedes cambiar de Lite a Pro o viceversa en cualquier momento desde tu área de usuario. 
+              Los cambios se aplicarán en el siguiente ciclo de facturación.
             </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg border">
-            <h3 className="font-semibold text-[--color-primary] mb-2">
+          </details>
+          <details className="group bg-[--emr-gray] p-4 rounded-lg shadow-sm">
+            <summary className="flex justify-between items-center font-semibold cursor-pointer text-[--color-primary]">
+              ¿Qué métodos de pago aceptáis?
+              <span className="group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p className="mt-2 text-gray-700">
+              Aceptamos tarjetas de crédito/débito (Visa, Mastercard, American Express) y PayPal.
+            </p>
+          </details>
+          <details className="group bg-[--emr-gray] p-4 rounded-lg shadow-sm">
+            <summary className="flex justify-between items-center font-semibold cursor-pointer text-[--color-primary]">
+              ¿Se renueva automáticamente mi suscripción?
+              <span className="group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p className="mt-2 text-gray-700">
+              Sí, todas las suscripciones se renuevan automáticamente al final de cada período (mensual o anual) 
+              a menos que las canceles.
+            </p>
+          </details>
+          <details className="group bg-[--emr-gray] p-4 rounded-lg shadow-sm">
+            <summary className="flex justify-between items-center font-semibold cursor-pointer text-[--color-primary]">
               ¿Hay garantía de devolución?
-            </h3>
-            <p className="text-gray-700">
-              Ofrecemos una garantía de satisfacción de 7 días para nuevos suscriptores del plan Pro. 
-              Si no estás conforme, te devolvemos el importe íntegro.
+              <span className="group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p className="mt-2 text-gray-700">
+              Ofrecemos una garantía de satisfacción de 7 días para el plan Pro. 
+              Si no estás satisfecho, te reembolsaremos el importe íntegro.
             </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg border">
-            <h3 className="font-semibold text-[--color-primary] mb-2">
-              ¿Los precios incluyen IVA?
-            </h3>
-            <p className="text-gray-700">
-              Sí, todos los precios mostrados incluyen el IVA correspondiente. 
-              Recibirás una factura detallada con el desglose de impuestos.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg border">
-            <h3 className="font-semibold text-[--color-primary] mb-2">
-              ¿Puedo cancelar mi suscripción?
-            </h3>
-            <p className="text-gray-700">
-              Sí, puedes cancelar tu suscripción en cualquier momento desde tu panel de usuario. 
-              No hay penalizaciones por cancelación.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg border">
-            <h3 className="font-semibold text-[--color-primary] mb-2">
-              ¿Hay descuentos para estudiantes o empresas?
-            </h3>
-            <p className="text-gray-700">
-              Ofrecemos descuentos especiales para estudiantes y planes corporativos. 
-              Contacta con nosotros en <a href="mailto:enterprise@earlymarketreports.com" className="text-[--color-accent] hover:underline">enterprise@earlymarketreports.com</a> para más información.
-            </p>
-          </div>
+          </details>
         </div>
-      </div>
-
-      {/* CTA Section */}
-      <div className="text-center mt-12 bg-[--emr-gray] p-8 rounded-lg">
-        <h2 className="text-2xl font-bold text-[--color-primary] mb-4">
-          ¿Tienes dudas sobre qué plan elegir?
-        </h2>
-        <p className="text-gray-600 mb-6">
-          Nuestro equipo está aquí para ayudarte a encontrar el plan perfecto para tus necesidades.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
-            href="/contacto"
-            className="btn-outline-primary"
-          >
-            Contactar soporte
-          </Link>
-          <Link
-            href="/subscribe?plan=lite"
-            className="btn-accent"
-          >
-            Empezar gratis ahora
-          </Link>
-        </div>
-      </div>
+      </section>
     </div>
   );
 }
