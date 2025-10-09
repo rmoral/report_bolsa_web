@@ -3,6 +3,7 @@ import { Montserrat, Inter } from "next/font/google";
 import "./globals.css";
 import { I18nProvider } from "@/i18n/I18nProvider";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -40,8 +41,13 @@ export default function RootLayout({
     <html lang="es">
       <body suppressHydrationWarning className={`${montserrat.variable} ${inter.variable} antialiased`}>
         <I18nProvider>
-          <Header />
-          {children}
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <main className="flex-grow">
+              {children}
+            </main>
+            <Footer />
+          </div>
         </I18nProvider>
       </body>
     </html>

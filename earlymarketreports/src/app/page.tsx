@@ -8,7 +8,7 @@ import { useI18n } from "@/i18n/I18nProvider";
 export default function Home() {
   const { t } = useI18n();
   return (
-    <div className="min-h-screen flex flex-col">
+    <div>
       {/* Header */}
       {/* Header global renderizado desde layout */}
 
@@ -225,17 +225,6 @@ export default function Home() {
         />
       </section>
       <Testimonials />
-
-      {/* Footer */}
-      <footer className="mt-auto bg-[--color-primary] text-white">
-        <div className="container-page py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm">© {new Date().getFullYear()} EarlyMarketReports</p>
-          <div className="flex gap-4 text-sm">
-            <Link href="/legal/terminos" className="hover:underline">{t("footer_terms")}</Link>
-            <Link href="/legal/privacidad" className="hover:underline">{t("footer_privacy")}</Link>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
