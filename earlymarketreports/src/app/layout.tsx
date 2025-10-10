@@ -108,6 +108,43 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning className={`${montserrat.variable} ${inter.variable} antialiased`}>
+        {/* Schema.org Organization & WebSite */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'EarlyMarketReports',
+              url: 'https://earlymarketreports.com',
+              logo: 'https://earlymarketreports.com/logo.png',
+              sameAs: [
+                'https://twitter.com/earlymarketreports',
+                'https://linkedin.com/company/earlymarketreports'
+              ],
+              brand: {
+                '@type': 'Brand',
+                name: 'EarlyMarketReports'
+              }
+            })
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: 'EarlyMarketReports',
+              url: 'https://earlymarketreports.com',
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: 'https://earlymarketreports.com/search?q={search_term_string}',
+                'query-input': 'required name=search_term_string'
+              }
+            })
+          }}
+        />
         <I18nProvider>
           <div className="min-h-screen flex flex-col">
             <Header />
