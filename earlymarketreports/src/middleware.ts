@@ -2,9 +2,23 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { locales, defaultLocale } from './i18n/config';
 import { getLocaleFromPathname, getPathnameWithoutLocale } from './i18n/routing';
+import { securityMiddleware, healthCheck, apiSecurityMiddleware } from './middleware/security';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  
+  // Health check endpoint
+  const healthResponse = healthCheck(request);
+  if (healthResponse) return healthResponse;
+
+  // Apply security middleware first
+  const securityResponse = securityMiddleware(request);
+  if (securityResponse.status === 403) return securityResponse;
+
+  // Apply API security middleware
+  const apiResponse = apiSecurityMiddleware(request);
+  if (apiResponse) return apiResponse;
+
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
