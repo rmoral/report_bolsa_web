@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useI18n } from "@/i18n/I18nProvider";
 import { CheckCircleIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { trackEvent } from "@/components/GoogleAnalytics";
 
 export default function PricingClient() {
   const { t } = useI18n();
@@ -179,12 +180,20 @@ export default function PricingClient() {
             <tr>
               <td className="py-4 pl-4 pr-3 sm:pl-6"></td>
               <td className="px-3 py-4 text-sm text-gray-500 text-center">
-                <Link href={litePlan.ctaLink} className="btn-primary w-full">
+                <Link 
+                  href={litePlan.ctaLink} 
+                  className="btn-primary w-full"
+                  onClick={() => trackEvent('click_cta', 'pricing', 'lite_plan')}
+                >
                   {litePlan.cta}
                 </Link>
               </td>
               <td className="px-3 py-4 text-sm text-gray-500 text-center">
-                <Link href={proPlan.ctaLink} className="btn-accent w-full">
+                <Link 
+                  href={proPlan.ctaLink} 
+                  className="btn-accent w-full"
+                  onClick={() => trackEvent('click_cta', 'pricing', 'pro_plan')}
+                >
                   {proPlan.cta}
                 </Link>
               </td>

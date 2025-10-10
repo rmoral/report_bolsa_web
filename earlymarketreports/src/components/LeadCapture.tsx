@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { trackEvent, trackConversion } from "./GoogleAnalytics";
 
 type Props = { className?: string };
 
@@ -14,6 +15,10 @@ export default function LeadCapture({ className }: Props) {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
+    
+    // Track form submission
+    trackEvent('form_submit', 'lead_capture', 'homepage_hero');
+    
     try {
       const res = await fetch("/api/subscribe", {
         method: "POST",
@@ -22,10 +27,17 @@ export default function LeadCapture({ className }: Props) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Error");
+      
+      // Track successful subscription
+      trackEvent('subscribe_success', 'conversion', 'lite_plan');
+      trackConversion('subscribe_lite', 0, 'EUR');
+      
       setMessage("¡Listo! Te hemos registrado en la versión Lite.");
       setName("");
       setEmail("");
     } catch (err: any) {
+      // Track error
+      trackEvent('subscribe_error', 'conversion', 'lite_plan');
       setMessage(err.message || "No se pudo completar el registro");
     } finally {
       setLoading(false);
