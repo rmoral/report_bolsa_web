@@ -25,13 +25,63 @@ export const metadata: Metadata = {
   },
   description:
     "Informes bursátiles diarios y análisis del mercado. Suscríbete a la versión Lite o Pro.",
+  keywords: "informes bursátiles, análisis técnico, trading, mercados financieros, inversión, bolsa",
+  authors: [{ name: "EarlyMarketReports" }],
+  creator: "EarlyMarketReports",
+  publisher: "EarlyMarketReports",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL("https://earlymarketreports.com"),
+  alternates: {
+    canonical: "/",
+    languages: {
+      "es-ES": "/",
+      "en-US": "/en",
+    },
+  },
   openGraph: {
-    title: "EarlyMarketReports",
+    title: "EarlyMarketReports | Informes bursátiles diarios",
     description:
       "Informes bursátiles diarios y análisis del mercado. Suscríbete a la versión Lite o Pro.",
     type: "website",
+    locale: "es_ES",
+    siteName: "EarlyMarketReports",
+    images: [
+      {
+        url: "/og-home.jpg",
+        width: 1200,
+        height: 630,
+        alt: "EarlyMarketReports - Informes bursátiles diarios",
+      },
+    ],
   },
-  icons: { icon: "/favicon.ico" },
+  twitter: {
+    card: "summary_large_image",
+    title: "EarlyMarketReports | Informes bursátiles diarios",
+    description:
+      "Informes bursátiles diarios y análisis del mercado. Suscríbete a la versión Lite o Pro.",
+    images: ["/og-home.jpg"],
+    creator: "@earlymarketreports",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: { 
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({
