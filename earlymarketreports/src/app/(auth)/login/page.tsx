@@ -5,6 +5,7 @@ import { saveToken } from "@/lib/clientAuth";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/i18n/I18nProvider";
 import Link from "next/link";
+import Image from "next/image";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 export default function LoginPage() {
@@ -78,7 +79,7 @@ export default function LoginPage() {
         {/* Header */}
         <div className="text-center">
           <Link href="/" className="flex items-center justify-center gap-3 mb-6">
-            <img src="/logo.png" alt="EarlyMarketReports" className="w-12 h-12 rounded" />
+            <Image src="/logo.png" alt="EarlyMarketReports" width={48} height={48} className="rounded" />
             <span className="text-2xl font-bold text-[--color-primary]">EarlyMarketReports</span>
           </Link>
           <h1 className="text-3xl font-bold text-[--color-primary] mb-2">
