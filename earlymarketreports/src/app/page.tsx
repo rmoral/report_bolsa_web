@@ -32,7 +32,7 @@ export default function Home() {
             </div>
           </div>
           <div className="flex sm:justify-end">
-            <img src="/illustrations/chart-up.svg" alt="Gráfico alcista" width={480} height={270} className="rounded-lg shadow" />
+            <img src="/illustrations/chart-up.svg" alt="Gráfico alcista" width={480} height={270} className="rounded-lg shadow" loading="lazy" decoding="async" />
           </div>
         </div>
       </section>
@@ -42,7 +42,7 @@ export default function Home() {
         <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">{t("section_offering_title")}</h2>
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg p-6 shadow card-accent flex gap-4">
-            <img src="/illustrations/report-doc.svg" alt="Informe Lite" width={72} height={72} />
+            <img src="/illustrations/report-doc.svg" alt="Informe Lite" width={72} height={72} loading="lazy" decoding="async" />
             <div>
               <h3 className="text-xl font-semibold">{t("plan_lite_title")}</h3>
               <p className="mt-2 text-gray-700">{t("plan_lite_bullet_1")}</p>
@@ -54,7 +54,7 @@ export default function Home() {
             </div>
           </div>
           <div className="bg-white rounded-lg p-6 shadow border border-[--color-accent] card-accent flex gap-4">
-            <img src="/illustrations/report-doc.svg" alt="Informe Pro" width={72} height={72} />
+            <img src="/illustrations/report-doc.svg" alt="Informe Pro" width={72} height={72} loading="lazy" decoding="async" />
             <div>
               <h3 className="text-xl font-semibold">{t("plan_pro_title")}</h3>
               <p className="mt-2 text-gray-700">{t("plan_pro_desc")}</p>
@@ -190,15 +190,15 @@ export default function Home() {
           <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">{t("why_title")}</h2>
           <div className="grid sm:grid-cols-3 gap-6">
             <div className="p-6 rounded-lg border bg-white">
-              <div className="flex items-center gap-2"><img src="/icons/clock-open.svg" alt="Antes de apertura" width={24} height={24} /><h3 className="font-semibold">{t("why_card_1_title")}</h3></div>
+              <div className="flex items-center gap-2"><img src="/icons/clock-open.svg" alt="Antes de apertura" width={24} height={24} loading="lazy" decoding="async" /><h3 className="font-semibold">{t("why_card_1_title")}</h3></div>
               <p className="text-gray-700 mt-2">{t("why_card_1_desc")}</p>
             </div>
             <div className="p-6 rounded-lg border bg-white">
-              <div className="flex items-center gap-2"><img src="/icons/analysis.svg" alt="Análisis" width={24} height={24} /><h3 className="font-semibold">{t("why_card_2_title")}</h3></div>
+              <div className="flex items-center gap-2"><img src="/icons/analysis.svg" alt="Análisis" width={24} height={24} loading="lazy" decoding="async" /><h3 className="font-semibold">{t("why_card_2_title")}</h3></div>
               <p className="text-gray-700 mt-2">{t("why_card_2_desc")}</p>
             </div>
             <div className="p-6 rounded-lg border bg-white">
-              <div className="flex items-center gap-2"><img src="/icons/upgrade.svg" alt="Upgrade" width={24} height={24} /><h3 className="font-semibold">{t("why_card_3_title")}</h3></div>
+              <div className="flex items-center gap-2"><img src="/icons/upgrade.svg" alt="Upgrade" width={24} height={24} loading="lazy" decoding="async" /><h3 className="font-semibold">{t("why_card_3_title")}</h3></div>
               <p className="text-gray-700 mt-2">{t("why_card_3_desc")}</p>
             </div>
           </div>
