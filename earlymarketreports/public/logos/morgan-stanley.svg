@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="40" viewBox="0 0 160 40" role="img" aria-label="Morgan Stanley placeholder">
+  <rect width="160" height="40" rx="6" fill="#F3F4F6"/>
+  <g fill="#4B5563">
+    <rect x="18" y="10" width="8" height="20" rx="2"/>
+    <rect x="30" y="10" width="8" height="20" rx="2"/>
+    <rect x="42" y="10" width="8" height="20" rx="2"/>
+    <rect x="54" y="10" width="8" height="20" rx="2"/>
+    <rect x="66" y="12" width="44" height="16" rx="3"/>
+    <rect x="114" y="10" width="28" height="20" rx="3"/>
+  </g>
+</svg>
+
