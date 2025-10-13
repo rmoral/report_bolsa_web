@@ -63,7 +63,7 @@ function ResetPasswordForm() {
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
             <Link href="/" className="flex items-center justify-center gap-3 mb-6">
-              <Image src="/logo.png" alt="EarlyMarketReports" width={48} height={48} className="rounded" />
+                <Image src="/earlymarketreports_logo.png" alt="EarlyMarketReports" width={48} height={48} className="rounded" />
               <span className="text-2xl font-bold text-[--color-primary]">EarlyMarketReports</span>
             </Link>
             <h1 className="text-3xl font-bold text-[--color-primary] mb-2">
@@ -87,7 +87,7 @@ function ResetPasswordForm() {
         {/* Header */}
         <div className="text-center">
           <Link href="/" className="flex items-center justify-center gap-3 mb-6">
-            <Image src="/logo.png" alt="EarlyMarketReports" width={48} height={48} className="rounded" />
+                <Image src="/earlymarketreports_logo.png" alt="EarlyMarketReports" width={48} height={48} className="rounded" />
             <span className="text-2xl font-bold text-[--color-primary]">EarlyMarketReports</span>
           </Link>
           <h1 className="text-3xl font-bold text-[--color-primary] mb-2">

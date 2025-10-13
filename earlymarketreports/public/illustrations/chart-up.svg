@@ -1,0 +1,32 @@
+<svg width="960" height="540" viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="uptrend chart">
+  <defs>
+    <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#F5F6FA"/>
+      <stop offset="100%" stop-color="#E8F9F0"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="url(#g1)"/>
+  <g transform="translate(40,20)">
+    <rect x="0" y="0" width="880" height="480" rx="12" fill="#ffffff" stroke="#E5E7EB"/>
+    <g transform="translate(24,24)">
+      <rect x="0" y="0" width="12" height="12" rx="3" fill="#E5E7EB"/>
+      <rect x="20" y="0" width="12" height="12" rx="3" fill="#E5E7EB"/>
+      <rect x="40" y="0" width="12" height="12" rx="3" fill="#E5E7EB"/>
+    </g>
+    <g transform="translate(24,64)" stroke="#E5E7EB">
+      <line x1="0" y1="0" x2="832" y2="0"/>
+      <line x1="0" y1="96" x2="832" y2="96"/>
+      <line x1="0" y1="192" x2="832" y2="192"/>
+      <line x1="0" y1="288" x2="832" y2="288"/>
+      <line x1="0" y1="384" x2="832" y2="384"/>
+    </g>
+    <g transform="translate(24,64)">
+      <path d="M0,320 L110,300 L170,320 L260,260 L350,280 L430,230 L520,260 L610,180 L700,220 L790,120" fill="none" stroke="#2ECC71" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="790" cy="120" r="8" fill="#2ECC71"/>
+    </g>
+    <g transform="translate(24,64)">
+      <path d="M0,360 L110,340 L170,360 L260,300 L350,320 L430,270 L520,300 L610,220" fill="none" stroke="#1B263B" stroke-opacity="0.25" stroke-width="6" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>
+

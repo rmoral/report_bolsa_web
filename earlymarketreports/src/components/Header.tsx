@@ -13,7 +13,7 @@ export default function Header() {
       <div className="container-page flex items-center justify-between py-2 sm:py-3">
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.png" alt="EarlyMarketReports" width={48} height={48} className="rounded" />
+                <Image src="/earlymarketreports_logo.png" alt="EarlyMarketReports" width={48} height={48} className="rounded" />
             <span className="text-xl sm:text-2xl font-bold tracking-tight">{t("brand_name")}</span>
           </Link>
         </div>
