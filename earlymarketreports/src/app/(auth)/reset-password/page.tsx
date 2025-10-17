@@ -26,13 +26,13 @@ function ResetPasswordForm() {
     setError(null);
 
     if (password !== confirmPassword) {
-      setError("Las contraseñas no coinciden");
+      setError("Passwords do not match");
       setLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres");
+      setError("Password must be at least 6 characters");
       setLoading(false);
       return;
     }
@@ -46,9 +46,9 @@ function ResetPasswordForm() {
       
       const data = await res.json();
       
-      if (!res.ok) throw new Error(data?.error || "Error al restablecer la contraseña");
+      if (!res.ok) throw new Error(data?.error || "Error resetting password");
       
-      alert("Contraseña restablecida exitosamente. Ya puedes iniciar sesión.");
+      alert("Password reset successfully. You can now sign in.");
       router.replace("/login");
     } catch (err: any) {
       setError(err.message);
@@ -62,18 +62,18 @@ function ResetPasswordForm() {
       <div className="min-h-screen bg-gradient-to-br from-[--emr-blue-10] to-[--emr-green-10] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
-            <Link href="/" className="flex items-center justify-center gap-3 mb-6">
-                <Image src="/earlymarketreports_logo.png" alt="EarlyMarketReports" width={48} height={48} className="rounded" />
+          <Link href="/" className="flex items-center justify-center gap-3 mb-6">
+                <Image src="/logo.png" alt="EarlyMarketReports" width={48} height={48} className="rounded" />
               <span className="text-2xl font-bold text-[--color-primary]">EarlyMarketReports</span>
             </Link>
             <h1 className="text-3xl font-bold text-[--color-primary] mb-2">
-              Token Inválido
+              Invalid Token
             </h1>
             <p className="text-gray-600 mb-6">
-              El enlace de recuperación no es válido o ha expirado.
+              The recovery link is invalid or has expired.
             </p>
             <Link href="/login" className="btn-primary">
-              Volver al Login
+              Back to Login
             </Link>
           </div>
         </div>
@@ -87,14 +87,14 @@ function ResetPasswordForm() {
         {/* Header */}
         <div className="text-center">
           <Link href="/" className="flex items-center justify-center gap-3 mb-6">
-                <Image src="/earlymarketreports_logo.png" alt="EarlyMarketReports" width={48} height={48} className="rounded" />
+                <Image src="/logo.png" alt="EarlyMarketReports" width={48} height={48} className="rounded" />
             <span className="text-2xl font-bold text-[--color-primary]">EarlyMarketReports</span>
           </Link>
           <h1 className="text-3xl font-bold text-[--color-primary] mb-2">
-            Restablecer Contraseña
+            Reset Password
           </h1>
           <p className="text-gray-600">
-            Introduce tu nueva contraseña
+            Enter your new password
           </p>
         </div>
 
@@ -103,7 +103,7 @@ function ResetPasswordForm() {
           <form onSubmit={onSubmit} className="space-y-6">
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Nueva Contraseña
+                New Password
               </label>
               <div className="relative">
                 <input
@@ -113,7 +113,7 @@ function ResetPasswordForm() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[--color-primary] focus:border-transparent"
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Minimum 6 characters"
                 />
                 <button
                   type="button"
@@ -131,7 +131,7 @@ function ResetPasswordForm() {
 
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                Confirmar Nueva Contraseña
+                Confirm New Password
               </label>
               <div className="relative">
                 <input
@@ -141,7 +141,7 @@ function ResetPasswordForm() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[--color-primary] focus:border-transparent"
-                  placeholder="Repite la contraseña"
+                  placeholder="Repeat the password"
                 />
                 <button
                   type="button"
@@ -168,14 +168,14 @@ function ResetPasswordForm() {
               disabled={loading}
               className="w-full btn-primary"
             >
-              {loading ? "Restableciendo..." : "Restablecer Contraseña"}
+              {loading ? "Resetting..." : "Reset Password"}
             </button>
           </form>
 
           {/* Back to Login */}
           <div className="mt-6 text-center">
             <Link href="/login" className="text-sm text-[--color-primary] hover:underline">
-              ← Volver al Login
+              ← Back to Login
             </Link>
           </div>
         </div>
@@ -183,7 +183,7 @@ function ResetPasswordForm() {
         {/* Security Notice */}
         <div className="text-center">
           <p className="text-xs text-gray-500">
-            🔒 Tu información está protegida con encriptación SSL
+            🔒 Your information is protected with SSL encryption
           </p>
         </div>
       </div>
@@ -197,7 +197,7 @@ export default function ResetPasswordPage() {
       <div className="min-h-screen bg-gradient-to-br from-[--emr-blue-10] to-[--emr-green-10] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[--color-primary] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Cargando...</p>
+          <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
     }>

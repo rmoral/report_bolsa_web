@@ -11,31 +11,31 @@ export default function PricingClient() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
 
   const features = [
-    { category: "Acceso al Informe",
+    { category: t("report_access"),
       items: [
-        { name: "Resumen de apertura de mercados", lite: true, pro: true },
-        { name: "3-5 oportunidades destacadas", lite: true, pro: true },
-        { name: "Niveles clave de soporte/resistencia", lite: true, pro: true },
-        { name: "Eventos macro del día", lite: true, pro: true },
-        { name: "Envío antes de las 9:00 ET", lite: true, pro: true },
-        { name: "Acceso a PDF completo", lite: false, pro: true },
-        { name: "Análisis técnico detallado", lite: false, pro: true },
-        { name: "Watchlist con 15+ valores", lite: false, pro: true },
-        { name: "Análisis de flujos institucionales", lite: false, pro: true },
-        { name: "Estrategias de trading", lite: false, pro: true },
+        { name: t("market_open_summary"), lite: true, pro: true },
+        { name: t("highlighted_opportunities"), lite: true, pro: true },
+        { name: t("key_levels"), lite: true, pro: true },
+        { name: t("macro_events"), lite: true, pro: true },
+        { name: t("delivered_before_open"), lite: true, pro: true },
+        { name: t("full_pdf_access"), lite: false, pro: true },
+        { name: t("detailed_technical_analysis"), lite: false, pro: true },
+        { name: t("watchlist_15_tickers"), lite: false, pro: true },
+        { name: t("institutional_flow_analysis"), lite: false, pro: true },
+        { name: t("trading_strategies"), lite: false, pro: true },
       ]
     },
-    { category: "Soporte y Comunidad",
+    { category: t("support_community"),
       items: [
-        { name: "Soporte por email", lite: true, pro: true },
-        { name: "Soporte prioritario", lite: false, pro: true },
-        { name: "Acceso a comunidad Pro", lite: false, pro: true },
+        { name: t("email_support"), lite: true, pro: true },
+        { name: t("priority_support"), lite: false, pro: true },
+        { name: t("pro_community_access"), lite: false, pro: true },
       ]
     },
-    { category: "Funcionalidades Adicionales",
+    { category: t("additional_features"),
       items: [
-        { name: "Informes históricos completos", lite: false, pro: true },
-        { name: "Garantía de satisfacción 7 días", lite: false, pro: true },
+        { name: t("historical_reports"), lite: false, pro: true },
+        { name: t("satisfaction_guarantee"), lite: false, pro: true },
       ]
     }
   ];
@@ -47,7 +47,7 @@ export default function PricingClient() {
     yearlyPrice: "€0",
     cta: t("pricing_cta_lite"),
     ctaLink: "/subscribe?plan=lite",
-    bestFor: "Inversores particulares que buscan información básica",
+    bestFor: t("lite_best_for"),
   };
 
   const proPlan = {
@@ -58,7 +58,7 @@ export default function PricingClient() {
     yearlySavings: t("pricing_save", { percentage: 17 }),
     cta: t("pricing_cta_pro"),
     ctaLink: "/subscribe?plan=pro",
-    bestFor: "Traders activos, gestores de fondos, inversores profesionales",
+    bestFor: t("pro_best_for"),
   };
 
   return (
@@ -103,7 +103,7 @@ export default function PricingClient() {
           <thead className="bg-gray-50">
             <tr>
               <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                Características
+                {t("features")}
               </th>
               <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
                 {litePlan.name}
@@ -111,7 +111,7 @@ export default function PricingClient() {
               <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900 relative">
                 {proPlan.name}
                 <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[--color-accent] text-white text-xs px-2 py-0.5 rounded-full">
-                  Popular
+                  {t("popular")}
                 </span>
               </th>
             </tr>
@@ -120,7 +120,7 @@ export default function PricingClient() {
             {/* Prices */}
             <tr>
               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                Precio ({billingCycle === "monthly" ? t("pricing_monthly").toLowerCase() : t("pricing_annual").toLowerCase()})
+                {t("price")} ({billingCycle === "monthly" ? t("pricing_monthly").toLowerCase() : t("pricing_annual").toLowerCase()})
               </td>
               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-center">
                 <span className="text-lg font-bold text-[--color-primary]">{litePlan.monthlyPrice}</span>
@@ -134,7 +134,7 @@ export default function PricingClient() {
             {/* Best For */}
             <tr>
               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                Mejor para
+                {t("best_for")}
               </td>
               <td className="px-3 py-4 text-sm text-gray-500 text-center">
                 {litePlan.bestFor}

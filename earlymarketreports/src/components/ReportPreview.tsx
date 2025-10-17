@@ -11,47 +11,47 @@ export default function ReportPreview() {
 
   const reportSections = [
     {
-      title: "Resumen Ejecutivo",
-      description: "Vista general del mercado y eventos clave del día",
+      title: t("executive_summary"),
+      description: t("executive_summary_desc"),
       image: "/screenshots/executive-summary.png",
       features: [
-        "Análisis macro del día",
-        "Eventos económicos importantes",
-        "Sentimiento general del mercado",
-        "Niveles clave a vigilar"
+        t("macro_analysis_day"),
+        t("important_economic_events"),
+        t("general_market_sentiment"),
+        t("key_levels_to_watch")
       ]
     },
     {
-      title: "Análisis Técnico",
-      description: "Gráficos detallados y niveles de soporte/resistencia",
+      title: t("technical_analysis_section"),
+      description: t("technical_analysis_section_desc"),
       image: "/screenshots/technical-analysis.png",
       features: [
-        "Gráficos de velas japonesas",
-        "Indicadores técnicos (RSI, MACD)",
-        "Niveles de soporte y resistencia",
-        "Patrones de trading"
+        t("japanese_candlestick_charts"),
+        t("technical_indicators"),
+        t("support_resistance_levels"),
+        t("trading_patterns")
       ]
     },
     {
-      title: "Watchlist Pro",
-      description: "15+ valores seleccionados con análisis detallado",
+      title: t("watchlist_pro_section"),
+      description: t("watchlist_pro_section_desc"),
       image: "/screenshots/watchlist.png",
       features: [
-        "Valores con mayor potencial",
-        "Precios objetivo y stop loss",
-        "Análisis de riesgo/beneficio",
-        "Catalizadores próximos"
+        t("highest_potential_tickers"),
+        t("target_prices_stop_loss"),
+        t("risk_reward_analysis"),
+        t("upcoming_catalysts")
       ]
     },
     {
-      title: "Flujos Institucionales",
-      description: "Seguimiento de movimientos de grandes inversores",
+      title: t("institutional_flows_section"),
+      description: t("institutional_flows_section_desc"),
       image: "/screenshots/institutional-flows.png",
       features: [
-        "Actividad de fondos institucionales",
-        "Cambios en posiciones",
-        "Análisis de volumen",
-        "Insider trading"
+        t("institutional_fund_activity"),
+        t("position_changes"),
+        t("volume_analysis"),
+        t("insider_trading")
       ]
     }
   ];
@@ -61,11 +61,10 @@ export default function ReportPreview() {
       <div className="container-page">
         <div className="text-center mb-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary] mb-4">
-            Por dentro del informe Pro
+            {t("inside_pro_report")}
           </h2>
           <p className="text-lg text-gray-700 max-w-3xl mx-auto">
-            Descubre la profundidad y calidad de nuestro análisis profesional. 
-            Cada sección está diseñada para darte la ventaja competitiva que necesitas.
+            {t("pro_report_description")}
           </p>
         </div>
 
@@ -100,7 +99,7 @@ export default function ReportPreview() {
                     {reportSections[activeTab].title}
                   </h3>
                   <p className="text-gray-600 text-sm">
-                    Captura de pantalla del informe real
+                    {t("real_report_screenshot")}
                   </p>
                 </div>
               </div>
@@ -111,7 +110,7 @@ export default function ReportPreview() {
                   href="/subscribe?plan=pro" 
                   className="btn-accent"
                 >
-                  Ver Informe Completo
+                  {t("view_full_report")}
                 </Link>
               </div>
             </div>
@@ -126,7 +125,7 @@ export default function ReportPreview() {
               </p>
               
               <h4 className="text-lg font-semibold text-[--color-primary] mb-4">
-                ¿Qué incluye esta sección?
+                {t("what_includes_section")}
               </h4>
               <ul className="space-y-3 mb-8">
                 {reportSections[activeTab].features.map((feature, index) => (
@@ -139,24 +138,23 @@ export default function ReportPreview() {
 
               <div className="bg-gradient-to-r from-[--emr-blue-10] to-[--emr-green-10] p-6 rounded-lg border border-[--color-accent]">
                 <h4 className="font-semibold text-[--color-primary] mb-2">
-                  ¿Quieres acceso completo?
+                  {t("want_full_access")}
                 </h4>
                 <p className="text-sm text-gray-700 mb-4">
-                  Suscríbete al plan Pro para acceder a todas las secciones del informe, 
-                  incluyendo análisis técnico detallado y watchlist exclusiva.
+                  {t("full_access_description")}
                 </p>
                 <div className="flex gap-3">
                   <Link 
                     href="/subscribe?plan=pro" 
                     className="btn-accent flex-1 text-center"
                   >
-                    Probar Pro Gratis
+                    {t("try_pro_free")}
                   </Link>
                   <Link 
                     href="/#ejemplo" 
                     className="btn-outline-primary flex-1 text-center"
                   >
-                    Ver Muestra
+                    {t("view_sample")}
                   </Link>
                 </div>
               </div>
@@ -170,9 +168,9 @@ export default function ReportPreview() {
             <div className="w-12 h-12 bg-[--color-accent] rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-white text-lg">⚡</span>
             </div>
-            <h4 className="font-semibold text-[--color-primary] mb-2">Entrega Rápida</h4>
+            <h4 className="font-semibold text-[--color-primary] mb-2">{t("fast_delivery")}</h4>
             <p className="text-sm text-gray-600">
-              Informe completo disponible antes de las 9:00 ET
+              {t("fast_delivery_desc")}
             </p>
           </div>
           
@@ -180,9 +178,9 @@ export default function ReportPreview() {
             <div className="w-12 h-12 bg-[--color-accent] rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-white text-lg">🎯</span>
             </div>
-            <h4 className="font-semibold text-[--color-primary] mb-2">Análisis Preciso</h4>
+            <h4 className="font-semibold text-[--color-primary] mb-2">{t("accurate_analysis")}</h4>
             <p className="text-sm text-gray-600">
-              Datos verificados y análisis basado en evidencia
+              {t("accurate_analysis_desc")}
             </p>
           </div>
           
@@ -190,9 +188,9 @@ export default function ReportPreview() {
             <div className="w-12 h-12 bg-[--color-accent] rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-white text-lg">💼</span>
             </div>
-            <h4 className="font-semibold text-[--color-primary] mb-2">Nivel Profesional</h4>
+            <h4 className="font-semibold text-[--color-primary] mb-2">{t("professional_level")}</h4>
             <p className="text-sm text-gray-600">
-              Calidad institucional para traders serios
+              {t("professional_level_desc")}
             </p>
           </div>
         </div>

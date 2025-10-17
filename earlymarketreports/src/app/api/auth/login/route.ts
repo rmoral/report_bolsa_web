@@ -25,13 +25,13 @@ export async function POST(req: Request) {
     });
   } catch (err: any) {
     if (err.name === "ZodError") {
-      return NextResponse.json({ error: err.issues?.[0]?.message || "Datos inválidos" }, { status: 400 });
+      return NextResponse.json({ error: err.issues?.[0]?.message || "Invalid data" }, { status: 400 });
     }
     if (err.message === "Credenciales inválidas") {
-      return NextResponse.json({ error: "Credenciales inválidas" }, { status: 401 });
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
     console.error("/api/auth/login error", err);
-    return NextResponse.json({ error: "Error de servidor" }, { status: 500 });
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
 

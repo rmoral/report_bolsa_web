@@ -14,199 +14,181 @@ export default function PrivacidadPage() {
       <div className="prose max-w-4xl mx-auto">
         <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
           <p className="text-sm text-blue-800">
-            <strong>INFORMACIÓN IMPORTANTE:</strong> Esta Política de Privacidad describe cómo EarlyMarketReports 
-            recopila, utiliza y protege su información personal de acuerdo con el Reglamento General de Protección 
-            de Datos (RGPD) y la Ley Orgánica de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD).
+            <strong>IMPORTANT INFORMATION:</strong> This Privacy Policy describes how EarlyMarketReports collects, uses and protects your personal information in line with GDPR and applicable data protection laws.
           </p>
         </div>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">1. Responsable del Tratamiento</h2>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">1. Data Controller</h2>
           <p className="mb-4">
-            <strong>Identidad:</strong> EarlyMarketReports<br />
-            <strong>Dirección:</strong> Madrid, España<br />
+            <strong>Identity:</strong> EarlyMarketReports<br />
+            <strong>Address:</strong> Madrid, Spain<br />
             <strong>Email:</strong> privacy@earlymarketreports.com<br />
-            <strong>DPO (Delegado de Protección de Datos):</strong> dpo@earlymarketreports.com
+            <strong>DPO (Data Protection Officer):</strong> dpo@earlymarketreports.com
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">2. Información que Recopilamos</h2>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">2. Information We Collect</h2>
           
-          <h3 className="text-lg font-semibold mb-3">2.1 Información Personal</h3>
+          <h3 className="text-lg font-semibold mb-3">2.1 Personal Information</h3>
           <ul className="list-disc pl-6 mb-4">
-            <li><strong>Datos de identificación:</strong> Nombre, apellidos, dirección de correo electrónico</li>
-            <li><strong>Datos de contacto:</strong> Dirección de correo electrónico para comunicaciones</li>
-            <li><strong>Datos de suscripción:</strong> Plan seleccionado (Lite/Pro), fecha de suscripción, estado de pago</li>
-            <li><strong>Datos de uso:</strong> Páginas visitadas, tiempo de permanencia, interacciones con el contenido</li>
+            <li><strong>Identification data:</strong> Name, last name, email address</li>
+            <li><strong>Contact data:</strong> Email address for communications</li>
+            <li><strong>Subscription data:</strong> Selected plan (Lite/Pro), subscription date, payment status</li>
+            <li><strong>Usage data:</strong> Pages visited, time on site, content interactions</li>
           </ul>
 
-          <h3 className="text-lg font-semibold mb-3">2.2 Información Técnica</h3>
+          <h3 className="text-lg font-semibold mb-3">2.2 Technical Information</h3>
           <ul className="list-disc pl-6 mb-4">
-            <li><strong>Datos de navegación:</strong> Dirección IP, tipo de navegador, sistema operativo</li>
-            <li><strong>Cookies y tecnologías similares:</strong> Para mejorar la experiencia del usuario y analizar el tráfico</li>
-            <li><strong>Datos de dispositivo:</strong> Tipo de dispositivo, resolución de pantalla, idioma preferido</li>
+            <li><strong>Browsing data:</strong> IP address, browser type, operating system</li>
+            <li><strong>Cookies and similar technologies:</strong> To improve experience and analyze traffic</li>
+            <li><strong>Device data:</strong> Device type, screen resolution, preferred language</li>
           </ul>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">3. Finalidades del Tratamiento</h2>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">3. Purposes of Processing</h2>
           
-          <h3 className="text-lg font-semibold mb-3">3.1 Finalidades Principales</h3>
+          <h3 className="text-lg font-semibold mb-3">3.1 Primary Purposes</h3>
           <ul className="list-disc pl-6 mb-4">
-            <li><strong>Prestación del servicio:</strong> Envío de informes bursátiles diarios según el plan contratado</li>
-            <li><strong>Gestión de suscripciones:</strong> Procesamiento de pagos, facturación, gestión de cambios de plan</li>
-            <li><strong>Comunicaciones:</strong> Notificaciones sobre el servicio, actualizaciones importantes</li>
-            <li><strong>Soporte al cliente:</strong> Atención a consultas y resolución de incidencias</li>
+            <li><strong>Service delivery:</strong> Sending daily market reports according to the plan</li>
+            <li><strong>Subscription management:</strong> Payment processing, billing, plan changes</li>
+            <li><strong>Communications:</strong> Service notices and important updates</li>
+            <li><strong>Customer support:</strong> Handling inquiries and incidents</li>
           </ul>
 
-          <h3 className="text-lg font-semibold mb-3">3.2 Finalidades Secundarias</h3>
+          <h3 className="text-lg font-semibold mb-3">3.2 Secondary Purposes</h3>
           <ul className="list-disc pl-6 mb-4">
-            <li><strong>Mejora del servicio:</strong> Análisis de uso para optimizar la experiencia del usuario</li>
-            <li><strong>Marketing directo:</strong> Envío de ofertas y promociones (solo con consentimiento)</li>
-            <li><strong>Análisis estadístico:</strong> Generación de informes agregados y anónimos</li>
-            <li><strong>Cumplimiento legal:</strong> Cumplimiento de obligaciones fiscales y contables</li>
-          </ul>
-        </section>
-
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">4. Base Legal del Tratamiento</h2>
-          <ul className="list-disc pl-6 mb-4">
-            <li><strong>Ejecución contractual:</strong> Para la prestación del servicio de suscripción</li>
-            <li><strong>Interés legítimo:</strong> Para la mejora del servicio y análisis estadístico</li>
-            <li><strong>Consentimiento:</strong> Para el envío de comunicaciones comerciales</li>
-            <li><strong>Cumplimiento legal:</strong> Para el cumplimiento de obligaciones fiscales</li>
+            <li><strong>Service improvement:</strong> Usage analytics to optimize user experience</li>
+            <li><strong>Direct marketing:</strong> Offers and promotions (only with consent)</li>
+            <li><strong>Statistical analysis:</strong> Aggregated and anonymized reporting</li>
+            <li><strong>Legal compliance:</strong> Tax and accounting obligations</li>
           </ul>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">5. Conservación de Datos</h2>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">4. Legal Basis</h2>
           <ul className="list-disc pl-6 mb-4">
-            <li><strong>Datos de suscripción activa:</strong> Durante la vigencia de la suscripción y 3 años adicionales</li>
-            <li><strong>Datos de facturación:</strong> 6 años desde la última transacción (obligación fiscal)</li>
-            <li><strong>Datos de marketing:</strong> Hasta la retirada del consentimiento</li>
-            <li><strong>Datos de navegación:</strong> Máximo 2 años (cookies analíticas)</li>
-            <li><strong>Datos de soporte:</strong> 3 años desde la resolución de la consulta</li>
+            <li><strong>Contract performance:</strong> Subscription service delivery</li>
+            <li><strong>Legitimate interest:</strong> Service improvement and analytics</li>
+            <li><strong>Consent:</strong> Commercial communications</li>
+            <li><strong>Legal obligation:</strong> Tax and accounting compliance</li>
           </ul>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">6. Compartir Información</h2>
-          <p className="mb-4">No vendemos, alquilamos ni compartimos su información personal con terceros, excepto:</p>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">5. Data Retention</h2>
           <ul className="list-disc pl-6 mb-4">
-            <li><strong>Proveedores de servicios:</strong> Procesadores de pagos (Stripe), servicios de email (SendGrid)</li>
-            <li><strong>Cumplimiento legal:</strong> Cuando sea requerido por ley o autoridades competentes</li>
-            <li><strong>Protección de derechos:</strong> Para proteger nuestros derechos legales o los de nuestros usuarios</li>
-            <li><strong>Consentimiento explícito:</strong> Cuando haya dado su consentimiento específico</li>
+            <li><strong>Active subscription data:</strong> During the subscription and 3 additional years</li>
+            <li><strong>Billing data:</strong> 6 years from last transaction (legal requirement)</li>
+            <li><strong>Marketing data:</strong> Until consent is withdrawn</li>
+            <li><strong>Browsing data:</strong> Up to 2 years (analytics cookies)</li>
+            <li><strong>Support data:</strong> 3 years from ticket resolution</li>
           </ul>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">7. Transferencias Internacionales</h2>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">6. Sharing Information</h2>
+          <p className="mb-4">We do not sell, rent, or share your personal information with third parties, except:</p>
+          <ul className="list-disc pl-6 mb-4">
+            <li><strong>Service providers:</strong> Payment processors (Stripe), email services (SendGrid)</li>
+            <li><strong>Legal compliance:</strong> When required by law or authorities</li>
+            <li><strong>Rights protection:</strong> To protect our legal rights or those of users</li>
+            <li><strong>Explicit consent:</strong> When you have provided specific consent</li>
+          </ul>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">7. International Transfers</h2>
           <p className="mb-4">
-            Algunos de nuestros proveedores de servicios pueden estar ubicados fuera del Espacio Económico Europeo. 
-            En estos casos, garantizamos que se aplican las salvaguardas adecuadas:
+            Some of our service providers may be located outside your jurisdiction. In such cases, we ensure appropriate safeguards are applied:
           </p>
           <ul className="list-disc pl-6 mb-4">
-            <li>Decisiones de adecuación de la Comisión Europea</li>
-            <li>Cláusulas contractuales tipo aprobadas por la UE</li>
-            <li>Certificaciones de privacidad reconocidas (Privacy Shield, etc.)</li>
+            <li>Applicable adequacy decisions</li>
+            <li>Standard contractual clauses</li>
+            <li>Recognized privacy certifications</li>
           </ul>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">8. Sus Derechos</h2>
-          <p className="mb-4">Como titular de los datos, tiene los siguientes derechos:</p>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">8. Your Rights</h2>
+          <p className="mb-4">As a data subject, you have the following rights:</p>
           <ul className="list-disc pl-6 mb-4">
-            <li><strong>Acceso:</strong> Conocer qué datos tenemos sobre usted</li>
-            <li><strong>Rectificación:</strong> Corregir datos inexactos o incompletos</li>
-            <li><strong>Supresión:</strong> Solicitar la eliminación de sus datos</li>
-            <li><strong>Limitación:</strong> Restringir el tratamiento de sus datos</li>
-            <li><strong>Portabilidad:</strong> Recibir sus datos en formato estructurado</li>
-            <li><strong>Oposición:</strong> Oponerse al tratamiento por motivos legítimos</li>
-            <li><strong>Retirada de consentimiento:</strong> En cualquier momento, sin afectar la licitud del tratamiento previo</li>
+            <li><strong>Access:</strong> Know what data we hold about you</li>
+            <li><strong>Rectification:</strong> Correct inaccurate or incomplete data</li>
+            <li><strong>Erasure:</strong> Request deletion of your data</li>
+            <li><strong>Restriction:</strong> Restrict processing of your data</li>
+            <li><strong>Portability:</strong> Receive your data in a structured format</li>
+            <li><strong>Objection:</strong> Object to processing on legitimate grounds</li>
+            <li><strong>Withdraw consent:</strong> At any time, without affecting prior lawful processing</li>
           </ul>
           <p className="mb-4">
-            Para ejercer estos derechos, contacte con nosotros en: privacy@earlymarketreports.com
-          </p>
-        </section>
-
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">9. Cookies y Tecnologías Similares</h2>
-          <p className="mb-4">Utilizamos cookies para:</p>
-          <ul className="list-disc pl-6 mb-4">
-            <li><strong>Cookies técnicas:</strong> Funcionamiento básico del sitio web</li>
-            <li><strong>Cookies de preferencias:</strong> Recordar sus configuraciones (idioma, tema)</li>
-            <li><strong>Cookies analíticas:</strong> Medir el uso del sitio web (Google Analytics)</li>
-            <li><strong>Cookies de marketing:</strong> Mostrar publicidad relevante (solo con consentimiento)</li>
-          </ul>
-          <p className="mb-4">
-            Puede gestionar sus preferencias de cookies a través del panel de configuración 
-            disponible en nuestro sitio web.
+            To exercise these rights, contact us at: privacy@earlymarketreports.com
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">10. Seguridad de los Datos</h2>
-          <p className="mb-4">Implementamos medidas técnicas y organizativas apropiadas para proteger sus datos:</p>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">9. Cookies and Similar Technologies</h2>
+          <p className="mb-4">We use cookies to:</p>
           <ul className="list-disc pl-6 mb-4">
-            <li><strong>Cifrado:</strong> Datos transmitidos y almacenados con cifrado SSL/TLS</li>
-            <li><strong>Acceso restringido:</strong> Solo personal autorizado puede acceder a los datos</li>
-            <li><strong>Copias de seguridad:</strong> Respaldo regular y seguro de los datos</li>
-            <li><strong>Monitoreo:</strong> Supervisión continua de accesos y actividades</li>
-            <li><strong>Formación:</strong> Personal formado en protección de datos</li>
+            <li><strong>Technical cookies:</strong> Basic website operation</li>
+            <li><strong>Preference cookies:</strong> Remember settings (language, theme)</li>
+            <li><strong>Analytics cookies:</strong> Measure site usage (Google Analytics)</li>
+            <li><strong>Marketing cookies:</strong> Show relevant ads (only with consent)</li>
+          </ul>
+          <p className="mb-4">
+            You can manage your cookie preferences through the settings panel available on our website.
+          </p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">10. Data Security</h2>
+          <p className="mb-4">We implement appropriate technical and organizational measures to protect your data:</p>
+          <ul className="list-disc pl-6 mb-4">
+            <li><strong>Encryption:</strong> Data transmitted and stored with SSL/TLS encryption</li>
+            <li><strong>Restricted access:</strong> Only authorized staff can access data</li>
+            <li><strong>Backups:</strong> Regular and secure data backups</li>
+            <li><strong>Monitoring:</strong> Continuous monitoring of access and activity</li>
+            <li><strong>Training:</strong> Staff trained in data protection</li>
           </ul>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">11. Menores de Edad</h2>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">11. Minors</h2>
           <p className="mb-4">
-            Nuestros servicios no están dirigidos a menores de 16 años. No recopilamos 
-            intencionalmente información personal de menores. Si un padre o tutor descubre 
-            que su hijo nos ha proporcionado información personal, contacte con nosotros 
-            para su eliminación.
+            Our services are not directed to individuals under 16. We do not knowingly collect personal information from minors. If a parent or guardian becomes aware that a child has provided personal information, please contact us for deletion.
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">12. Cambios en esta Política</h2>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">12. Changes to this Policy</h2>
           <p className="mb-4">
-            Podemos actualizar esta Política de Privacidad ocasionalmente. Los cambios 
-            significativos serán notificados por email o mediante un aviso prominente 
-            en nuestro sitio web. La fecha de la última actualización se indica al final 
-            de este documento.
+            We may update this Privacy Policy from time to time. Significant changes will be notified by email or through a prominent notice on our website. The date of the last update is indicated at the end of this document.
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">13. Reclamaciones</h2>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">13. Complaints</h2>
           <p className="mb-4">
-            Si considera que el tratamiento de sus datos personales no es adecuado, 
-            puede presentar una reclamación ante la Agencia Española de Protección de Datos (AEPD):
-          </p>
-          <p className="mb-4">
-            <strong>Agencia Española de Protección de Datos</strong><br />
-            C/ Jorge Juan, 6 - 28001 Madrid<br />
-            Teléfono: 901 100 099<br />
-            Web: www.aepd.es
+            If you believe your personal data is being processed improperly, you may lodge a complaint with your local data protection authority. For EU residents, you can contact your national authority.
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">14. Contacto</h2>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">14. Contact</h2>
           <p className="mb-4">
-            Para cualquier consulta sobre esta Política de Privacidad o el tratamiento 
-            de sus datos personales, puede contactarnos en:
+            For any questions about this Privacy Policy or the processing of your personal data, contact us at:
           </p>
           <p className="mb-4">
             <strong>Email:</strong> privacy@earlymarketreports.com<br />
             <strong>DPO:</strong> dpo@earlymarketreports.com<br />
-            <strong>Dirección:</strong> EarlyMarketReports, Madrid, España
+            <strong>Address:</strong> EarlyMarketReports, Madrid, Spain
           </p>
         </section>
 
         <div className="text-sm text-gray-600 mt-8 pt-4 border-t">
-          <p>Última actualización: {new Date().toLocaleDateString('es-ES')}</p>
+          <p>Last updated: {new Date().toLocaleDateString('en-US')}</p>
         </div>
       </div>
     </div>

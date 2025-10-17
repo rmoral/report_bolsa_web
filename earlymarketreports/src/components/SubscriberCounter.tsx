@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useI18n } from "@/i18n/I18nProvider";
 
 export default function SubscriberCounter() {
+  const { t } = useI18n();
   const [count, setCount] = useState(2487);
   const [isClient, setIsClient] = useState(false);
 
@@ -23,7 +25,7 @@ export default function SubscriberCounter() {
       <div className="hidden sm:flex items-center gap-2 text-sm text-gray-600">
         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
         <span>
-          <span className="font-semibold text-[--color-primary]">2,487</span> suscriptores activos
+          <span className="font-semibold text-[--color-primary]">2,487</span> {t("active_subscribers")}
         </span>
       </div>
     );
@@ -33,7 +35,7 @@ export default function SubscriberCounter() {
     <div className="hidden sm:flex items-center gap-2 text-sm text-gray-600">
       <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
       <span>
-        <span className="font-semibold text-[--color-primary]">{count.toLocaleString()}</span> suscriptores activos
+        <span className="font-semibold text-[--color-primary]">{count.toLocaleString()}</span> {t("active_subscribers")}
       </span>
     </div>
   );

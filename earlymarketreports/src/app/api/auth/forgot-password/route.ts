@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
 
     if (!email) {
       return NextResponse.json(
-        { error: "Email es requerido" },
+        { error: "Email is required" },
         { status: 400 }
       );
     }
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     if (!user) {
       // Por seguridad, no revelamos si el email existe o no
       return NextResponse.json(
-        { message: "Si el email existe, se ha enviado un enlace de recuperación" },
+        { message: "If the email exists, a recovery link has been sent" },
         { status: 200 }
       );
     }
@@ -33,14 +33,14 @@ export async function POST(request: NextRequest) {
     // - Enviar email con enlace de recuperación
     
     return NextResponse.json(
-      { message: "Si el email existe, se ha enviado un enlace de recuperación" },
+      { message: "If the email exists, a recovery link has been sent" },
       { status: 200 }
     );
 
   } catch (error) {
     console.error("Error in forgot-password:", error);
     return NextResponse.json(
-      { error: "Error interno del servidor" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

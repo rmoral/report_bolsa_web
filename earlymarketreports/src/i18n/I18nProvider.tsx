@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Locale, t } from "./dictionaries";
+import { defaultLocale } from "./config";
 
 type Ctx = { locale: Locale; setLocale: (l: Locale) => void; t: (k: string) => string };
 
@@ -9,10 +10,10 @@ const I18nCtx = createContext<Ctx | null>(null);
 const STORAGE_KEY = "emr_locale";
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("es");
+  const [locale, setLocaleState] = useState<Locale>(defaultLocale);
 
   useEffect(() => {
-    const saved = (typeof window !== "undefined" && (localStorage.getItem(STORAGE_KEY) as Locale)) || "es";
+    const saved = (typeof window !== "undefined" && (localStorage.getItem(STORAGE_KEY) as Locale)) || defaultLocale;
     setLocaleState(saved);
   }, []);
 

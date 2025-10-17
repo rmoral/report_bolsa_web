@@ -14,8 +14,7 @@ export default function Footer() {
           <div className="md:col-span-2">
             <h3 className="text-xl font-bold mb-4">EarlyMarketReports</h3>
             <p className="text-gray-300 mb-4 max-w-md">
-              Informes bursátiles diarios antes de la apertura. Análisis profesional 
-              para traders e inversores que buscan ventaja competitiva en los mercados.
+              {t("footer_description")}
             </p>
             <div className="flex gap-4">
               <a href="#" className="text-gray-300 hover:text-white transition-colors">
@@ -38,26 +37,26 @@ export default function Footer() {
 
           {/* Product */}
           <div>
-            <h4 className="font-semibold mb-4">Producto</h4>
+            <h4 className="font-semibold mb-4">{t("product")}</h4>
             <ul className="space-y-2">
               <li>
                 <Link href="/precios" className="text-gray-300 hover:text-white transition-colors">
-                  Precios
+                  {t("pricing")}
                 </Link>
               </li>
               <li>
                 <Link href="/#que-ofrecemos" className="text-gray-300 hover:text-white transition-colors">
-                  Qué ofrecemos
+                  {t("what_we_offer")}
                 </Link>
               </li>
               <li>
                 <Link href="/#ejemplo" className="text-gray-300 hover:text-white transition-colors">
-                  Ver ejemplo
+                  {t("view_example")}
                 </Link>
               </li>
               <li>
                 <Link href="/subscribe" className="text-gray-300 hover:text-white transition-colors">
-                  Suscribirse
+                  {t("subscribe")}
                 </Link>
               </li>
             </ul>
@@ -65,16 +64,16 @@ export default function Footer() {
 
           {/* Company */}
           <div>
-            <h4 className="font-semibold mb-4">Empresa</h4>
+            <h4 className="font-semibold mb-4">{t("company")}</h4>
             <ul className="space-y-2">
               <li>
                 <Link href="/acerca" className="text-gray-300 hover:text-white transition-colors">
-                  Acerca de
+                  {t("about")}
                 </Link>
               </li>
               <li>
                 <Link href="/contacto" className="text-gray-300 hover:text-white transition-colors">
-                  Contacto
+                  {t("contact")}
                 </Link>
               </li>
               <li>
@@ -84,7 +83,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/soporte" className="text-gray-300 hover:text-white transition-colors">
-                  Soporte
+                  {t("support")}
                 </Link>
               </li>
             </ul>
@@ -95,20 +94,20 @@ export default function Footer() {
         <div className="border-t border-gray-600 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-sm text-gray-300">
-              © {new Date().getFullYear()} EarlyMarketReports. Todos los derechos reservados.
+              © {new Date().getFullYear()} EarlyMarketReports. {t("all_rights_reserved")}
             </div>
             <div className="flex flex-wrap gap-6 text-sm">
               <Link href="/legal/terminos" className="text-gray-300 hover:text-white transition-colors">
-                Términos y Condiciones
+                {t("terms_conditions")}
               </Link>
               <Link href="/legal/privacidad" className="text-gray-300 hover:text-white transition-colors">
-                Política de Privacidad
+                {t("privacy_policy")}
               </Link>
               <Link href="/legal/cookies" className="text-gray-300 hover:text-white transition-colors">
-                Política de Cookies
+                {t("cookie_policy")}
               </Link>
               <Link href="/legal/aviso-riesgos" className="text-gray-300 hover:text-white transition-colors">
-                Aviso de Riesgos
+                {t("risk_warning")}
               </Link>
             </div>
           </div>
@@ -116,9 +115,7 @@ export default function Footer() {
           {/* Risk Warning */}
           <div className="mt-6 p-4 bg-yellow-600 bg-opacity-20 border border-yellow-500 border-opacity-30 rounded-lg">
             <p className="text-sm text-yellow-100">
-              <strong>Advertencia de Riesgo:</strong> La inversión en mercados financieros conlleva riesgos significativos. 
-              Los informes de EarlyMarketReports no constituyen asesoramiento financiero. 
-              Consulte con un asesor financiero independiente antes de tomar decisiones de inversión.
+              <strong>{t("risk_warning")}:</strong> {t("risk_warning_text")}
             </p>
           </div>
         </div>

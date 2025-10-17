@@ -29,7 +29,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Error de acceso");
+      if (!res.ok) throw new Error(data?.error || "Access error");
       saveToken(data.token);
       if (rememberMe) {
         localStorage.setItem("rememberMe", "true");
@@ -44,7 +44,7 @@ export default function LoginPage() {
 
   const handleForgotPassword = async () => {
     if (!email) {
-      setError("Por favor, introduce tu email para recuperar la contraseña");
+      setError("Please enter your email to recover your password");
       return;
     }
 
@@ -62,12 +62,12 @@ export default function LoginPage() {
       
       if (response.ok) {
         setError(null);
-        alert("Se ha enviado un enlace de recuperación a tu email");
+        alert("A recovery link has been sent to your email");
       } else {
-        setError(data.error || "Error al enviar el email de recuperación");
+        setError(data.error || "Error sending recovery email");
       }
     } catch (err) {
-      setError("Error inesperado. Inténtalo de nuevo.");
+      setError("Unexpected error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -79,14 +79,14 @@ export default function LoginPage() {
         {/* Header */}
         <div className="text-center">
           <Link href="/" className="flex items-center justify-center gap-3 mb-6">
-                    <Image src="/earlymarketreports_logo.png" alt="EarlyMarketReports" width={48} height={48} className="rounded" />
+                    <Image src="/logo.png" alt="EarlyMarketReports" width={48} height={48} className="rounded" />
             <span className="text-2xl font-bold text-[--color-primary]">EarlyMarketReports</span>
           </Link>
           <h1 className="text-3xl font-bold text-[--color-primary] mb-2">
             {t("login_title")}
           </h1>
           <p className="text-gray-600">
-            Accede a tu cuenta para ver tus informes
+            Sign in to view your reports
           </p>
         </div>
 
@@ -104,7 +104,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[--color-primary] focus:border-transparent"
-                placeholder="tu@email.com"
+                placeholder="you@email.com"
               />
             </div>
 
@@ -120,7 +120,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[--color-primary] focus:border-transparent"
-                  placeholder="Tu contraseña"
+                  placeholder="Your password"
                 />
                 <button
                   type="button"
@@ -148,7 +148,7 @@ export default function LoginPage() {
                   className="h-4 w-4 text-[--color-primary] focus:ring-[--color-primary] border-gray-300 rounded"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                  Recordarme
+                  Remember me
                 </label>
               </div>
 
@@ -157,7 +157,7 @@ export default function LoginPage() {
                 onClick={handleForgotPassword}
                 className="text-sm text-[--color-primary] hover:underline"
               >
-                ¿Olvidaste tu contraseña?
+                Forgot your password?
               </button>
             </div>
 
@@ -172,7 +172,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full btn-primary"
             >
-              {loading ? t("login_logging_in") : t("login_cta")}
+              {loading ? t("login_logging_in") : t("login_submit")}
             </button>
           </form>
 
@@ -183,7 +183,7 @@ export default function LoginPage() {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">O continúa con</span>
+                <span className="px-2 bg-white text-gray-500">Or continue with</span>
               </div>
             </div>
 
@@ -228,7 +228,7 @@ export default function LoginPage() {
         {/* Security Notice */}
         <div className="text-center">
           <p className="text-xs text-gray-500">
-            🔒 Tu información está protegida con encriptación SSL
+            🔒 Your information is protected with SSL encryption
           </p>
         </div>
       </div>

@@ -8,96 +8,92 @@ export default function AvisoRiesgosPage() {
   return (
     <div className="container-page py-10">
       <h1 className="text-2xl sm:text-3xl font-bold text-[--color-primary] mb-8">
-        Aviso de Riesgos Financieros
+        Financial Risk Warning
       </h1>
       
       <div className="prose max-w-4xl mx-auto">
         <div className="bg-red-50 border-l-4 border-red-400 p-6 mb-8">
-          <h2 className="text-xl font-semibold text-red-800 mb-4">⚠️ ADVERTENCIA IMPORTANTE</h2>
+          <h2 className="text-xl font-semibold text-red-800 mb-4">⚠️ IMPORTANT WARNING</h2>
           <p className="text-red-800 font-semibold">
-            Los informes y análisis proporcionados por EarlyMarketReports NO CONSTITUYEN ASESORAMIENTO FINANCIERO, 
-            DE INVERSIÓN, LEGAL O FISCAL. Toda la información es únicamente para fines informativos y educativos.
+            Reports and analysis provided by EarlyMarketReports DO NOT CONSTITUTE FINANCIAL, INVESTMENT, LEGAL OR TAX ADVICE. All information is for informational and educational purposes only.
           </p>
         </div>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">Riesgos de Inversión</h2>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">Investment Risks</h2>
           <p className="mb-4">
-            La inversión en mercados financieros conlleva riesgos significativos que pueden resultar en la pérdida 
-            de su capital invertido. Es importante que comprenda estos riesgos antes de tomar cualquier decisión de inversión.
+            Investing in financial markets carries significant risks that may result in the loss of your invested capital. It is important that you understand these risks before making any investment decisions.
           </p>
           
           <ul className="list-disc pl-6 mb-4 space-y-2">
-            <li><strong>Riesgo de pérdida de capital:</strong> Puede perder todo o parte del dinero que invierte</li>
-            <li><strong>Volatilidad del mercado:</strong> Los precios de los valores pueden fluctuar significativamente</li>
-            <li><strong>Riesgo de liquidez:</strong> Puede no ser posible vender sus inversiones cuando lo desee</li>
-            <li><strong>Riesgo de divisa:</strong> Las fluctuaciones cambiarias pueden afectar el valor de sus inversiones</li>
-            <li><strong>Riesgo de concentración:</strong> Invertir en pocos valores aumenta el riesgo específico</li>
-            <li><strong>Riesgo de inflación:</strong> La inflación puede erosionar el poder adquisitivo de sus inversiones</li>
+            <li><strong>Capital loss risk:</strong> You can lose all or part of the money you invest</li>
+            <li><strong>Market volatility:</strong> Security prices can fluctuate significantly</li>
+            <li><strong>Liquidity risk:</strong> You may not be able to sell your investments when you want</li>
+            <li><strong>Currency risk:</strong> Exchange rate fluctuations can affect investment value</li>
+            <li><strong>Concentration risk:</strong> Investing in few securities increases specific risk</li>
+            <li><strong>Inflation risk:</strong> Inflation can erode purchasing power of returns</li>
           </ul>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">Limitaciones de la Información</h2>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">Information Limitations</h2>
           <p className="mb-4">
-            La información proporcionada por EarlyMarketReports tiene las siguientes limitaciones:
+            Information provided by EarlyMarketReports has the following limitations:
           </p>
           
           <ul className="list-disc pl-6 mb-4 space-y-2">
-            <li>No constituye asesoramiento personalizado para su situación específica</li>
-            <li>No considera sus objetivos de inversión, situación financiera o necesidades particulares</li>
-            <li>Puede contener errores, omisiones o información desactualizada</li>
-            <li>Los rendimientos pasados no garantizan resultados futuros</li>
-            <li>No incluye todos los riesgos y consideraciones relevantes</li>
+            <li>It is not personalized advice for your specific situation</li>
+            <li>It does not consider your objectives, financial situation or needs</li>
+            <li>It may contain errors, omissions or outdated information</li>
+            <li>Past performance does not guarantee future results</li>
+            <li>It does not include all relevant risks and considerations</li>
           </ul>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">Recomendaciones Importantes</h2>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">Important Recommendations</h2>
           <div className="bg-blue-50 border-l-4 border-blue-400 p-6 mb-4">
-            <h3 className="text-lg font-semibold text-blue-800 mb-3">Antes de invertir:</h3>
+            <h3 className="text-lg font-semibold text-blue-800 mb-3">Before investing:</h3>
             <ul className="list-disc pl-6 space-y-2 text-blue-800">
-              <li>Consulte con un asesor financiero independiente y cualificado</li>
-              <li>Evalúe cuidadosamente su situación financiera y objetivos</li>
-              <li>Diversifique su cartera para reducir el riesgo</li>
-              <li>Invierta solo el dinero que puede permitirse perder</li>
-              <li>Comprenda completamente los productos en los que invierte</li>
+              <li>Consult an independent, qualified financial advisor</li>
+              <li>Carefully assess your financial situation and goals</li>
+              <li>Diversify your portfolio to reduce risk</li>
+              <li>Only invest money you can afford to lose</li>
+              <li>Fully understand the products you invest in</li>
             </ul>
           </div>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">Exención de Responsabilidad</h2>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">Disclaimer</h2>
           <p className="mb-4">
-            EarlyMarketReports, sus empleados, directores y afiliados no serán responsables de:
+            EarlyMarketReports, its employees, directors and affiliates will not be liable for:
           </p>
           
           <ul className="list-disc pl-6 mb-4 space-y-2">
-            <li>Pérdidas financieras resultantes del uso de nuestra información</li>
-            <li>Decisiones de inversión tomadas basándose en nuestros informes</li>
-            <li>Errores, omisiones o inexactitudes en la información proporcionada</li>
-            <li>Interrupciones del servicio o problemas técnicos</li>
-            <li>Daños indirectos, incidentales o consecuenciales</li>
+            <li>Financial losses from the use of our information</li>
+            <li>Investment decisions based on our reports</li>
+            <li>Errors, omissions or inaccuracies in the information provided</li>
+            <li>Service interruptions or technical issues</li>
+            <li>Indirect, incidental or consequential damages</li>
           </ul>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">Regulación y Supervisión</h2>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">Regulation and Oversight</h2>
           <p className="mb-4">
-            EarlyMarketReports no está regulado como asesor de inversiones. Nuestros servicios son únicamente 
-            informativos y educativos. Si necesita asesoramiento financiero personalizado, debe consultar con 
-            un profesional regulado en su jurisdicción.
+            EarlyMarketReports is not regulated as an investment advisor. Our services are for informational and educational purposes only. If you need personalized financial advice, consult a regulated professional in your jurisdiction.
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">Contacto</h2>
+          <h2 className="text-xl font-semibold text-[--color-primary] mb-4">Contact</h2>
           <p className="mb-4">
-            Si tiene preguntas sobre este aviso de riesgos, puede contactarnos en:
+            If you have questions about this risk warning, you can contact us at:
           </p>
           <p className="mb-4">
             Email: legal@earlymarketreports.com<br />
-            Dirección: EarlyMarketReports, Madrid, España
+            Address: EarlyMarketReports, Madrid, Spain
           </p>
         </section>
 
@@ -109,7 +105,7 @@ export default function AvisoRiesgosPage() {
         </div>
 
         <div className="text-sm text-gray-600 mt-8 pt-4 border-t">
-          <p>Última actualización: {new Date().toLocaleDateString('es-ES')}</p>
+          <p>Last updated: {new Date().toLocaleDateString('en-US')}</p>
         </div>
       </div>
     </div>

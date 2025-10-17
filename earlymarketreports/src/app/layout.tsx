@@ -21,12 +21,12 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "EarlyMarketReports | Informes bursátiles diarios",
+    default: "EarlyMarketReports | Daily market reports",
     template: "%s | EarlyMarketReports",
   },
   description:
-    "Informes bursátiles diarios y análisis del mercado. Suscríbete a la versión Lite o Pro.",
-  keywords: "informes bursátiles, análisis técnico, trading, mercados financieros, inversión, bolsa",
+    "Daily market reports and analysis. Subscribe to Lite or Pro.",
+  keywords: "market reports, technical analysis, trading, financial markets, investing, stocks",
   authors: [{ name: "EarlyMarketReports" }],
   creator: "EarlyMarketReports",
   publisher: "EarlyMarketReports",
@@ -39,31 +39,31 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
     languages: {
-      "es-ES": "/",
-      "en-US": "/en",
+      "en-US": "/",
+      "es-ES": "/es",
     },
   },
   openGraph: {
-    title: "EarlyMarketReports | Informes bursátiles diarios",
+    title: "EarlyMarketReports | Daily market reports",
     description:
-      "Informes bursátiles diarios y análisis del mercado. Suscríbete a la versión Lite o Pro.",
+      "Daily market reports and analysis. Subscribe to Lite or Pro.",
     type: "website",
-    locale: "es_ES",
+    locale: "en_US",
     siteName: "EarlyMarketReports",
     images: [
       {
         url: "/og-home.jpg",
         width: 1200,
         height: 630,
-        alt: "EarlyMarketReports - Informes bursátiles diarios",
+        alt: "EarlyMarketReports - Daily market reports",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "EarlyMarketReports | Informes bursátiles diarios",
+    title: "EarlyMarketReports | Daily market reports",
     description:
-      "Informes bursátiles diarios y análisis del mercado. Suscríbete a la versión Lite o Pro.",
+      "Daily market reports and analysis. Subscribe to Lite or Pro.",
     images: ["/og-home.jpg"],
     creator: "@earlymarketreports",
   },

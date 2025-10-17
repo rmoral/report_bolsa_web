@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import PricingClient from "./PricingClient";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return generatePageMetadata(pageMetadata.pricing.es);
+  return generatePageMetadata(pageMetadata.pricing.en);
 }
 
 export default function PreciosPage() {
@@ -21,13 +21,13 @@ export default function PreciosPage() {
               {
                 '@type': 'ListItem',
                 position: 1,
-                name: 'Inicio',
+                name: 'Home',
                 item: 'https://earlymarketreports.com/'
               },
               {
                 '@type': 'ListItem',
                 position: 2,
-                name: 'Precios',
+                name: 'Pricing',
                 item: 'https://earlymarketreports.com/precios'
               }
             ]

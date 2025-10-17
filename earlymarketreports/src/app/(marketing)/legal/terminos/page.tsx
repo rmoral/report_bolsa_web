@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import TerminosClient from "./TerminosClient";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return generatePageMetadata(pageMetadata.terms.es);
+  return generatePageMetadata(pageMetadata.terms.en);
 }
 
 export default function TerminosPage() {

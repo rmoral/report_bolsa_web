@@ -26,7 +26,7 @@ export async function POST(req: Request) {
   } catch (err: any) {
     if (err.name === "ZodError") return NextResponse.json({ error: err.issues?.[0]?.message }, { status: 400 });
     console.error("/api/subscribe error", err);
-    return NextResponse.json({ error: err?.message || "Error de servidor" }, { status: 500 });
+    return NextResponse.json({ error: err?.message || "Server error" }, { status: 500 });
   }
 }
 

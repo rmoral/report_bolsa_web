@@ -32,17 +32,29 @@ export default function Home() {
             </div>
           </div>
           <div className="flex sm:justify-end">
-            <img src="/illustrations/chart-up.svg" alt="Gráfico alcista" width={480} height={270} className="rounded-lg shadow" loading="lazy" decoding="async" />
+        <Image
+              src="/hero/trading.png" 
+              alt="Trading chart" 
+              width={720} 
+              height={405} 
+              className="rounded-lg shadow"
+          priority
+              quality={85}
+              sizes="(min-width: 1024px) 720px, (min-width: 640px) 75vw, 90vw"
+              fetchPriority="high"
+              placeholder="blur"
+              blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTInIGhlaWdodD0nOCcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJyB5MT0nMCcgeDI9JzEnIHkyPScxJz48c3RvcCBvZmZzZXQ9JzAnIHN0b3AtY29sb3I9JyMxQjI2M0InLz48c3RvcCBvZmZzZXQ9JzEnIHN0b3AtY29sb3I9JyMyRUNDNzEnLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJyBmaWxsPSJ1cmwoI2cpIi8+PC9zdmc+"
+            />
           </div>
         </div>
       </section>
 
-      {/* Qué ofrecemos */}
+      {/* What we offer */}
       <section id="que-ofrecemos" className="container-page py-12">
         <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">{t("section_offering_title")}</h2>
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg p-6 shadow card-accent flex gap-4">
-            <img src="/illustrations/report-doc.svg" alt="Informe Lite" width={72} height={72} loading="lazy" decoding="async" />
+            <img src="/illustrations_svg/report-doc.svg" alt="Lite report" width={72} height={72} loading="lazy" decoding="async" />
             <div>
               <h3 className="text-xl font-semibold">{t("plan_lite_title")}</h3>
               <p className="mt-2 text-gray-700">{t("plan_lite_bullet_1")}</p>
@@ -54,7 +66,7 @@ export default function Home() {
             </div>
           </div>
           <div className="bg-white rounded-lg p-6 shadow border border-[--color-accent] card-accent flex gap-4">
-            <img src="/illustrations/report-doc.svg" alt="Informe Pro" width={72} height={72} loading="lazy" decoding="async" />
+            <img src="/illustrations_svg/report-doc.svg" alt="Pro report" width={72} height={72} loading="lazy" decoding="async" />
             <div>
               <h3 className="text-xl font-semibold">{t("plan_pro_title")}</h3>
               <p className="mt-2 text-gray-700">{t("plan_pro_desc")}</p>
@@ -71,7 +83,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Ejemplo */}
+      {/* Example */}
       <section id="ejemplo" className="bg-white">
         <div className="container-page py-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">{t("section_example_title")}</h2>
@@ -83,11 +95,10 @@ export default function Home() {
               <div className="w-8 h-8 bg-[--color-accent] rounded-full flex items-center justify-center">
                 <span className="text-white text-sm font-bold">📊</span>
               </div>
-              <h3 className="text-lg font-semibold text-[--color-primary]">Muestra del Informe Diario</h3>
+              <h3 className="text-lg font-semibold text-[--color-primary]">{t("daily_report_sample")}</h3>
             </div>
             <p className="text-gray-700 mb-4">
-              Esta es una muestra limitada de nuestro informe completo. El informe Pro incluye análisis técnico detallado, 
-              watchlist con 15+ valores, flujos institucionales y estrategias de trading.
+              {t("sample_description")}
             </p>
             
             <div className="grid gap-4 sm:grid-cols-2">
@@ -101,60 +112,60 @@ export default function Home() {
               </article>
               
               <div className="bg-white p-4 rounded-lg border">
-                <h4 className="font-semibold text-[--color-primary] mb-2">Acceso al Informe</h4>
-                <p className="text-sm text-gray-800 mb-3">Descarga la muestra o suscríbete para el informe completo.</p>
+                <h4 className="font-semibold text-[--color-primary] mb-2">{t("report_access")}</h4>
+                <p className="text-sm text-gray-800 mb-3">{t("download_sample")}</p>
                 <div className="flex flex-col gap-2">
                   <a 
                     className="btn-outline-primary text-center" 
                     href="/reports/US_SAMPLE_20251003.pdf" 
             target="_blank"
                   >
-                    {t("open_pdf")} (Muestra)
+                    {t("open_pdf")} ({t("view_sample")})
                   </a>
                   <Link 
                     href="/subscribe?plan=pro" 
                     className="btn-accent text-center"
                   >
-                    Ver Informe Completo (Pro)
+                    {t("view_full_report")}
                   </Link>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Características del informe completo */}
+      {/* Full report features */}
           <div className="mt-8">
-            <h3 className="text-xl font-semibold text-[--color-primary] mb-4">¿Qué incluye el informe completo?</h3>
+            <h3 className="text-xl font-semibold text-[--color-primary] mb-4">{t("what_includes_full_report")}</h3>
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="text-center p-4 bg-white rounded-lg border">
                 <div className="w-12 h-12 bg-[--color-accent] rounded-full flex items-center justify-center mx-auto mb-3">
                   <span className="text-white text-lg">📈</span>
                 </div>
-                <h4 className="font-semibold mb-2">Análisis Técnico</h4>
-                <p className="text-sm text-gray-600">Gráficos detallados, niveles de soporte/resistencia y indicadores técnicos</p>
+                <h4 className="font-semibold mb-2">{t("technical_analysis")}</h4>
+                <p className="text-sm text-gray-600">{t("technical_analysis_desc")}</p>
               </div>
               
               <div className="text-center p-4 bg-white rounded-lg border">
                 <div className="w-12 h-12 bg-[--color-accent] rounded-full flex items-center justify-center mx-auto mb-3">
                   <span className="text-white text-lg">🎯</span>
                 </div>
-                <h4 className="font-semibold mb-2">Watchlist Pro</h4>
-                <p className="text-sm text-gray-600">15+ valores seleccionados con análisis de entrada y salida</p>
+                <h4 className="font-semibold mb-2">{t("pro_watchlist")}</h4>
+                <p className="text-sm text-gray-600">{t("pro_watchlist_desc")}</p>
               </div>
               
               <div className="text-center p-4 bg-white rounded-lg border">
                 <div className="w-12 h-12 bg-[--color-accent] rounded-full flex items-center justify-center mx-auto mb-3">
                   <span className="text-white text-lg">💼</span>
                 </div>
-                <h4 className="font-semibold mb-2">Flujos Institucionales</h4>
-                <p className="text-sm text-gray-600">Seguimiento de movimientos de fondos y grandes inversores</p>
+                <h4 className="font-semibold mb-2">{t("institutional_flows")}</h4>
+                <p className="text-sm text-gray-600">{t("institutional_flows_desc")}</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Cómo funciona */}
+      {/* How it works */}
       <section className="bg-white">
         <div className="container-page py-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary] text-center">{t("how_title")}</h2>
@@ -184,21 +195,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Beneficios para SEO */}
+      {/* Why EMR */}
       <section className="bg-[--emr-gray]">
         <div className="container-page py-12 grid gap-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-[--color-primary]">{t("why_title")}</h2>
           <div className="grid sm:grid-cols-3 gap-6">
             <div className="p-6 rounded-lg border bg-white">
-              <div className="flex items-center gap-2"><img src="/icons/clock-open.svg" alt="Antes de apertura" width={24} height={24} loading="lazy" decoding="async" /><h3 className="font-semibold">{t("why_card_1_title")}</h3></div>
+              <div className="flex items-center gap-2"><img src="/icons_svg/clock-open.svg" alt="Before the open" width={24} height={24} loading="lazy" decoding="async" /><h3 className="font-semibold">{t("why_card_1_title")}</h3></div>
               <p className="text-gray-700 mt-2">{t("why_card_1_desc")}</p>
             </div>
             <div className="p-6 rounded-lg border bg-white">
-              <div className="flex items-center gap-2"><img src="/icons/analysis.svg" alt="Análisis" width={24} height={24} loading="lazy" decoding="async" /><h3 className="font-semibold">{t("why_card_2_title")}</h3></div>
+              <div className="flex items-center gap-2"><img src="/icons_svg/analysis.svg" alt="Analysis" width={24} height={24} loading="lazy" decoding="async" /><h3 className="font-semibold">{t("why_card_2_title")}</h3></div>
               <p className="text-gray-700 mt-2">{t("why_card_2_desc")}</p>
             </div>
             <div className="p-6 rounded-lg border bg-white">
-              <div className="flex items-center gap-2"><img src="/icons/upgrade.svg" alt="Upgrade" width={24} height={24} loading="lazy" decoding="async" /><h3 className="font-semibold">{t("why_card_3_title")}</h3></div>
+              <div className="flex items-center gap-2"><img src="/icons_svg/upgrade.svg" alt="Upgrade" width={24} height={24} loading="lazy" decoding="async" /><h3 className="font-semibold">{t("why_card_3_title")}</h3></div>
               <p className="text-gray-700 mt-2">{t("why_card_3_desc")}</p>
             </div>
           </div>

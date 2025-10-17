@@ -8,14 +8,14 @@ export async function POST(request: NextRequest) {
 
     if (!token || !password) {
       return NextResponse.json(
-        { error: "Token y contraseña son requeridos" },
+        { error: "Token and password are required" },
         { status: 400 }
       );
     }
 
     if (password.length < 6) {
       return NextResponse.json(
-        { error: "La contraseña debe tener al menos 6 caracteres" },
+        { error: "Password must be at least 6 characters" },
         { status: 400 }
       );
     }
@@ -43,14 +43,14 @@ export async function POST(request: NextRequest) {
     // TODO: Eliminar el token de recuperación de la base de datos
     
     return NextResponse.json(
-      { message: "Contraseña restablecida exitosamente" },
+      { message: "Password reset successfully" },
       { status: 200 }
     );
 
   } catch (error) {
     console.error("Error in reset-password:", error);
     return NextResponse.json(
-      { error: "Error interno del servidor" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

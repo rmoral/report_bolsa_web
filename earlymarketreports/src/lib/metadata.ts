@@ -24,9 +24,9 @@ const baseUrl = 'https://earlymarketreports.com';
 
 export function generateMetadata(
   pageMetadata: PageMetadata,
-  locale: Locale = 'es'
+  locale: Locale = 'en'
 ): Metadata {
-  const localePrefix = locale === 'es' ? '' : `/${locale}`;
+  const localePrefix = locale === 'en' ? '' : `/${locale}`;
   const canonicalUrl = `${baseUrl}${localePrefix}${pageMetadata.canonical || ''}`;
   
   return {
@@ -41,7 +41,7 @@ export function generateMetadata(
       description: pageMetadata.openGraph?.description || pageMetadata.description,
       url: pageMetadata.openGraph?.url || canonicalUrl,
       siteName: 'EarlyMarketReports',
-      locale: locale === 'es' ? 'es_ES' : 'en_US',
+      locale: locale === 'en' ? 'en_US' : 'es_ES',
       type: 'website',
       images: pageMetadata.openGraph?.image ? [
         {
