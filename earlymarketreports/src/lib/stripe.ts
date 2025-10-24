@@ -90,8 +90,8 @@ export function getPlanByPriceId(priceId: string) {
   return null;
 }
 
-// Helper function to get price ID by plan key
-export function getPriceIdByPlan(planKey: string) {
+// Helper function to get price ID by plan key (deprecated - use the one in subscription.ts)
+export function getPriceIdByPlanKey(planKey: string) {
   const upperKey = planKey.toUpperCase() as keyof typeof STRIPE_CONFIG.PRICES;
   const priceId = STRIPE_CONFIG.PRICES[upperKey];
   

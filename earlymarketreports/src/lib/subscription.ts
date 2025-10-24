@@ -263,6 +263,22 @@ export function getPlanNameByPriceId(priceId: string): string {
 }
 
 /**
+ * Helper function to get price ID by plan
+ */
+export function getPriceIdByPlan(plan: SubscriptionPlan): string | null {
+  switch (plan) {
+    case 'lite':
+      return STRIPE_CONFIG.PRICES.LITE;
+    case 'pro_monthly':
+      return STRIPE_CONFIG.PRICES.PRO_MONTHLY;
+    case 'pro_annual':
+      return STRIPE_CONFIG.PRICES.PRO_ANNUAL;
+    default:
+      return null;
+  }
+}
+
+/**
  * Check if user has active subscription
  */
 export function hasActiveSubscription(subscription: Subscription | null): boolean {
