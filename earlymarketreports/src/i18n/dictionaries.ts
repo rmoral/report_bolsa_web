@@ -299,6 +299,33 @@ export const dictionaries: Record<Locale, Dict> = {
     satisfaction_guarantee: "Garantía de satisfacción de 7 días",
     lite_best_for: "Inversores particulares que buscan insights esenciales",
     pro_best_for: "Traders activos, gestores de fondos, inversores profesionales",
+    
+    // Subscribe page placeholders
+    placeholder_name: "Tu nombre",
+    placeholder_email: "tucorreo@dominio.com",
+    placeholder_password: "••••••••",
+    
+    // Checkout form
+    your_information: "Tu información",
+    processing: "Procesando",
+    error: "Error",
+    success: "Éxito",
+    and: "y",
+    free: "Gratis",
+    subscribe_subtitle: "Elige tu plan y comienza a recibir informes profesionales diarios",
+    
+    // Subscription management
+    current_subscription: "Suscripción Actual",
+    plan: "Plan",
+    status: "Estado",
+    next_billing: "Próxima Facturación",
+    cancels_at_period_end: "Se cancela al final del período",
+    upgrade_to_pro: "Actualizar a Pro",
+    upgrade_to_annual: "Actualizar a Anual",
+    cancel_subscription: "Cancelar Suscripción",
+    manage_billing: "Gestionar Facturación",
+    billing_history: "Historial de Facturación",
+    subscribe_now: "Suscribirse Ahora",
   },
   en: {
     brand_name: "EarlyMarketReports",
@@ -596,6 +623,33 @@ export const dictionaries: Record<Locale, Dict> = {
     satisfaction_guarantee: "7-day satisfaction guarantee",
     lite_best_for: "Retail investors seeking essential insights",
     pro_best_for: "Active traders, fund managers, professional investors",
+    
+    // Subscribe page placeholders
+    placeholder_name: "Your name",
+    placeholder_email: "you@email.com",
+    placeholder_password: "••••••••",
+    
+    // Checkout form
+    your_information: "Your information",
+    processing: "Processing",
+    error: "Error",
+    success: "Success",
+    and: "and",
+    free: "Free",
+    subscribe_subtitle: "Choose your plan and start receiving professional daily reports",
+    
+    // Subscription management
+    current_subscription: "Current Subscription",
+    plan: "Plan",
+    status: "Status",
+    next_billing: "Next Billing",
+    cancels_at_period_end: "Cancels at period end",
+    upgrade_to_pro: "Upgrade to Pro",
+    upgrade_to_annual: "Upgrade to Annual",
+    cancel_subscription: "Cancel Subscription",
+    manage_billing: "Manage Billing",
+    billing_history: "Billing History",
+    subscribe_now: "Subscribe Now",
   },
 };
 
