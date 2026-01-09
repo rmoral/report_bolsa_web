@@ -65,33 +65,51 @@ check_page() {
   
   echo -n "Verificando ${url}... "
   
-  # Obtener el HTML de la página con mejor manejo de errores y SSL
-  # Usar -k para ignorar certificados SSL si es necesario
-  # Agregar User-Agent para evitar bloqueos
-  TEMP_FILE="/tmp/verify-gtm-page-$$-${RANDOM}.html"
-  ERROR_FILE="/tmp/verify-gtm-error-$$-${RANDOM}.log"
+  # Determinar directorio temporal (usar /tmp o directorio actual si /tmp no es accesible)
+  if [ -w "/tmp" ]; then
+    TEMP_DIR="/tmp"
+  elif [ -w "." ]; then
+    TEMP_DIR="."
+  else
+    TEMP_DIR="$HOME"
+  fi
+  
+  TEMP_FILE="${TEMP_DIR}/verify-gtm-page-$$-${RANDOM}.html"
+  ERROR_FILE="${TEMP_DIR}/verify-gtm-error-$$-${RANDOM}.log"
+  
+  # Limpiar archivos temporales previos si existen
+  rm -f "$TEMP_FILE" "$ERROR_FILE" 2>/dev/null || true
   
   # Primero obtener el código HTTP y el contenido
-  # Intentar sin -s primero para ver si hay algún problema de salida
-  HTTP_CODE=$(curl -k -o "$TEMP_FILE" -w "%{http_code}" -L --max-time 15 --connect-timeout 10 \
+  # Usar -s para silenciar pero capturar errores
+  HTTP_CODE=$(curl -s -k -o "$TEMP_FILE" -w "%{http_code}" -L --max-time 15 --connect-timeout 10 \
     -H "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
     -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
     -H "Accept-Language: en-US,en;q=0.9" \
     "$full_url" 2>"$ERROR_FILE" || echo "000")
   
-  # Si el archivo está vacío pero HTTP es 200, intentar sin seguir redirecciones
-  if [ "$HTTP_CODE" = "200" ] && [ ! -s "$TEMP_FILE" ]; then
-    # Intentar sin -L (sin seguir redirecciones)
+  CURL_EXIT_CODE=$?
+  
+  # Si curl falló o el archivo no existe, intentar método alternativo
+  if [ "$CURL_EXIT_CODE" -ne 0 ] || [ ! -f "$TEMP_FILE" ]; then
+    # Intentar sin seguir redirecciones y sin -s para ver errores
     HTTP_CODE=$(curl -k -o "$TEMP_FILE" -w "%{http_code}" --max-time 15 --connect-timeout 10 \
       -H "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
       -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
       -H "Accept-Language: en-US,en;q=0.9" \
       "$full_url" 2>"$ERROR_FILE" || echo "000")
+    CURL_EXIT_CODE=$?
   fi
   
-  # Verificar que el archivo existe y tiene contenido antes de leerlo
+  # Verificar que el archivo existe
   if [ ! -f "$TEMP_FILE" ]; then
+    CURL_ERROR=$(cat "$ERROR_FILE" 2>/dev/null | head -3 || echo "No se pudo obtener error")
     echo -e "${RED}❌ ERROR: Archivo temporal no creado${NC}"
+    echo -e "   ${YELLOW}Exit code: $CURL_EXIT_CODE${NC}"
+    echo -e "   ${YELLOW}HTTP Code: $HTTP_CODE${NC}"
+    echo -e "   ${YELLOW}Error: $CURL_ERROR${NC}"
+    echo -e "   ${YELLOW}TEMP_DIR: $TEMP_DIR${NC}"
+    rm -f "$TEMP_FILE" "$ERROR_FILE" 2>/dev/null || true
     FAILED=$((FAILED + 1))
     return 1
   fi
