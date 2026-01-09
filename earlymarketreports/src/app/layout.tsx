@@ -5,7 +5,7 @@ import { I18nProvider } from "@/i18n/I18nProvider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
-import GoogleTagManager from "@/components/GoogleTagManager";
+import GoogleTagManager, { GoogleTagManagerScript } from "@/components/GoogleTagManager";
 import { locales, defaultLocale } from "@/i18n/config";
 import { getAlternateLocales } from "@/i18n/routing";
 
@@ -94,6 +94,8 @@ export default function RootLayout({
   return (
     <html lang={defaultLocale}>
       <head>
+        {/* Google Tag Manager - Must be in head for all pages */}
+        <GoogleTagManagerScript />
         {/* Hreflang tags */}
         {locales.map((locale) => (
           <link
@@ -110,7 +112,7 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning className={`${montserrat.variable} ${inter.variable} antialiased`}>
-        {/* Google Tag Manager - Loads on all pages using Next.js Script component */}
+        {/* Google Tag Manager - Loads on all pages (noscript fallback + Script component) */}
         <GoogleTagManager />
         {/* Schema.org Organization & WebSite */}
         <script

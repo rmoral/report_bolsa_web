@@ -7,7 +7,8 @@ const GTM_ID = "GTM-PVZFJ4WV";
 /**
  * Google Tag Manager component
  * This component should be included in the root layout to ensure GTM loads on all pages
- * Uses Next.js Script component for reliable loading across all pages
+ * Uses Next.js Script component with afterInteractive strategy
+ * Also injects script directly in head via useEffect for maximum compatibility
  */
 export default function GoogleTagManager() {
   return (
@@ -38,8 +39,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 }
 
 /**
- * Google Tag Manager script for head section (deprecated - use GoogleTagManager component instead)
- * Kept for backwards compatibility but GoogleTagManager component is preferred
+ * Google Tag Manager script for head section
+ * This should be added to the <head> tag in layout.tsx for optimal loading
+ * Note: This is a Server Component function (no "use client" directive)
  */
 export function GoogleTagManagerScript() {
   return (
