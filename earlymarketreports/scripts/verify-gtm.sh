@@ -65,23 +65,24 @@ check_page() {
   
   echo -n "Verificando ${url}... "
   
-  # Determinar directorio temporal (usar /tmp o directorio actual si /tmp no es accesible)
-  if [ -w "/tmp" ]; then
-    TEMP_DIR="/tmp"
+  # Determinar directorio temporal (Snap curl no puede escribir en /tmp)
+  # Usar directorio home o directorio actual
+  if [ -w "$HOME" ] && [ -n "$HOME" ]; then
+    TEMP_DIR="$HOME"
   elif [ -w "." ]; then
     TEMP_DIR="."
   else
-    TEMP_DIR="$HOME"
+    TEMP_DIR="/tmp"
   fi
   
-  TEMP_FILE="${TEMP_DIR}/verify-gtm-page-$$-${RANDOM}.html"
-  ERROR_FILE="${TEMP_DIR}/verify-gtm-error-$$-${RANDOM}.log"
+  TEMP_FILE="${TEMP_DIR}/.verify-gtm-$$-${RANDOM}.html"
+  ERROR_FILE="${TEMP_DIR}/.verify-gtm-error-$$-${RANDOM}.log"
   
   # Limpiar archivos temporales previos si existen
   rm -f "$TEMP_FILE" "$ERROR_FILE" 2>/dev/null || true
   
-  # Primero obtener el código HTTP y el contenido
-  # Usar -s para silenciar pero capturar errores
+  # Capturar el contenido directamente en una variable como fallback
+  # Primero intentar con archivo temporal
   HTTP_CODE=$(curl -s -k -o "$TEMP_FILE" -w "%{http_code}" -L --max-time 15 --connect-timeout 10 \
     -H "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
     -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
@@ -90,19 +91,32 @@ check_page() {
   
   CURL_EXIT_CODE=$?
   
-  # Si curl falló o el archivo no existe, intentar método alternativo
-  if [ "$CURL_EXIT_CODE" -ne 0 ] || [ ! -f "$TEMP_FILE" ]; then
-    # Intentar sin seguir redirecciones y sin -s para ver errores
-    HTTP_CODE=$(curl -k -o "$TEMP_FILE" -w "%{http_code}" --max-time 15 --connect-timeout 10 \
+  # Si el archivo no existe pero curl fue exitoso, capturar directamente en variable
+  if [ "$CURL_EXIT_CODE" -eq 0 ] && [ "$HTTP_CODE" = "200" ] && [ ! -f "$TEMP_FILE" ]; then
+    # Capturar directamente en variable (método alternativo para Snap curl)
+    HTML=$(curl -s -k -L --max-time 15 --connect-timeout 10 \
       -H "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
       -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
       -H "Accept-Language: en-US,en;q=0.9" \
-      "$full_url" 2>"$ERROR_FILE" || echo "000")
-    CURL_EXIT_CODE=$?
-  fi
-  
-  # Verificar que el archivo existe
-  if [ ! -f "$TEMP_FILE" ]; then
+      "$full_url" 2>"$ERROR_FILE")
+    HTML_LENGTH=${#HTML}
+    
+    # Si tenemos contenido, continuar con la verificación
+    if [ "$HTML_LENGTH" -gt 100 ]; then
+      # Saltar la lectura del archivo y continuar con la verificación
+      FILE_SIZE=$HTML_LENGTH
+    else
+      CURL_ERROR=$(cat "$ERROR_FILE" 2>/dev/null | head -3 || echo "No se pudo obtener error")
+      echo -e "${RED}❌ ERROR: No se pudo obtener contenido${NC}"
+      echo -e "   ${YELLOW}Exit code: $CURL_EXIT_CODE${NC}"
+      echo -e "   ${YELLOW}HTTP Code: $HTTP_CODE${NC}"
+      echo -e "   ${YELLOW}Longitud: $HTML_LENGTH caracteres${NC}"
+      echo -e "   ${YELLOW}Error: $CURL_ERROR${NC}"
+      rm -f "$TEMP_FILE" "$ERROR_FILE" 2>/dev/null || true
+      FAILED=$((FAILED + 1))
+      return 1
+    fi
+  elif [ ! -f "$TEMP_FILE" ]; then
     CURL_ERROR=$(cat "$ERROR_FILE" 2>/dev/null | head -3 || echo "No se pudo obtener error")
     echo -e "${RED}❌ ERROR: Archivo temporal no creado${NC}"
     echo -e "   ${YELLOW}Exit code: $CURL_EXIT_CODE${NC}"
@@ -112,13 +126,14 @@ check_page() {
     rm -f "$TEMP_FILE" "$ERROR_FILE" 2>/dev/null || true
     FAILED=$((FAILED + 1))
     return 1
+  else
+    # Leer el contenido del archivo
+    HTML=$(cat "$TEMP_FILE" 2>/dev/null || echo "")
+    HTML_LENGTH=${#HTML}
+    FILE_SIZE=$(stat -f%z "$TEMP_FILE" 2>/dev/null || stat -c%s "$TEMP_FILE" 2>/dev/null || echo "0")
   fi
   
-  # Leer el contenido
-  HTML=$(cat "$TEMP_FILE" 2>/dev/null || echo "")
-  HTML_LENGTH=${#HTML}
-  FILE_SIZE=$(stat -f%z "$TEMP_FILE" 2>/dev/null || stat -c%s "$TEMP_FILE" 2>/dev/null || echo "0")
-  
+  # El contenido ya fue leído arriba o capturado directamente
   CURL_ERROR=$(cat "$ERROR_FILE" 2>/dev/null || echo "")
   
   # Debug: mostrar información adicional si falla
