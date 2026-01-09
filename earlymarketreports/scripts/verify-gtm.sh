@@ -3,8 +3,6 @@
 # Script de verificación de Google Tag Manager
 # Verifica que GTM esté presente en todas las páginas del sitio
 
-set -e
-
 # Colores para output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -13,7 +11,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 GTM_ID="GTM-PVZFJ4WV"
-BASE_URL="${1:-http://18.217.132.43}"
+BASE_URL="${1:-https://earlymarketreports.com}"
 
 echo -e "${BLUE}🔍 Verificando Google Tag Manager en todas las páginas...${NC}"
 echo -e "${YELLOW}URL base: $BASE_URL${NC}\n"
@@ -52,11 +50,19 @@ check_page() {
   
   echo -n "Verificando ${url}... "
   
-  # Obtener el HTML de la página
-  HTML=$(curl -s -L "$full_url" 2>/dev/null || echo "")
+  # Obtener el HTML de la página con mejor manejo de errores
+  HTTP_CODE=$(curl -s -o /tmp/verify-gtm-page.html -w "%{http_code}" -L --max-time 10 "$full_url" 2>/dev/null || echo "000")
+  HTML=$(cat /tmp/verify-gtm-page.html 2>/dev/null || echo "")
+  rm -f /tmp/verify-gtm-page.html 2>/dev/null || true
   
-  if [ -z "$HTML" ]; then
-    echo -e "${RED}❌ ERROR: No se pudo cargar la página${NC}"
+  if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "000" ]; then
+    echo -e "${RED}❌ ERROR: HTTP $HTTP_CODE${NC}"
+    FAILED=$((FAILED + 1))
+    return 1
+  fi
+  
+  if [ -z "$HTML" ] || [ ${#HTML} -lt 100 ]; then
+    echo -e "${RED}❌ ERROR: No se pudo cargar la página o respuesta vacía${NC}"
     FAILED=$((FAILED + 1))
     return 1
   fi
@@ -72,19 +78,21 @@ check_page() {
   
   # Verificar que aparece en el head
   HEAD_SECTION=$(echo "$HTML" | sed -n '/<head>/,/<\/head>/p')
-  IN_HEAD=$(echo "$HEAD_SECTION" | grep -c "$GTM_ID" || echo "0")
+  IN_HEAD=$(echo "$HEAD_SECTION" | grep -o "$GTM_ID" | wc -l | tr -d ' \n' || echo "0")
+  IN_HEAD=${IN_HEAD:-0}
   
   # Verificar que aparece en el body (noscript)
   BODY_SECTION=$(echo "$HTML" | sed -n '/<body>/,/<\/body>/p')
-  IN_BODY=$(echo "$BODY_SECTION" | grep -c "$GTM_ID" || echo "0")
+  IN_BODY=$(echo "$BODY_SECTION" | grep -o "$GTM_ID" | wc -l | tr -d ' \n' || echo "0")
+  IN_BODY=${IN_BODY:-0}
   
-  if [ "$IN_HEAD" -eq "0" ]; then
+  if [ "$IN_HEAD" -eq "0" ] || [ -z "$IN_HEAD" ]; then
     echo -e "${RED}❌ ERROR: GTM no encontrado en <head>${NC}"
     FAILED=$((FAILED + 1))
     return 1
   fi
   
-  if [ "$IN_BODY" -eq "0" ]; then
+  if [ "$IN_BODY" -eq "0" ] || [ -z "$IN_BODY" ]; then
     echo -e "${YELLOW}⚠️  WARNING: GTM noscript no encontrado en <body>${NC}"
     # No contamos esto como fallo crítico, pero lo reportamos
   fi
