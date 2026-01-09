@@ -72,11 +72,22 @@ check_page() {
   ERROR_FILE="/tmp/verify-gtm-error-$$-${RANDOM}.log"
   
   # Primero obtener el código HTTP y el contenido
-  HTTP_CODE=$(curl -s -k -o "$TEMP_FILE" -w "%{http_code}" -L --max-time 15 --connect-timeout 10 \
+  # Intentar sin -s primero para ver si hay algún problema de salida
+  HTTP_CODE=$(curl -k -o "$TEMP_FILE" -w "%{http_code}" -L --max-time 15 --connect-timeout 10 \
     -H "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
     -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
     -H "Accept-Language: en-US,en;q=0.9" \
     "$full_url" 2>"$ERROR_FILE" || echo "000")
+  
+  # Si el archivo está vacío pero HTTP es 200, intentar sin seguir redirecciones
+  if [ "$HTTP_CODE" = "200" ] && [ ! -s "$TEMP_FILE" ]; then
+    # Intentar sin -L (sin seguir redirecciones)
+    HTTP_CODE=$(curl -k -o "$TEMP_FILE" -w "%{http_code}" --max-time 15 --connect-timeout 10 \
+      -H "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
+      -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+      -H "Accept-Language: en-US,en;q=0.9" \
+      "$full_url" 2>"$ERROR_FILE" || echo "000")
+  fi
   
   # Verificar que el archivo existe y tiene contenido antes de leerlo
   if [ ! -f "$TEMP_FILE" ]; then
