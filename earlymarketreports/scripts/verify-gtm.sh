@@ -16,6 +16,21 @@ BASE_URL="${1:-https://earlymarketreports.com}"
 echo -e "${BLUE}🔍 Verificando Google Tag Manager en todas las páginas...${NC}"
 echo -e "${YELLOW}URL base: $BASE_URL${NC}\n"
 
+# Verificar que curl está disponible
+if ! command -v curl &> /dev/null; then
+  echo -e "${RED}❌ ERROR: curl no está instalado${NC}"
+  exit 1
+fi
+
+# Verificar conectividad básica
+echo -e "${BLUE}🔗 Verificando conectividad...${NC}"
+if ! curl -s -k --max-time 5 --head "$BASE_URL" > /dev/null 2>&1; then
+  echo -e "${YELLOW}⚠️  ADVERTENCIA: No se pudo conectar a $BASE_URL${NC}"
+  echo -e "${YELLOW}   Intentando continuar de todas formas...${NC}\n"
+else
+  echo -e "${GREEN}✅ Conectividad OK${NC}\n"
+fi
+
 # Lista de páginas a verificar
 PAGES=(
   "/"
@@ -50,19 +65,35 @@ check_page() {
   
   echo -n "Verificando ${url}... "
   
-  # Obtener el HTML de la página con mejor manejo de errores
-  HTTP_CODE=$(curl -s -o /tmp/verify-gtm-page.html -w "%{http_code}" -L --max-time 10 "$full_url" 2>/dev/null || echo "000")
+  # Obtener el HTML de la página con mejor manejo de errores y SSL
+  # Usar -k para ignorar certificados SSL si es necesario, y -f para fallar en errores HTTP
+  HTTP_CODE=$(curl -s -k -o /tmp/verify-gtm-page.html -w "%{http_code}" -L --max-time 15 --connect-timeout 10 "$full_url" 2>/tmp/verify-gtm-error.log || echo "000")
+  CURL_ERROR=$(cat /tmp/verify-gtm-error.log 2>/dev/null || echo "")
   HTML=$(cat /tmp/verify-gtm-page.html 2>/dev/null || echo "")
-  rm -f /tmp/verify-gtm-page.html 2>/dev/null || true
+  HTML_LENGTH=${#HTML}
+  rm -f /tmp/verify-gtm-page.html /tmp/verify-gtm-error.log 2>/dev/null || true
   
-  if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "000" ]; then
+  # Verificar código HTTP
+  if [ "$HTTP_CODE" = "000" ]; then
+    if [ -n "$CURL_ERROR" ]; then
+      ERROR_MSG=$(echo "$CURL_ERROR" | head -1 | cut -c1-50)
+      echo -e "${RED}❌ ERROR: Conexión fallida ($ERROR_MSG)${NC}"
+    else
+      echo -e "${RED}❌ ERROR: No se pudo conectar${NC}"
+    fi
+    FAILED=$((FAILED + 1))
+    return 1
+  fi
+  
+  if [ "$HTTP_CODE" != "200" ]; then
     echo -e "${RED}❌ ERROR: HTTP $HTTP_CODE${NC}"
     FAILED=$((FAILED + 1))
     return 1
   fi
   
-  if [ -z "$HTML" ] || [ ${#HTML} -lt 100 ]; then
-    echo -e "${RED}❌ ERROR: No se pudo cargar la página o respuesta vacía${NC}"
+  # Verificar que el HTML no esté vacío
+  if [ -z "$HTML" ] || [ "$HTML_LENGTH" -lt 100 ]; then
+    echo -e "${RED}❌ ERROR: Respuesta vacía o muy corta (${HTML_LENGTH} caracteres)${NC}"
     FAILED=$((FAILED + 1))
     return 1
   fi
