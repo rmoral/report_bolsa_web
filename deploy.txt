@@ -1,0 +1,5 @@
+[0/4] Comprobando conexión SSH
+SSH OK
+[1/4] Empaquetando proyecto (earlymarketreports)
+[2/4] Copiando paquete al servidor
+[3/4] Desplegando en el servidor
