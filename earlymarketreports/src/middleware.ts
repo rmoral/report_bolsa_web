@@ -6,7 +6,11 @@ import { securityMiddleware, healthCheck, apiSecurityMiddleware } from './middle
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
+
+  if (pathname.startsWith('/cms') || pathname.startsWith('/admin')) {
+    return NextResponse.next()
+  }  
+
   // Health check endpoint
   const healthResponse = healthCheck(request);
   if (healthResponse) return healthResponse;
@@ -80,6 +84,6 @@ function getLocaleFromRequest(request: NextRequest): string {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|reports).*)',
+    '/((?!api|cms|admin|_next/static|_next/image|favicon.ico|reports).*)',
   ],
 };

@@ -6,24 +6,33 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "payload:importmap": "payload generate:importmap"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@payloadcms/db-mongodb": "^3.72.0",
+    "@payloadcms/next": "^3.72.0",
+    "@payloadcms/richtext-lexical": "^3.72.0",
+    "@payloadcms/ui": "^3.72.0",
     "@stripe/stripe-js": "^8.1.0",
     "bcryptjs": "^3.0.2",
     "firebase-admin": "^13.5.0",
     "jsonwebtoken": "^9.0.2",
+    "mongodb": "^7.0.0",
     "mongoose": "^8.19.1",
     "next": "15.5.4",
+    "payload": "3.72.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "sharp": "^0.34.5",
     "stripe": "^19.1.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
@@ -33,5 +42,10 @@
     "eslint-config-next": "15.5.4",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "pnpm": {
+    "overrides": {
+      "undici": "6.21.0"
+    }
   }
 }

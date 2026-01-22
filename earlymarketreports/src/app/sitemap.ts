@@ -1,44 +1,45 @@
-import { MetadataRoute } from 'next';
-import { locales, defaultLocale } from '@/i18n/config';
+import type { MetadataRoute } from 'next'
+import { headers } from 'next/headers'
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://earlymarketreports.com';
-  const routes = [
-    '',
-    '/precios',
-    '/legal/terminos',
-    '/legal/privacidad',
-    '/legal/cookies',
-    '/legal/aviso-riesgos',
-    '/subscribe',
-    '/login',
-  ];
+async function getOrigin() {
+  const h = await headers()
+  const host = h.get('host')
+  const proto = h.get('x-forwarded-proto') ?? 'https'
+  return `${proto}://${host}`
+}
 
-  const sitemap: MetadataRoute.Sitemap = [];
+async function fetchPosts(origin: string, locale: string) {
+  const res = await fetch(
+    `${origin}/api/posts?locale=${locale}&where[status][equals]=published&limit=1000&sort=-publishedAt`,
+    { cache: 'no-store' }
+  )
+  if (!res.ok) return []
+  const data = await res.json()
+  return data?.docs ?? []
+}
 
-  // Generar rutas para cada idioma
-  locales.forEach((locale) => {
-    routes.forEach((route) => {
-      const url = locale === defaultLocale 
-        ? `${baseUrl}${route}` 
-        : `${baseUrl}/${locale}${route}`;
-      
-      sitemap.push({
-        url,
-        lastModified: new Date(),
-        changeFrequency: route === '' ? 'daily' : 'monthly',
-        priority: route === '' ? 1 : route === '/precios' ? 0.8 : 0.5,
-        alternates: {
-          languages: locales.reduce((acc, loc) => {
-            acc[loc] = loc === defaultLocale 
-              ? `${baseUrl}${route}` 
-              : `${baseUrl}/${loc}${route}`;
-            return acc;
-          }, {} as Record<string, string>),
-        },
-      });
-    });
-  });
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const origin = await getOrigin()
 
-  return sitemap;
+  const [enPosts, esPosts] = await Promise.all([
+    fetchPosts(origin, 'en'),
+    fetchPosts(origin, 'es'),
+  ])
+
+  const base: MetadataRoute.Sitemap = [
+    { url: `${origin}/en/blog`, lastModified: new Date() },
+    { url: `${origin}/es/blog`, lastModified: new Date() },
+  ]
+
+  const enUrls = enPosts.map((p: any) => ({
+    url: `${origin}/en/blog/${p.slug}`,
+    lastModified: p.updatedAt ?? p.publishedAt ?? new Date(),
+  }))
+
+  const esUrls = esPosts.map((p: any) => ({
+    url: `${origin}/es/blog/${p.slug}`,
+    lastModified: p.updatedAt ?? p.publishedAt ?? new Date(),
+  }))
+
+  return [...base, ...enUrls, ...esUrls]
 }

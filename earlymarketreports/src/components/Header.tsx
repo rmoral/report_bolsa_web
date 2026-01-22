@@ -6,7 +6,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import SubscriberCounter from "./SubscriberCounter";
 import { useI18n } from "@/i18n/I18nProvider";
 
-export default function Header() {
+export default function Header({ locale }: { locale: string }) {
   const { t } = useI18n();
   return (
     <header className="w-full site-header">
@@ -20,6 +20,7 @@ export default function Header() {
         
         <div className="flex items-center gap-6">
           <nav className="hidden sm:flex items-center gap-6 text-sm">
+	    <Link href={`/${locale}/blog`}>Blog</Link>
             <Link href="/#que-ofrecemos" className="hover:underline">{t("nav_offering")}</Link>
             <Link href="/precios" className="hover:underline">{t("nav_pricing")}</Link>
             <Link href="/#ejemplo" className="hover:underline">{t("nav_example")}</Link>
