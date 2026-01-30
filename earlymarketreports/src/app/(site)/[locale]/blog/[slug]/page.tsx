@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { headers } from 'next/headers'
 import type { Metadata } from 'next'
+import SetPageAlternates from '@/components/SetPageAlternates'
 
 async function originFromHeaders() {
   const h = await headers()
@@ -20,7 +21,6 @@ async function fetchPostBySlug(locale: string, slug: string) {
   return data?.docs?.[0] ?? null
 }
 
-// (Recomendado) para construir alternates, necesitarás canonicalKey
 async function fetchPostByCanonicalKey(locale: string, canonicalKey: string) {
   const origin = await originFromHeaders()
   const res = await fetch(
@@ -69,14 +69,27 @@ export default async function BlogPostPage(props: { params: Promise<{ locale: st
   const post = await fetchPostBySlug(locale, slug)
   if (!post || post.status !== 'published') notFound()
 
-  return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <h1 className="text-3xl font-semibold">{post.title}</h1>
+  const [enDoc, esDoc] = await Promise.all([
+    fetchPostByCanonicalKey('en', post.canonicalKey),
+    fetchPostByCanonicalKey('es', post.canonicalKey),
+  ])
 
-      <article
-        className="mt-8"
-        dangerouslySetInnerHTML={{ __html: post.content_html || '' }}
-      />
-    </div>
+  const alternates = {
+    en: enDoc && enDoc.status === 'published' ? `/en/blog/${enDoc.slug}` : '/en/blog',
+    es: esDoc && esDoc.status === 'published' ? `/es/blog/${esDoc.slug}` : '/es/blog',
+  }
+
+  return (
+    <>
+      <SetPageAlternates en={alternates.en} es={alternates.es} />
+      <div className="mx-auto max-w-3xl px-4 py-10">
+        <h1 className="text-3xl font-semibold">{post.title}</h1>
+
+        <article
+          className="mt-8"
+          dangerouslySetInnerHTML={{ __html: post.content_html || '' }}
+        />
+      </div>
+    </>
   )
 }

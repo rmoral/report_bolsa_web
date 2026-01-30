@@ -15,6 +15,16 @@ const nextConfig: NextConfig = {
         destination: '/cms/:path*',
         permanent: false,
       },
+      {
+        source: '/blog',
+        destination: '/en/blog',
+        permanent: false,
+      },
+      {
+        source: '/blog/',
+        destination: '/en/blog',
+        permanent: false,
+      },
     ]
   },
 }

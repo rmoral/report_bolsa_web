@@ -4,17 +4,20 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "payload:importmap": "payload generate:importmap"
+    "payload:importmap": "node -r ./scripts/preload-undici-cli.cjs ./node_modules/payload/bin.js generate:importmap"
+  },
+  "engines": {
+    "node": ">=20.0.0 <25"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
-    "@payloadcms/db-mongodb": "^3.72.0",
-    "@payloadcms/next": "^3.72.0",
-    "@payloadcms/richtext-lexical": "^3.72.0",
-    "@payloadcms/ui": "^3.72.0",
+    "@payloadcms/db-mongodb": "3.72.0",
+    "@payloadcms/next": "3.72.0",
+    "@payloadcms/richtext-lexical": "3.72.0",
+    "@payloadcms/ui": "3.72.0",
     "@stripe/stripe-js": "^8.1.0",
     "bcryptjs": "^3.0.2",
     "firebase-admin": "^13.5.0",

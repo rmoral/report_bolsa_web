@@ -2,12 +2,18 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import LanguageSwitcher from "./LanguageSwitcher";
 import SubscriberCounter from "./SubscriberCounter";
 import { useI18n } from "@/i18n/I18nProvider";
+import { getLocaleFromPathname } from "@/i18n/routing";
+import { defaultLocale } from "@/i18n/config";
 
-export default function Header({ locale }: { locale: string }) {
+export default function Header() {
   const { t } = useI18n();
+  const pathname = usePathname();
+  const locale = pathname ? getLocaleFromPathname(pathname) : defaultLocale;
+  const blogHref = locale ? `/${locale}/blog` : `/${defaultLocale}/blog`;
   return (
     <header className="w-full site-header">
       <div className="container-page flex items-center justify-between py-2 sm:py-3">
@@ -20,7 +26,7 @@ export default function Header({ locale }: { locale: string }) {
         
         <div className="flex items-center gap-6">
           <nav className="hidden sm:flex items-center gap-6 text-sm">
-	    <Link href={`/${locale}/blog`}>Blog</Link>
+	    <Link href={blogHref}>Blog</Link>
             <Link href="/#que-ofrecemos" className="hover:underline">{t("nav_offering")}</Link>
             <Link href="/precios" className="hover:underline">{t("nav_pricing")}</Link>
             <Link href="/#ejemplo" className="hover:underline">{t("nav_example")}</Link>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat, Inter } from "next/font/google";
 import "./../globals.css";
 import { I18nProvider } from "@/i18n/I18nProvider";
+import { PageAlternatesProvider } from "@/i18n/PageAlternatesContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
@@ -153,13 +154,15 @@ export default function RootLayout({
         />
         <GoogleAnalytics />
         <I18nProvider>
-          <div className="min-h-screen flex flex-col">
-            <Header />
-            <main className="flex-grow">
-              {children}
-            </main>
-            <Footer />
-          </div>
+          <PageAlternatesProvider>
+            <div className="min-h-screen flex flex-col">
+              <Header />
+              <main className="flex-grow">
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </PageAlternatesProvider>
         </I18nProvider>
       </body>
     </html>

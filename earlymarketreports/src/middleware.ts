@@ -40,7 +40,12 @@ export function middleware(request: NextRequest) {
 
   // Manejar internacionalización
   if (!pathnameHasLocale) {
-    // Redirigir a la versión localizada
+    // /blog siempre muestra el blog en inglés
+    if (pathname === '/blog' || pathname === '/blog/') {
+      const newUrl = new URL('/en/blog', request.url);
+      return NextResponse.redirect(newUrl);
+    }
+    // Resto: redirigir a la versión localizada
     const locale = getLocaleFromRequest(request);
     const newUrl = new URL(`/${locale}${pathname}`, request.url);
     return NextResponse.redirect(newUrl);
