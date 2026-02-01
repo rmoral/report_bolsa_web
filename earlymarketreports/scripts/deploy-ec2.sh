@@ -44,9 +44,19 @@ if [ "$PKG" = "npm" ] && [ -d node_modules ]; then
   rm -rf node_modules
 fi
 
-# Instalar dependencias
-echo -e "${YELLOW}📦 Installing dependencies...${NC}"
-$INSTALL_CMD
+# Limitar memoria de Node en servidores con poca RAM (evita OOM al instalar)
+if [ -z "$NODE_OPTIONS" ]; then
+  export NODE_OPTIONS="--max-old-space-size=1536"
+  echo -e "${BLUE}📌 NODE_OPTIONS=$NODE_OPTIONS (para evitar quedarse sin memoria)${NC}"
+fi
+
+# Instalar dependencias (--no-audit --no-fund acelera y reduce uso de red/memoria)
+echo -e "${YELLOW}📦 Installing dependencies... (puede tardar varios minutos en EC2)${NC}"
+if [ "$PKG" = "npm" ]; then
+  npm install --no-audit --no-fund
+else
+  $INSTALL_CMD
+fi
 
 # Import map de Payload (requiere Node 20)
 echo -e "${YELLOW}📋 Generating Payload import map...${NC}"
