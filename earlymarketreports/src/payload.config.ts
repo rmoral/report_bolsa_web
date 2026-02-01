@@ -30,7 +30,27 @@ export default buildConfig({
         // añade campos extra si quieres (role, etc.)
       ],
     },
-{
+    {
+      slug: 'media',
+      access: {
+        // Permitir lectura pública de medios para que las imágenes del blog se muestren sin login
+        read: () => true,
+      },
+      upload: {
+        staticDir: 'media',
+        mimeTypes: ['image/*'],
+        imageSizes: [
+          { name: 'thumbnail', width: 400, height: 300, position: 'centre' },
+          { name: 'card', width: 768, height: 1024, position: 'centre' },
+          { name: 'tablet', width: 1024, height: undefined, position: 'centre' },
+        ],
+        adminThumbnail: 'thumbnail',
+      },
+      fields: [
+        { name: 'alt', type: 'text', label: 'Texto alternativo (accesibilidad)' },
+      ],
+    },
+    {
   slug: 'posts',
   access: {
     read: ({ req }) => (req.user ? true : { status: { equals: 'published' } }),
@@ -53,6 +73,13 @@ export default buildConfig({
       name: 'excerpt',
       type: 'textarea',
       localized: true,
+    },
+    {
+      name: 'featuredImage',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Imagen destacada',
+      admin: { description: 'Imagen de portada del post (opcional)' },
     },
     {
       name: 'status',

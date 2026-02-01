@@ -8,14 +8,11 @@ La app es **Next.js con API y Payload**; debe ejecutarse con **Node** (`next sta
 
 ## Subir código: ¿archivos directamente o Git?
 
+- **Deploy con Git (recomendado)**  
+  El repo es público ([report_bolsa_web](https://github.com/rmoral/report_bolsa_web)); en el servidor no hace falta configurar claves. Una vez clonado el repo en el EC2, cada deploy es: `git pull origin main` + `./scripts/deploy-ec2.sh`. Desde tu máquina puedes usar un solo comando: `./scripts/deploy-via-git.sh` (SSH + pull + deploy). Ver más abajo **“Deploy con Git”**.
+
 - **Subir archivos directamente (rsync, SFTP, etc.)**  
-  Es una opción válida: subes solo lo que cambia, no necesitas Git en el servidor. Útil si despliegas desde tu máquina y quieres controlar exactamente qué se sube.  
-  **Importante:** después de subir, ejecuta **en el servidor** `./scripts/deploy-ec2.sh` para instalar deps, generar import map, hacer build y reiniciar PM2. No basta con copiar archivos: hace falta `pnpm install` y `pnpm run build` en el EC2.
-
-- **Git pull en el servidor**  
-  Suele ser más cómodo a largo plazo: en el EC2 haces `git pull` y luego `./scripts/deploy-ec2.sh`. Tienes historial y rollback con `git checkout` o `git reset`.
-
-Puedes seguir subiendo archivos directamente; solo asegúrate de correr el script de deploy en el servidor después de cada subida para que se instalen dependencias, se genere el import map, se haga el build y se reinicie PM2.
+  Opción válida si prefieres no usar Git en el servidor. Después de subir, ejecuta **en el servidor** `./scripts/deploy-ec2.sh`. Desde local: `./scripts/deploy-from-local.sh` (rsync + deploy).
 
 ---
 
@@ -45,7 +42,66 @@ chmod +x scripts/deploy-ec2.sh
 
 ---
 
-## Deploy desde la consola local (todo en un comando)
+## Deploy con Git (recomendado)
+
+Producción se actualiza con lo que está en `main` del repo. No hace falta rsync ni copiar ficheros a mano.
+
+### Setup una vez en el servidor
+
+1. **Clona el repo** en la ruta donde quieras la app (por ejemplo `/home/ubuntu/web/report_bolsa_web`):
+
+   ```bash
+   sudo mkdir -p /home/ubuntu/web
+   sudo chown ubuntu:ubuntu /home/ubuntu/web
+   cd /home/ubuntu/web
+   git clone https://github.com/rmoral/report_bolsa_web.git
+   ```
+
+2. **Configura la app** dentro de `earlymarketreports`:
+   - Crea `.env.production` con las variables de producción (MongoDB, Stripe, etc.).
+   - Si usas systemd, añade en `.env.production`: `SYSTEMD_SERVICE=nombre-de-tu-servicio`.
+
+3. **Primer deploy** (instalar deps, build, arrancar):
+
+   ```bash
+   cd /home/ubuntu/web/report_bolsa_web/earlymarketreports
+   chmod +x scripts/deploy-ec2.sh
+   ./scripts/deploy-ec2.sh
+   ```
+
+### Deploy desde tu máquina (un comando)
+
+1. En tu **`.env.deploy`** añade la ruta del repo en el servidor:
+
+   ```bash
+   DEPLOY_REMOTE_REPO=/home/ubuntu/web/report_bolsa_web
+   ```
+
+   (El resto de variables ya las tienes: `DEPLOY_SSH_HOST`, `DEPLOY_SSH_USER`, `DEPLOY_SSH_KEY`.)
+
+2. Cada vez que quieras desplegar:
+
+   ```bash
+   git push origin main
+   ./scripts/deploy-via-git.sh
+   ```
+
+   El script entra por SSH, hace `git pull origin main` en el servidor y ejecuta `deploy-ec2.sh` en `earlymarketreports`.
+
+### Rollback
+
+En el servidor:
+
+```bash
+cd /home/ubuntu/web/report_bolsa_web
+git log --oneline -5   # ver commits
+git checkout <commit-o-tag>
+cd earlymarketreports && ./scripts/deploy-ec2.sh
+```
+
+---
+
+## Deploy desde la consola local (rsync + deploy)
 
 Desde tu máquina puedes subir el código y ejecutar el deploy en el servidor con un solo script:
 
