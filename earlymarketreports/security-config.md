@@ -22,14 +22,28 @@ default-src 'self';
 script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com;
 style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
 font-src 'self' https://fonts.gstatic.com;
-img-src 'self' data: https: blob:;
-media-src 'self';
+img-src 'self' data: https: blob: https://www.gravatar.com https://*.gravatar.com;
+media-src 'self' blob:;
 object-src 'none';
 base-uri 'self';
 form-action 'self';
 frame-ancestors 'none';
+frame-src 'self' https://www.googletagmanager.com;
 upgrade-insecure-requests;
 ```
+
+### CSP en producción (CloudFront u otro proxy)
+Si el navegador muestra errores de CSP como *"violates the following Content Security Policy directive: img-src ..."* o *"'unsafe-eval' is not an allowed source"*, la CSP que se aplica en producción **no es la de Next.js** sino la de **CloudFront Response Headers Policy** (o nginx/proxy).
+
+Debes actualizar esa política para que el admin de Payload (/cms) funcione:
+
+- **img-src** debe incluir: `'self' data: https: blob: https://www.gravatar.com https://*.gravatar.com`  
+  (para avatares Gravatar y previsualización de imágenes al subir)
+- **script-src** debe incluir: `'unsafe-eval'`  
+  (necesario para el panel de Payload)
+- **media-src** debe incluir: `'self' blob:`
+
+En **AWS CloudFront**: Distribution → Behaviors → Edit → Response headers policy → Create o edit → Content-Security-Policy con el valor completo de la sección "CSP Configuration" anterior. Asegúrate de que no haya otra política que esté sobrescribiendo solo con `img-src 'self' data: https://www.google-analytics.com ...`.
 
 ## ☁️ CDN Configuration (CloudFront)
 
