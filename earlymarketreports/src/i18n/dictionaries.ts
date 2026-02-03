@@ -9,6 +9,10 @@ export const dictionaries: Record<Locale, Dict> = {
     nav_pricing: "Precios",
     nav_example: "Ejemplo",
     nav_login: "Acceder",
+    nav_menu: "Menú",
+    nav_menu_open: "Abrir menú",
+    nav_menu_close: "Cerrar menú",
+    language: "Idioma",
     cta_subscribe_now: "Suscríbete ya",
 
     hero_title: "Informes bursátiles diarios, antes que nadie.",
@@ -333,6 +337,10 @@ export const dictionaries: Record<Locale, Dict> = {
     nav_pricing: "Pricing",
     nav_example: "Example",
     nav_login: "Sign in",
+    nav_menu: "Menu",
+    nav_menu_open: "Open menu",
+    nav_menu_close: "Close menu",
+    language: "Language",
     cta_subscribe_now: "Subscribe now",
 
     hero_title: "Daily market reports, before anyone else.",
