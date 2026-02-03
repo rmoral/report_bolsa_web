@@ -80,9 +80,11 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  icons: { 
+  icons: {
+    // Favicon principal (ICO en la raíz de la app)
     icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    // Icono para pantalla de inicio en móviles (puede seguir siendo el logo PNG)
+    apple: "/logo.png",
   },
   manifest: "/site.webmanifest",
 };
