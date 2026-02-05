@@ -55,48 +55,6 @@ export default function SocialProof() {
           </div>
         </div>
 
-        {/* Logos de medios */}
-        <div className="mb-12">
-          <h3 className="text-lg font-semibold text-center text-gray-700 mb-6">
-            {t("featured_in")}
-          </h3>
-          <div className="flex flex-wrap justify-center items-center gap-8 opacity-80">
-            {mediaLogos.map((media, index) => (
-              <img
-                key={index}
-                src={media.src}
-                alt={media.alt}
-                width={120}
-                height={32}
-                loading="lazy"
-                decoding="async"
-                className="h-6 sm:h-8 w-auto"
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Logos de empresas */}
-        <div className="mb-12">
-          <h3 className="text-lg font-semibold text-center text-gray-700 mb-6">
-            {t("used_by_professionals")}
-          </h3>
-          <div className="flex flex-wrap justify-center items-center gap-8 opacity-80">
-            {companyLogos.map((company, index) => (
-              <img
-                key={index}
-                src={company.src}
-                alt={company.alt}
-                width={120}
-                height={32}
-                loading="lazy"
-                decoding="async"
-                className="h-6 sm:h-8 w-auto"
-              />
-            ))}
-          </div>
-        </div>
-
         {/* Testimonial destacado */}
           <div className="bg-gradient-to-r from-[--emr-blue-10] to-[--emr-green-10] rounded-lg p-8 text-center">
           <div className="max-w-3xl mx-auto">
