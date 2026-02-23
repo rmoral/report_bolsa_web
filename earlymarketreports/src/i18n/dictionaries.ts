@@ -14,6 +14,8 @@ export const dictionaries: Record<Locale, Dict> = {
     nav_menu_close: "Cerrar menú",
     language: "Idioma",
     cta_subscribe_now: "Suscríbete ya",
+    latest_posts_title: "Últimas entradas del blog",
+    latest_posts_view_all: "Ver todas",
 
     hero_title: "Informes bursátiles diarios, antes que nadie.",
     hero_subtitle: "Resúmenes accionables al amanecer y el informe completo para profesionales.",
@@ -342,6 +344,8 @@ export const dictionaries: Record<Locale, Dict> = {
     nav_menu_close: "Close menu",
     language: "Language",
     cta_subscribe_now: "Subscribe now",
+    latest_posts_title: "Latest from the blog",
+    latest_posts_view_all: "View all",
 
     hero_title: "Daily market reports, before anyone else.",
     hero_subtitle: "Actionable summaries at dawn and the full report for professionals.",

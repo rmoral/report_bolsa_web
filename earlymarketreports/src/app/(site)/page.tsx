@@ -5,6 +5,7 @@ import LeadCapture from "@/components/LeadCapture";
 import Testimonials from "@/components/Testimonials";
 import SocialProof from "@/components/SocialProof";
 import ReportPreview from "@/components/ReportPreview";
+import LatestPostsWidget from "@/components/LatestPostsWidget";
 import { useI18n } from "@/i18n/I18nProvider";
 
 export default function Home() {
@@ -216,6 +217,9 @@ export default function Home() {
           <LeadCapture className="mt-2" />
         </div>
       </section>
+
+      {/* Últimos 3 posts del blog */}
+      <LatestPostsWidget />
 
       {/* FAQs con schema.org */}
       <section className="container-page py-12" id="faq">
