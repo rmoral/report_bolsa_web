@@ -196,6 +196,12 @@ export const dictionaries: Record<Locale, Dict> = {
     professional_level_desc: "Calidad institucional para traders serios",
     
     // Footer
+    footer_follow_us: "Síguenos",
+    footer_social_twitter: "Twitter / X",
+    footer_social_linkedin: "LinkedIn",
+    footer_social_youtube: "YouTube",
+    footer_social_instagram: "Instagram",
+    footer_social_facebook: "Facebook",
     footer_description: "Informes bursátiles diarios antes de la apertura. Análisis profesional para traders e inversores que buscan ventaja competitiva en los mercados.",
     product: "Producto",
     pricing: "Precios",
@@ -526,6 +532,12 @@ export const dictionaries: Record<Locale, Dict> = {
     professional_level_desc: "Institutional quality for serious traders",
     
     // Footer
+    footer_follow_us: "Follow us",
+    footer_social_twitter: "Twitter / X",
+    footer_social_linkedin: "LinkedIn",
+    footer_social_youtube: "YouTube",
+    footer_social_instagram: "Instagram",
+    footer_social_facebook: "Facebook",
     footer_description: "Daily market reports before the open. Professional analysis for traders and investors seeking competitive advantage in the markets.",
     product: "Product",
     pricing: "Pricing",
