@@ -10,6 +10,7 @@ export default function LeadCapture({ className }: Props) {
   const { t } = useI18n();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -25,7 +26,7 @@ export default function LeadCapture({ className }: Props) {
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, plan: "lite", source: "homepage-hero" }),
+        body: JSON.stringify({ name, email, phone, plan: "lite", source: "homepage-hero" }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Error");
@@ -37,6 +38,7 @@ export default function LeadCapture({ className }: Props) {
       setMessage("All set! You’re subscribed to the Lite version.");
       setName("");
       setEmail("");
+      setPhone("");
     } catch (err: any) {
       // Track error
       trackEvent('subscribe_error', 'conversion', 'lite_plan');
@@ -47,7 +49,7 @@ export default function LeadCapture({ className }: Props) {
   }
 
   return (
-    <form onSubmit={onSubmit} className={`grid sm:grid-cols-[1fr_1fr_auto] gap-3 ${className || ""}`}>
+    <form onSubmit={onSubmit} className={`grid sm:grid-cols-[1fr_1fr_1fr_auto] gap-3 ${className || ""}`}>
       <input
         className="border rounded px-3 py-3 w-full"
         placeholder={t("your_name")}
@@ -61,6 +63,14 @@ export default function LeadCapture({ className }: Props) {
         placeholder={t("your_email")}
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <input
+        type="tel"
+        className="border rounded px-3 py-3 w-full"
+        placeholder={t("your_phone")}
+        value={phone}
+        onChange={(e) => setPhone(e.target.value)}
         required
       />
       <button className="btn-accent min-w-40" type="submit" disabled={loading}>

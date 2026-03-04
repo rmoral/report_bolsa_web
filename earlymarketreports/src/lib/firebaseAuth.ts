@@ -10,6 +10,7 @@ export interface FirestoreUser {
   name: string;
   email: string;
   passwordHash: string;
+  phone?: string;
   plan: SubscriptionPlan;
   role: UserRole;
   isActive: boolean;
@@ -21,9 +22,10 @@ export async function createUser(userData: {
   name: string;
   email: string;
   password: string;
+  phone?: string;
   plan: SubscriptionPlan;
-}): Promise<{ id: string; email: string; plan: SubscriptionPlan }> {
-  const { name, email, password, plan } = userData;
+}): Promise<{ id: string; email: string; plan: SubscriptionPlan; phone?: string }> {
+  const { name, email, password, phone, plan } = userData;
   
   // Verificar si el usuario ya existe
   const existingUsers = await db.collection("users")
@@ -43,6 +45,7 @@ export async function createUser(userData: {
     name,
     email: email.toLowerCase(),
     passwordHash,
+    phone: phone || null,
     plan,
     role: "user",
     isActive: true,
@@ -53,6 +56,7 @@ export async function createUser(userData: {
   return {
     id: userRef.id,
     email: email.toLowerCase(),
+    phone,
     plan,
   };
 }
