@@ -1,14 +1,5 @@
 import sgMail from "@sendgrid/mail";
 
-const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-const EMAIL_FROM = process.env.EMAIL_FROM || "EarlyMarketReports <no-reply@earlymarketreports.com>";
-const EMAIL_NOTIFICATIONS =
-  process.env.EMAIL_NOTIFICATIONS || process.env.EMAIL_ALERTS || "";
-
-if (SENDGRID_API_KEY) {
-  sgMail.setApiKey(SENDGRID_API_KEY);
-}
-
 type BaseEmail = {
   to: string;
   subject: string;
@@ -16,22 +7,37 @@ type BaseEmail = {
   html?: string;
 };
 
+function getEmailConfig() {
+  const apiKey = process.env.SENDGRID_API_KEY;
+  const from =
+    process.env.EMAIL_FROM || "EarlyMarketReports <no-reply@earlymarketreports.com>";
+  const notifications =
+    process.env.EMAIL_NOTIFICATIONS || process.env.EMAIL_ALERTS || "";
+  return { apiKey, from, notifications };
+}
+
 async function sendEmail({ to, subject, text, html }: BaseEmail) {
-  if (!SENDGRID_API_KEY || !EMAIL_FROM) {
+  const { apiKey, from } = getEmailConfig();
+
+  if (!apiKey?.trim() || !from?.trim()) {
     console.warn(
-      "[email] SENDGRID_API_KEY o EMAIL_FROM no configurados. Email no enviado."
+      "[email] SENDGRID_API_KEY o EMAIL_FROM no configurados. Email no enviado.",
+      { hasApiKey: !!apiKey?.trim(), hasFrom: !!from?.trim() }
     );
     return;
   }
 
+  sgMail.setApiKey(apiKey);
+
   try {
     await sgMail.send({
       to,
-      from: EMAIL_FROM,
+      from,
       subject,
       text,
       html: html || text.replace(/\n/g, "<br />"),
     });
+    console.log("[email] Enviado correctamente a", to);
   } catch (err) {
     console.error("[email] Error enviando email", err);
   }
@@ -73,7 +79,8 @@ export async function sendInternalNewNewsletterLeadEmail(params: {
   plan: "lite" | "pro";
   source?: string;
 }) {
-  if (!EMAIL_NOTIFICATIONS) {
+  const { notifications } = getEmailConfig();
+  if (!notifications?.trim()) {
     console.warn(
       "[email] EMAIL_NOTIFICATIONS no configurado. Notificación interna de newsletter no enviada."
     );
@@ -93,7 +100,7 @@ export async function sendInternalNewNewsletterLeadEmail(params: {
     `- Fecha: ${new Date().toISOString()}`,
   ].join("\n");
 
-  const recipients = EMAIL_NOTIFICATIONS.split(",").map((e) => e.trim()).filter(Boolean);
+  const recipients = notifications.split(",").map((e) => e.trim()).filter(Boolean);
 
   await Promise.all(
     recipients.map((to) =>
@@ -144,7 +151,8 @@ export async function sendInternalNewUserEmail(params: {
   phone?: string;
   plan: "lite" | "pro";
 }) {
-  if (!EMAIL_NOTIFICATIONS) {
+  const { notifications } = getEmailConfig();
+  if (!notifications?.trim()) {
     console.warn(
       "[email] EMAIL_NOTIFICATIONS no configurado. Notificación interna de usuario no enviada."
     );
@@ -165,7 +173,7 @@ export async function sendInternalNewUserEmail(params: {
     .filter(Boolean)
     .join("\n");
 
-  const recipients = EMAIL_NOTIFICATIONS.split(",").map((e) => e.trim()).filter(Boolean);
+  const recipients = notifications.split(",").map((e) => e.trim()).filter(Boolean);
 
   await Promise.all(
     recipients.map((to) =>
