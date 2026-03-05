@@ -24,7 +24,7 @@ const REQUIRED_KEYS: (keyof EmailTemplateData)[] = [
 let cachedTemplate: Handlebars.TemplateDelegate<EmailTemplateData> | null = null;
 /** Resolve template path: works from cwd (scripts) and from compiled output (Next). */
 function getTemplatePath(): string {
-  const fromCwd = path.resolve(process.cwd(), "src/email/templates/premium.hbs.html");
+  const fromCwd = path.resolve(process.cwd(), "public/email/premium.hbs.html");
   if (fs.existsSync(fromCwd)) return fromCwd;
   const fromDir = path.resolve(__dirname, "templates", "premium.hbs.html");
   if (fs.existsSync(fromDir)) return fromDir;
