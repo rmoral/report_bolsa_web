@@ -51,6 +51,10 @@ function normalize(data: EmailTemplateInput): EmailTemplateData {
   const supportUrlText =
     data.support_url_text ?? (supportUrl ? "Help Center" : "");
 
+  const tableInput = data.table ?? {};
+  const ctaInput = data.cta ?? {};
+  const secondaryCtaInput = data.secondary_cta ?? {};
+
   const normalized: EmailTemplateData = {
     subject: data.subject,
     preheader: data.preheader ?? "",
@@ -68,18 +72,23 @@ function normalize(data: EmailTemplateInput): EmailTemplateData {
     intro: data.intro,
     body_html: sanitizeBodyHtml(data.body_html ?? ""),
 
-    cta: data.cta?.url ? data.cta : undefined,
-    secondary_cta: data.secondary_cta,
+    cta: {
+      url: ctaInput.url ?? "",
+      text: ctaInput.text ?? "",
+      helper: ctaInput.helper,
+    },
+    secondary_cta: {
+      url: secondaryCtaInput.url ?? "",
+      text: secondaryCtaInput.text ?? "",
+    },
 
     alerts: data.alerts ?? [],
-    table: data.table
-      ? {
-          title: data.table.title,
-          headers: data.table.headers ?? [],
-          rows: data.table.rows ?? [],
-          note: data.table.note,
-        }
-      : undefined,
+    table: {
+      title: tableInput.title,
+      headers: tableInput.headers ?? [],
+      rows: tableInput.rows ?? [],
+      note: tableInput.note,
+    },
     // footer/legal
 
     support_email: data.support_email,
