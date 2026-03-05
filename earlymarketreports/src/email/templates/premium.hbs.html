@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <title>{{subject}}</title>
+
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+        <o:AllowPNG/>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
+
+  <style>
+    /* =========================
+       Base / Reset
+    ========================== */
+    html, body { margin:0 !important; padding:0 !important; height:100% !important; width:100% !important; }
+    * { -ms-text-size-adjust:100%; -webkit-text-size-adjust:100%; }
+    table, td { mso-table-lspace:0pt; mso-table-rspace:0pt; border-collapse:collapse !important; }
+    img { -ms-interpolation-mode:bicubic; border:0; outline:none; text-decoration:none; display:block; }
+    a { text-decoration:none; }
+    .preheader { display:none !important; visibility:hidden; opacity:0; color:transparent; height:0; width:0; max-height:0; max-width:0; overflow:hidden; mso-hide:all; }
+    .container { width:100%; background:#f4f7fb; }
+    .card { background:#ffffff; border-radius:16px; overflow:hidden; box-shadow:0 8px 30px rgba(16,24,40,.08); }
+    .muted { color:#667085; }
+    .small { font-size:12px; line-height:18px; }
+    .h1 { font-size:28px; line-height:34px; font-weight:700; letter-spacing:-0.02em; margin:0; }
+    .h2 { font-size:18px; line-height:26px; font-weight:700; margin:0; }
+    .p  { font-size:15px; line-height:24px; margin:0; }
+    .btn { display:inline-block; border-radius:10px; padding:14px 18px; font-weight:700; font-size:14px; line-height:14px; }
+    .btn-primary { background:#2563eb; color:#ffffff !important; }
+    .btn-secondary { background:#eef2ff; color:#1e40af !important; }
+    .divider { height:1px; background:#eaecf0; }
+    .badge { display:inline-block; padding:6px 10px; border-radius:999px; font-size:12px; line-height:12px; font-weight:700; }
+    .badge-info { background:#eff8ff; color:#175cd3; }
+    .badge-success { background:#ecfdf3; color:#027a48; }
+    .badge-warn { background:#fffaeb; color:#b54708; }
+    .badge-danger { background:#fef3f2; color:#b42318; }
+
+    /* =========================
+       Responsive
+    ========================== */
+    @media screen and (max-width: 620px) {
+      .wrap { width:100% !important; }
+      .px { padding-left:18px !important; padding-right:18px !important; }
+      .py { padding-top:18px !important; padding-bottom:18px !important; }
+      .h1 { font-size:24px !important; line-height:30px !important; }
+      .stack { display:block !important; width:100% !important; }
+      .center { text-align:center !important; }
+      .btn { width:100% !important; text-align:center !important; }
+      .hide-sm { display:none !important; }
+    }
+
+    /* =========================
+       Dark Mode
+    ========================== */
+    @media (prefers-color-scheme: dark) {
+      body, .container { background:#0b1220 !important; }
+      .card { background:#0f172a !important; box-shadow:none !important; }
+      .divider { background:#1f2937 !important; }
+      .muted { color:#a5b4fc !important; }
+      .p, .h1, .h2 { color:#e5e7eb !important; }
+      .btn-secondary { background:#111827 !important; color:#c7d2fe !important; }
+      .table-head { background:#111827 !important; }
+      .table-row { background:#0f172a !important; }
+      .table-row-alt { background:#0b1220 !important; }
+      .chip { background:#111827 !important; color:#e5e7eb !important; border-color:#1f2937 !important; }
+      .panel { background:#0b1220 !important; border-color:#1f2937 !important; }
+    }
+  </style>
+</head>
+
+<body style="margin:0;padding:0;background:#f4f7fb;">
+  <!-- Preheader (hidden) -->
+  <div class="preheader">{{preheader}}</div>
+
+  <center class="container" style="width:100%;background:#f4f7fb;">
+    <!--[if mso]>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr><td align="center">
+    <![endif]-->
+
+    <table role="presentation" class="wrap" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;margin:0 auto;">
+      <tr>
+        <td style="padding:28px 10px 18px 10px;">
+          <!-- Brand row -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td class="center" style="vertical-align:middle;">
+                <a href="{{brand_url}}" target="_blank" style="display:inline-block;">
+                  <!-- Logo asset: public/logo.png (URL = origin + /logo.png) -->
+                  <img src="{{logo_url}}" width="{{logo_width}}" alt="{{brand_name}}" style="max-height:44px;height:auto;">
+                </a>
+              </td>
+              <td class="hide-sm" align="right" style="vertical-align:middle;">
+                {{#if top_right_text}}
+                  <span class="small muted" style="font-size:12px;line-height:18px;color:#667085;">{{top_right_text}}</span>
+                {{/if}}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- Card -->
+      <tr>
+        <td class="card" style="background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 8px 30px rgba(16,24,40,.08);">
+          <!-- Accent / Hero -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td style="padding:0;">
+                <!-- Top gradient strip -->
+                <div style="height:6px;background:linear-gradient(90deg, {{accent_1}}, {{accent_2}});"></div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Header content -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td class="px py" style="padding:34px 42px 16px 42px;">
+                {{#if badge_text}}
+                  <span class="badge badge-info" style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;line-height:12px;font-weight:700;background:#eff8ff;color:#175cd3;">
+                    {{badge_text}}
+                  </span>
+                {{/if}}
+                <h1 class="h1" style="font-size:28px;line-height:34px;font-weight:700;letter-spacing:-0.02em;margin:14px 0 10px 0;color:#101828;">
+                  {{title}}
+                </h1>
+
+                {{#if subtitle}}
+                  <p class="p muted" style="font-size:15px;line-height:24px;margin:0;color:#667085;">
+                    {{subtitle}}
+                  </p>
+                {{/if}}
+              </td>
+            </tr>
+          </table>
+
+          <!-- Body -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td class="px" style="padding:0 42px 6px 42px;">
+                {{#if intro}}
+                  <p class="p" style="font-size:15px;line-height:24px;margin:0 0 14px 0;color:#101828;">{{intro}}</p>
+                {{/if}}
+
+                <!-- Main HTML content (rendered by your backend, already sanitized) -->
+                <div style="font-size:15px;line-height:24px;color:#101828;">
+                  {{{body_html}}}
+                </div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Alerts (optional) -->
+          {{#if alerts.length}}
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td class="px" style="padding:18px 42px 6px 42px;">
+                {{#each alerts}}
+                  <div class="panel" style="border:1px solid #eaecf0;border-radius:14px;padding:14px 14px;margin:0 0 12px 0;background:#f9fafb;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="vertical-align:top;">
+                          {{#if this.type}}
+                            <span class="badge {{this.badge_class}}" style="display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;line-height:12px;font-weight:700;{{this.badge_style}}">
+                              {{this.type}}
+                            </span>
+                          {{/if}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding-top:10px;">
+                          <p class="p" style="font-size:15px;line-height:24px;margin:0;color:#101828;">{{this.message}}</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                {{/each}}
+              </td>
+            </tr>
+          </table>
+          {{/if}}
+
+          <!-- Data table module (optional) -->
+          {{#if table.rows.length}}
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td class="px" style="padding:10px 42px 6px 42px;">
+                {{#if table.title}}
+                  <h2 class="h2" style="font-size:18px;line-height:26px;font-weight:700;margin:10px 0 12px 0;color:#101828;">{{table.title}}</h2>
+                {{/if}}
+
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #eaecf0;border-radius:14px;overflow:hidden;">
+                  <tr>
+                    <td>
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr class="table-head" style="background:#f9fafb;">
+                          {{#each table.headers}}
+                            <td style="padding:12px 12px;font-size:12px;line-height:18px;color:#475467;font-weight:700;border-bottom:1px solid #eaecf0;">
+                              {{this}}
+                            </td>
+                          {{/each}}
+                        </tr>
+
+                        {{#each table.rows}}
+                          <tr class="{{#if @odd}}table-row-alt{{else}}table-row{{/if}}" style="background:{{#if @odd}}#ffffff{{else}}#fcfcfd{{/if}};">
+                            {{#each this}}
+                              <td style="padding:12px 12px;font-size:13px;line-height:20px;color:#101828;border-bottom:1px solid #f2f4f7;vertical-align:top;">
+                                {{{this}}}
+                              </td>
+                            {{/each}}
+                          </tr>
+                        {{/each}}
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+
+                {{#if table.note}}
+                  <p class="small muted" style="font-size:12px;line-height:18px;margin:10px 0 0 0;color:#667085;">{{table.note}}</p>
+                {{/if}}
+              </td>
+            </tr>
+          </table>
+          {{/if}}
+
+          <!-- CTA -->
+          {{#if cta.url}}
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td class="px" style="padding:22px 42px 10px 42px;">
+                <div style="text-align:center;">
+                  <!--[if mso]>
+                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" href="{{cta.url}}" style="height:44px;v-text-anchor:middle;width:240px;" arcsize="18%" stroke="f" fillcolor="#2563eb">
+                      <w:anchorlock/>
+                      <center style="color:#ffffff;font-family:Segoe UI, Arial, sans-serif;font-size:14px;font-weight:700;">
+                        {{cta.text}}
+                      </center>
+                    </v:roundrect>
+                  <![endif]-->
+                  <!--[if !mso]><!-- -->
+                    <a href="{{cta.url}}" target="_blank" class="btn btn-primary" style="display:inline-block;border-radius:10px;padding:14px 18px;font-weight:700;font-size:14px;line-height:14px;background:#2563eb;color:#ffffff !important;">
+                      {{cta.text}}
+                    </a>
+                  <!--<![endif]-->
+                </div>
+
+                {{#if cta.helper}}
+                  <p class="small muted" style="font-size:12px;line-height:18px;margin:12px 0 0 0;color:#667085;text-align:center;">
+                    {{cta.helper}}
+                  </p>
+                {{/if}}
+
+                {{#if secondary_cta.url}}
+                  <div style="text-align:center;margin-top:10px;">
+                    <a href="{{secondary_cta.url}}" target="_blank" class="btn btn-secondary" style="display:inline-block;border-radius:10px;padding:14px 18px;font-weight:700;font-size:14px;line-height:14px;background:#eef2ff;color:#1e40af !important;">
+                      {{secondary_cta.text}}
+                    </a>
+                  </div>
+                {{/if}}
+              </td>
+            </tr>
+          </table>
+          {{/if}}
+
+          <!-- Divider -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr><td style="padding:18px 42px 0 42px;"><div class="divider" style="height:1px;background:#eaecf0;"></div></td></tr>
+          </table>
+
+          <!-- Footer inside card -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td class="px py" style="padding:18px 42px 34px 42px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td class="stack" style="vertical-align:top;">
+                      <p class="small muted" style="font-size:12px;line-height:18px;margin:0;color:#667085;">
+                        <strong style="color:#101828;">{{brand_name}}</strong><br>
+                        {{brand_tagline}}<br>
+                        {{#if support_email}}Support: <a href="mailto:{{support_email}}" style="color:#2563eb;">{{support_email}}</a><br>{{/if}}
+                        {{#if support_url}}Help Center: <a href="{{support_url}}" target="_blank" style="color:#2563eb;">{{support_url_text}}</a><br>{{/if}}
+                      </p>
+                    </td>
+
+                    <td class="stack" align="right" style="vertical-align:top;">
+                      <p class="small muted" style="font-size:12px;line-height:18px;margin:0;color:#667085;">
+                        {{company_legal_name}}<br>
+                        {{company_address}}<br>
+                        {{#if vat_id}}VAT/Tax ID: {{vat_id}}<br>{{/if}}
+                        © {{year}} {{brand_name}}
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+
+                {{#if legal_note}}
+                  <p class="small muted" style="font-size:12px;line-height:18px;margin:14px 0 0 0;color:#667085;">
+                    {{legal_note}}
+                  </p>
+                {{/if}}
+
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:14px;">
+                  <tr>
+                    <td class="small muted" style="font-size:12px;line-height:18px;color:#667085;">
+                      {{#if unsubscribe_url}}
+                        <a href="{{unsubscribe_url}}" target="_blank" style="color:#2563eb;">Unsubscribe</a>
+                        <span style="color:#98a2b3;"> · </span>
+                      {{/if}}
+                      {{#if preferences_url}}
+                        <a href="{{preferences_url}}" target="_blank" style="color:#2563eb;">Email preferences</a>
+                        <span style="color:#98a2b3;"> · </span>
+                      {{/if}}
+                      {{#if privacy_url}}
+                        <a href="{{privacy_url}}" target="_blank" style="color:#2563eb;">Privacy</a>
+                        <span style="color:#98a2b3;"> · </span>
+                      {{/if}}
+                      {{#if terms_url}}
+                        <a href="{{terms_url}}" target="_blank" style="color:#2563eb;">Terms</a>
+                      {{/if}}
+                    </td>
+                  </tr>
+                </table>
+
+              </td>
+            </tr>
+          </table>
+
+        </td>
+      </tr>
+
+      <!-- Outside footer / fallback links -->
+      <tr>
+        <td style="padding:18px 10px 34px 10px;text-align:center;">
+          {{#if view_in_browser_url}}
+            <p class="small muted" style="font-size:12px;line-height:18px;margin:0;color:#667085;">
+              Trouble viewing this email? <a href="{{view_in_browser_url}}" target="_blank" style="color:#2563eb;">Open in browser</a>
+            </p>
+          {{/if}}
+        </td>
+      </tr>
+
+    </table>
+
+    <!--[if mso]>
+        </td></tr>
+      </table>
+    <![endif]-->
+  </center>
+</body>
+</html>
