@@ -319,6 +319,9 @@ export const dictionaries: Record<Locale, Dict> = {
     placeholder_email: "tucorreo@dominio.com",
     placeholder_password: "••••••••",
     placeholder_phone: "+34 600 000 000",
+    error_fill_required_fields: "Por favor, rellena todos los campos obligatorios",
+    error_password_min_length: "La contraseña debe tener al menos 8 caracteres",
+    error_phone_min_length: "El teléfono debe tener al menos 7 dígitos",
 
     // Checkout form
     your_information: "Tu información",
@@ -658,6 +661,9 @@ export const dictionaries: Record<Locale, Dict> = {
     placeholder_email: "you@email.com",
     placeholder_password: "••••••••",
     placeholder_phone: "+1 600 000 000",
+    error_fill_required_fields: "Please fill in all required fields",
+    error_password_min_length: "Password must be at least 8 characters",
+    error_phone_min_length: "Phone must be at least 7 digits",
 
     // Checkout form
     your_information: "Your information",

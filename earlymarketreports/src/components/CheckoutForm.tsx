@@ -112,7 +112,19 @@ export default function CheckoutForm({ onSuccess, onError }: CheckoutFormProps) 
       // Plan Lite: registro directo sin pasar por Stripe
       if (selectedPlan === 'lite') {
         if (!formData.password || !formData.phone) {
-          onError?.('Please fill in all required fields');
+          onError?.(t('error_fill_required_fields'));
+          setLoading(false);
+          return;
+        }
+
+        if (formData.password.length < 8) {
+          onError?.(t('error_password_min_length'));
+          setLoading(false);
+          return;
+        }
+
+        if (formData.phone.length < 7) {
+          onError?.(t('error_phone_min_length'));
           setLoading(false);
           return;
         }
@@ -286,6 +298,7 @@ export default function CheckoutForm({ onSuccess, onError }: CheckoutFormProps) 
                   value={formData.password}
                   onChange={handleInputChange}
                   placeholder={t('placeholder_password')}
+                  minLength={8}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[--color-accent] focus:border-transparent"
                   required
                 />
