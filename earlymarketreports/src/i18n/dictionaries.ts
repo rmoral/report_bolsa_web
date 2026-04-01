@@ -105,6 +105,7 @@ export const dictionaries: Record<Locale, Dict> = {
     field_name: "Nombre",
     field_email: "Email",
     field_password: "Contraseña",
+    field_phone: "Teléfono",
     choose_plan: "Selecciona tu plan",
     plan_lite: "Lite (gratis)",
     plan_pro: "Pro (de pago)",
@@ -317,7 +318,8 @@ export const dictionaries: Record<Locale, Dict> = {
     placeholder_name: "Tu nombre",
     placeholder_email: "tucorreo@dominio.com",
     placeholder_password: "••••••••",
-    
+    placeholder_phone: "+34 600 000 000",
+
     // Checkout form
     your_information: "Tu información",
     processing: "Procesando",
@@ -442,6 +444,7 @@ export const dictionaries: Record<Locale, Dict> = {
     field_name: "Name",
     field_email: "Email",
     field_password: "Password",
+    field_phone: "Phone",
     choose_plan: "Choose your plan",
     plan_lite: "Lite (free)",
     plan_pro: "Pro (paid)",
@@ -654,7 +657,8 @@ export const dictionaries: Record<Locale, Dict> = {
     placeholder_name: "Your name",
     placeholder_email: "you@email.com",
     placeholder_password: "••••••••",
-    
+    placeholder_phone: "+1 600 000 000",
+
     // Checkout form
     your_information: "Your information",
     processing: "Processing",

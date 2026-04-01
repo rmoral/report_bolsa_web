@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useI18n } from '@/i18n/I18nProvider';
 import { SubscriptionPlan } from '@/types/subscription';
 import { trackEvent } from '@/components/GoogleAnalytics';
@@ -12,12 +13,14 @@ interface CheckoutFormProps {
 
 export default function CheckoutForm({ onSuccess, onError }: CheckoutFormProps) {
   const { t } = useI18n();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>('pro_monthly');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
+    phone: '',
   });
 
   const plans = [
@@ -95,7 +98,7 @@ export default function CheckoutForm({ onSuccess, onError }: CheckoutFormProps) 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.email || !formData.name) {
       onError?.('Please fill in all required fields');
       return;
@@ -104,14 +107,44 @@ export default function CheckoutForm({ onSuccess, onError }: CheckoutFormProps) 
     setLoading(true);
 
     try {
-      // Track the checkout attempt
       trackEvent('begin_checkout', 'subscription', selectedPlan);
 
+      // Plan Lite: registro directo sin pasar por Stripe
+      if (selectedPlan === 'lite') {
+        if (!formData.password || !formData.phone) {
+          onError?.('Please fill in all required fields');
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            phone: formData.phone,
+            plan: 'lite',
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Registration failed');
+        }
+
+        trackEvent('sign_up', 'subscription', 'lite');
+        onSuccess?.(data.id);
+        router.push('/dashboard?welcome=true');
+        return;
+      }
+
+      // Planes Pro: flujo de Stripe Checkout
       const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           plan: selectedPlan,
           userEmail: formData.email,
@@ -125,10 +158,8 @@ export default function CheckoutForm({ onSuccess, onError }: CheckoutFormProps) 
         throw new Error(data.error || 'Failed to create checkout session');
       }
 
-      // Track successful checkout session creation
       trackEvent('checkout_session_created', 'subscription', selectedPlan);
 
-      // Redirect to Stripe Checkout
       if (data.url) {
         window.location.href = data.url;
       } else {
@@ -138,8 +169,6 @@ export default function CheckoutForm({ onSuccess, onError }: CheckoutFormProps) 
     } catch (error) {
       console.error('Checkout error:', error);
       onError?.(error instanceof Error ? error.message : 'An error occurred');
-      
-      // Track checkout error
       trackEvent('checkout_error', 'subscription', selectedPlan);
     } finally {
       setLoading(false);
@@ -243,20 +272,40 @@ export default function CheckoutForm({ onSuccess, onError }: CheckoutFormProps) 
               />
             </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t('field_password')} *
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              placeholder={t('placeholder_password')}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[--color-accent] focus:border-transparent"
-              required
-            />
-          </div>
+
+          {/* Campos adicionales solo para el plan Lite */}
+          {selectedPlan === 'lite' && (
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('field_password')} *
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder={t('placeholder_password')}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[--color-accent] focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('field_phone')} *
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  placeholder={t('placeholder_phone')}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[--color-accent] focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Submit Button */}

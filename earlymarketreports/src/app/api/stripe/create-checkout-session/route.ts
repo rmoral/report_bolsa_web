@@ -8,8 +8,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { plan, userEmail, userName } = body;
 
-    // Validate plan
-    const validPlans: SubscriptionPlan[] = ['lite', 'pro_monthly', 'pro_annual'];
+    // Validate plan — Lite plan is free and handled via /api/auth/register, not Stripe
+    const validPlans: SubscriptionPlan[] = ['pro_monthly', 'pro_annual'];
     if (!validPlans.includes(plan)) {
       return NextResponse.json(
         { error: 'Invalid plan' },

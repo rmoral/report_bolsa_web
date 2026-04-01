@@ -32,47 +32,12 @@ export async function createCheckoutSession({
   cancelUrl,
 }: {
   customerId: string;
-  priceId: string;
+  priceId: string | null;
   plan: SubscriptionPlan;
   successUrl: string;
   cancelUrl: string;
 }) {
   try {
-    // For Lite plan (free), create a simple payment session
-    if (plan === 'lite') {
-      const session = await stripe.checkout.sessions.create({
-        customer: customerId,
-        payment_method_types: ['card'],
-        line_items: [
-          {
-            price_data: {
-              currency: 'eur',
-              product_data: {
-                name: 'EarlyMarketReports Lite',
-                description: 'Free daily stock market summary',
-              },
-              unit_amount: 0,
-            },
-            quantity: 1,
-          },
-        ],
-        mode: 'payment',
-        success_url: successUrl,
-        cancel_url: cancelUrl,
-        metadata: {
-          plan,
-          priceId,
-        },
-        allow_promotion_codes: true,
-        billing_address_collection: 'required',
-        customer_update: {
-          name: 'auto',
-          address: 'auto',
-        },
-      });
-      return session;
-    }
-
     // For Pro plans, use price_data directly (more reliable)
     const amount = plan === 'pro_monthly' ? 1000 : 9900; // €10 or €99
     const interval = plan === 'pro_monthly' ? 'month' : 'year';
