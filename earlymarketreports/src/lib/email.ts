@@ -12,7 +12,7 @@ function getEmailConfig() {
   const from =
     process.env.EMAIL_FROM || "EarlyMarketReports <no-reply@earlymarketreports.com>";
   const notifications =
-    process.env.EMAIL_NOTIFICATIONS || process.env.EMAIL_ALERTS || "";
+    process.env.EMAIL_NOTIFICATIONS || process.env.EMAIL_ALERTS || "ruben@earlymarketreports.com";
   return { apiKey, from, notifications };
 }
 
