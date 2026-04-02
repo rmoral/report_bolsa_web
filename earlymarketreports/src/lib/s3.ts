@@ -25,11 +25,8 @@ function parseReport(key: string, size: number, lastModified: Date): S3Report {
   const filename = key.split("/").pop() || key;
   const dateMatch = filename.match(/(\d{4})(\d{2})(\d{2})/);
   const date = dateMatch ? `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}` : null;
-  const type = filename.toUpperCase().includes("FULL")
-    ? "full"
-    : filename.toUpperCase().includes("SAMPLE")
-    ? "sample"
-    : "other";
+  // El tipo se determina por la carpeta en S3 (full/ o sample/), no por el nombre
+  const type = key.startsWith("full/") ? "full" : key.startsWith("sample/") ? "sample" : "other";
   return { filename, date, type, size, lastModified };
 }
 
