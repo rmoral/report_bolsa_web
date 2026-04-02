@@ -46,7 +46,7 @@ const nextConfig: NextConfig = {
               "base-uri 'self'",
               "form-action 'self'",
               "frame-ancestors 'none'",
-              "frame-src 'self' https://www.googletagmanager.com",
+              "frame-src 'self' https://www.googletagmanager.com https://*.s3.amazonaws.com https://*.s3.*.amazonaws.com",
               "upgrade-insecure-requests",
             ].join('; '),
           },

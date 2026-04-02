@@ -137,6 +137,16 @@ export async function getUserByEmail(email: string): Promise<FirestoreUser | nul
   } as FirestoreUser;
 }
 
+export async function updateUser(
+  userId: string,
+  updates: Partial<Pick<FirestoreUser, "name" | "phone">>
+): Promise<void> {
+  await db.collection("users").doc(userId).update({
+    ...updates,
+    updatedAt: new Date().toISOString(),
+  });
+}
+
 export async function updateUserRole(userId: string, role: UserRole): Promise<void> {
   await db.collection("users").doc(userId).update({
     role,
