@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import SubscriptionManager from "@/components/SubscriptionManager";
 import ReportsList from "@/components/ReportsList";
 import ProfileForm from "@/components/ProfileForm";
+import UpgradeButton from "@/components/UpgradeButton";
 
 type Me = {
   id: string;
@@ -100,16 +101,17 @@ export default function DashboardPage() {
         me.stripeCustomerId ? (
           <SubscriptionManager customerId={me.stripeCustomerId} />
         ) : (
-          <div className="bg-white rounded-lg border p-8 text-center">
-            <p className="text-gray-600 mb-4">
+          <div className="bg-white rounded-lg border p-8 text-center space-y-4">
+            <p className="text-gray-600">
               {me.plan === "pro"
                 ? "Cargando información de suscripción…"
                 : "Estás en el plan Lite gratuito."}
             </p>
             {me.plan !== "pro" && (
-              <a href="/subscribe" className="btn-accent">
-                Actualizar a Pro
-              </a>
+              <div className="flex justify-center gap-3">
+                <UpgradeButton plan="pro_monthly" label="Pro Mensual — €10/mes" className="btn-accent" />
+                <UpgradeButton plan="pro_annual" label="Pro Anual — €99/año" className="btn-primary" />
+              </div>
             )}
           </div>
         )
