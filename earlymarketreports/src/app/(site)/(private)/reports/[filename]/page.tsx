@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getToken } from "@/lib/clientAuth";
 import Link from "next/link";
+import UpgradeButton from "@/components/UpgradeButton";
 
 interface ReportPageProps {
   params: { filename: string };
@@ -57,9 +58,7 @@ export default function ReportPage({ params }: ReportPageProps) {
             Este informe completo está disponible únicamente para suscriptores del plan Pro.
           </p>
           <div className="space-y-3">
-            <Link href="/subscribe" className="btn-accent inline-block">
-              Suscribirse al Plan Pro
-            </Link>
+            <UpgradeButton label="Suscribirse al Plan Pro" className="btn-accent" />
             <div>
               <Link href="/dashboard" className="text-[--color-primary] hover:underline text-sm">
                 ← Volver al dashboard

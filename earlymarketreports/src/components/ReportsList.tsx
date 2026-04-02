@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getToken } from "@/lib/clientAuth";
+import UpgradeButton from "@/components/UpgradeButton";
 
 interface Report {
   filename: string;
@@ -128,9 +129,7 @@ export default function ReportsList({ plan }: ReportsListProps) {
         {isLocked ? (
           <div className="flex items-center gap-2">
             <span className="text-xs text-gray-500 hidden sm:inline">Solo Pro</span>
-            <a href="/subscribe" className="btn-accent text-xs px-3 py-1.5">
-              Actualizar
-            </a>
+            <UpgradeButton label="Actualizar" className="btn-accent text-xs px-3 py-1.5" />
           </div>
         ) : (
           <button

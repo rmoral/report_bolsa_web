@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useI18n } from '@/i18n/I18nProvider';
 import { Subscription, BillingHistoryItem } from '@/types/subscription';
 import { trackEvent } from '@/components/GoogleAnalytics';
+import UpgradeButton from '@/components/UpgradeButton';
 
 interface SubscriptionManagerProps {
   userId?: string;
@@ -147,11 +148,12 @@ export default function SubscriptionManager({ userId, customerId }: Subscription
 
   if (!subscription) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-600 mb-4">No active subscription found.</p>
-        <a href="/subscribe" className="btn-primary">
-          {t('subscribe_now')}
-        </a>
+      <div className="text-center py-8 space-y-4">
+        <p className="text-gray-600">No hay ninguna suscripción activa.</p>
+        <div className="flex justify-center gap-3">
+          <UpgradeButton plan="pro_monthly" label="Pro Mensual — €10/mes" className="btn-accent" />
+          <UpgradeButton plan="pro_annual" label="Pro Anual — €99/año" className="btn-primary" />
+        </div>
       </div>
     );
   }
@@ -223,12 +225,7 @@ export default function SubscriptionManager({ userId, customerId }: Subscription
           
           <div className="space-y-3">
             {subscription.plan === 'lite' && (
-              <button
-                onClick={() => handleUpgradePlan('pro_monthly')}
-                className="w-full btn-accent text-sm"
-              >
-                {t('upgrade_to_pro')}
-              </button>
+              <UpgradeButton plan="pro_monthly" label={t('upgrade_to_pro')} className="w-full btn-accent text-sm" />
             )}
             
             {subscription.plan === 'pro_monthly' && (

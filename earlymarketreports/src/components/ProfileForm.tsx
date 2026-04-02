@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import UpgradeButton from "@/components/UpgradeButton";
 import { getToken } from "@/lib/clientAuth";
 
 interface Me {
@@ -105,9 +106,7 @@ export default function ProfileForm({ me, onSaved }: ProfileFormProps) {
                 {me.plan === "pro" ? "Pro" : "Lite (gratuito)"}
               </span>
               {me.plan !== "pro" && (
-                <a href="/subscribe" className="text-xs text-[--color-accent] hover:underline">
-                  Actualizar a Pro →
-                </a>
+                <UpgradeButton label="Actualizar a Pro →" className="text-xs text-[--color-accent] hover:underline bg-transparent border-none p-0 cursor-pointer" />
               )}
             </div>
           </div>
