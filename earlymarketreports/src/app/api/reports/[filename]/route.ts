@@ -15,8 +15,10 @@ export async function GET(
   if (!payload) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
   const { filename } = params;
+  const { searchParams } = new URL(req.url);
+  const type = searchParams.get("type"); // "full" | "sample"
   const isPro = payload.plan === "pro";
-  const isSample = filename.toUpperCase().includes("SAMPLE");
+  const isSample = type === "sample";
 
   // Usuarios Lite solo pueden acceder a muestras
   if (!isPro && !isSample) {

@@ -49,11 +49,11 @@ export default function ReportsList({ plan }: ReportsListProps) {
       .finally(() => setLoading(false));
   }, []);
 
-  const openReport = async (filename: string) => {
+  const openReport = async (filename: string, type: "full" | "sample" | "other") => {
     setOpeningFile(filename);
     try {
       const token = getToken();
-      const res = await fetch(`/api/reports/${encodeURIComponent(filename)}`, {
+      const res = await fetch(`/api/reports/${encodeURIComponent(filename)}?type=${type}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error();
@@ -134,7 +134,7 @@ export default function ReportsList({ plan }: ReportsListProps) {
           </div>
         ) : (
           <button
-            onClick={() => openReport(report.filename)}
+            onClick={() => openReport(report.filename, report.type)}
             disabled={isOpening}
             className="btn-primary text-xs px-3 py-1.5 disabled:opacity-50"
           >
