@@ -5,6 +5,7 @@ Provides full control over the automation pipeline via chat.
 import asyncio
 import logging
 import textwrap
+import warnings
 from datetime import datetime, timezone
 from typing import Optional
 
@@ -14,6 +15,12 @@ from telegram.ext import (
     CallbackQueryHandler, CommandHandler, ContextTypes,
     ConversationHandler, MessageHandler, filters,
 )
+from telegram.warnings import PTBUserWarning
+
+# The edit ConversationHandler intentionally mixes CallbackQueryHandler (entry/confirm)
+# with MessageHandler (receive edited text), so per_message=False is correct here.
+warnings.filterwarnings("ignore", message=".*per_message=False.*", category=PTBUserWarning)
+warnings.filterwarnings("ignore", message=".*per_message=True.*", category=PTBUserWarning)
 
 from social_automation.database import db
 from social_automation.database.models import Platform, Post, PostStatus
@@ -425,7 +432,7 @@ def register_handlers(app) -> None:
             ],
         },
         fallbacks=[CommandHandler("cancel", cmd_cancel)],
-        per_message=True,
+        per_message=False,
     )
     app.add_handler(edit_conv)
 
