@@ -11,8 +11,12 @@ Usage:
 """
 import asyncio
 import logging
+import os
 import signal
 import sys
+
+# Allow running directly from the social_automation/ directory
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from social_automation.database.db import init_db
 from social_automation.scheduler import create_scheduler
