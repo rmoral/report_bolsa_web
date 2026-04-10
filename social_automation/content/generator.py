@@ -163,19 +163,23 @@ def _generate_for_platform_sync(news: NewsItem, platform: Platform) -> Post:
     )
 
 
+# Instagram disabled until image generation is integrated
+ACTIVE_PLATFORMS = [Platform.TWITTER, Platform.LINKEDIN]
+
+
 async def generate_posts_for_news(news: NewsItem) -> List[Post]:
     """
-    Generate posts for all three platforms for a single news item.
+    Generate posts for active platforms for a single news item.
     Runs platform calls concurrently via thread executor.
     """
     loop = asyncio.get_event_loop()
     tasks = [
         loop.run_in_executor(None, _generate_for_platform_sync, news, platform)
-        for platform in [Platform.TWITTER, Platform.LINKEDIN, Platform.INSTAGRAM]
+        for platform in ACTIVE_PLATFORMS
     ]
     results = await asyncio.gather(*tasks, return_exceptions=True)
     posts: List[Post] = []
-    for platform, result in zip([Platform.TWITTER, Platform.LINKEDIN, Platform.INSTAGRAM], results):
+    for platform, result in zip(ACTIVE_PLATFORMS, results):
         if isinstance(result, Exception):
             logger.error(
                 "Content generation failed for platform=%s news_id=%s: %s",
