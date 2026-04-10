@@ -38,6 +38,12 @@ def admin_only(func):
     async def wrapper(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chat_id = update.effective_chat.id if update.effective_chat else None
         if chat_id != config.telegram_admin_chat_id:
+            logger.warning(
+                "Unauthorized access attempt — chat_id=%s (expected %s). "
+                "Update TELEGRAM_ADMIN_CHAT_ID in .env if this is you.",
+                chat_id,
+                config.telegram_admin_chat_id,
+            )
             return
         return await func(update, context)
     wrapper.__name__ = func.__name__
