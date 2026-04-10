@@ -1,0 +1,86 @@
+"""
+Central configuration loaded from environment variables.
+"""
+import os
+from dataclasses import dataclass, field
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+@dataclass
+class Config:
+    # Anthropic
+    anthropic_api_key: str = field(default_factory=lambda: os.environ["ANTHROPIC_API_KEY"])
+
+    # News
+    newsapi_key: str = field(default_factory=lambda: os.getenv("NEWSAPI_KEY", ""))
+
+    # Telegram
+    telegram_bot_token: str = field(default_factory=lambda: os.environ["TELEGRAM_BOT_TOKEN"])
+    telegram_admin_chat_id: int = field(
+        default_factory=lambda: int(os.environ["TELEGRAM_ADMIN_CHAT_ID"])
+    )
+
+    # Twitter / X
+    twitter_api_key: str = field(default_factory=lambda: os.getenv("TWITTER_API_KEY", ""))
+    twitter_api_secret: str = field(default_factory=lambda: os.getenv("TWITTER_API_SECRET", ""))
+    twitter_access_token: str = field(default_factory=lambda: os.getenv("TWITTER_ACCESS_TOKEN", ""))
+    twitter_access_token_secret: str = field(
+        default_factory=lambda: os.getenv("TWITTER_ACCESS_TOKEN_SECRET", "")
+    )
+    twitter_bearer_token: str = field(default_factory=lambda: os.getenv("TWITTER_BEARER_TOKEN", ""))
+
+    # LinkedIn
+    linkedin_client_id: str = field(default_factory=lambda: os.getenv("LINKEDIN_CLIENT_ID", ""))
+    linkedin_client_secret: str = field(default_factory=lambda: os.getenv("LINKEDIN_CLIENT_SECRET", ""))
+    linkedin_access_token: str = field(default_factory=lambda: os.getenv("LINKEDIN_ACCESS_TOKEN", ""))
+    linkedin_person_urn: str = field(default_factory=lambda: os.getenv("LINKEDIN_PERSON_URN", ""))
+
+    # Instagram
+    instagram_access_token: str = field(default_factory=lambda: os.getenv("INSTAGRAM_ACCESS_TOKEN", ""))
+    instagram_account_id: str = field(default_factory=lambda: os.getenv("INSTAGRAM_ACCOUNT_ID", ""))
+    instagram_username: str = field(default_factory=lambda: os.getenv("INSTAGRAM_USERNAME", ""))
+    instagram_password: str = field(default_factory=lambda: os.getenv("INSTAGRAM_PASSWORD", ""))
+
+    # Scheduling
+    daily_run_hour: int = field(default_factory=lambda: int(os.getenv("DAILY_RUN_HOUR", "7")))
+    daily_run_minute: int = field(default_factory=lambda: int(os.getenv("DAILY_RUN_MINUTE", "0")))
+    timezone: str = field(default_factory=lambda: os.getenv("TIMEZONE", "Europe/Madrid"))
+
+    # Content
+    max_news_items: int = field(default_factory=lambda: int(os.getenv("MAX_NEWS_ITEMS", "5")))
+    content_language: str = field(default_factory=lambda: os.getenv("CONTENT_LANGUAGE", "es"))
+    auto_publish: bool = field(
+        default_factory=lambda: os.getenv("AUTO_PUBLISH", "false").lower() == "true"
+    )
+
+    # Database
+    database_url: str = field(
+        default_factory=lambda: os.getenv(
+            "DATABASE_URL", "sqlite+aiosqlite:///social_automation.db"
+        )
+    )
+
+    @property
+    def twitter_enabled(self) -> bool:
+        return bool(self.twitter_api_key and self.twitter_access_token)
+
+    @property
+    def linkedin_enabled(self) -> bool:
+        return bool(self.linkedin_access_token and self.linkedin_person_urn)
+
+    @property
+    def instagram_enabled(self) -> bool:
+        return bool(
+            (self.instagram_access_token and self.instagram_account_id)
+            or (self.instagram_username and self.instagram_password)
+        )
+
+    @property
+    def newsapi_enabled(self) -> bool:
+        return bool(self.newsapi_key)
+
+
+# Singleton
+config = Config()

@@ -1,0 +1,21 @@
+[Unit]
+Description=Social Media Automation System
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/report_bolsa_web/social_automation
+ExecStart=/opt/report_bolsa_web/social_automation/.venv/bin/python main.py
+Restart=on-failure
+RestartSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=social-automation
+
+# Environment file path (adjust to your server)
+EnvironmentFile=/opt/report_bolsa_web/social_automation/.env
+
+[Install]
+WantedBy=multi-user.target
