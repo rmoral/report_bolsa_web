@@ -6,17 +6,22 @@ Fetches top global news from multiple sources:
 """
 import asyncio
 import logging
+import ssl
 from datetime import datetime, timedelta, timezone
 from typing import List
 from urllib.parse import urlparse
 
 import aiohttp
+import certifi
 import feedparser
 
 from social_automation.config import config
 from social_automation.database.models import NewsItem
 
 logger = logging.getLogger(__name__)
+
+# SSL context using certifi — fixes macOS certificate verification errors
+_ssl_context = ssl.create_default_context(cafile=certifi.where())
 
 # High-quality RSS feeds by category
 RSS_FEEDS = {
@@ -105,7 +110,8 @@ async def _fetch_brave(run_id: str) -> List[NewsItem]:
         "Accept-Encoding": "gzip",
         "X-Subscription-Token": config.brave_api_key,
     }
-    async with aiohttp.ClientSession(headers=headers) as session:
+    connector = aiohttp.TCPConnector(ssl=_ssl_context)
+    async with aiohttp.ClientSession(headers=headers, connector=connector) as session:
         for query, category in BRAVE_QUERIES:
             try:
                 params = {"q": query, "count": 10, "freshness": "pd"}
@@ -156,7 +162,8 @@ async def _fetch_newsapi(run_id: str) -> List[NewsItem]:
         "pageSize": 10,
         "from": from_date,
     }
-    async with aiohttp.ClientSession() as session:
+    connector = aiohttp.TCPConnector(ssl=_ssl_context)
+    async with aiohttp.ClientSession(connector=connector) as session:
         for query, category in NEWSAPI_QUERIES:
             try:
                 params = {**params_base, "q": query}
@@ -200,7 +207,7 @@ async def fetch_all_news(run_id: str) -> List[NewsItem]:
 
     # RSS feeds — all in parallel
     rss_tasks = []
-    connector = aiohttp.TCPConnector(limit=20)
+    connector = aiohttp.TCPConnector(limit=20, ssl=_ssl_context)
     async with aiohttp.ClientSession(connector=connector) as session:
         for category, urls in RSS_FEEDS.items():
             for url in urls:
