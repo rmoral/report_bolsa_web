@@ -419,7 +419,7 @@ def register_handlers(app) -> None:
             ],
         },
         fallbacks=[CommandHandler("cancel", cmd_cancel)],
-        per_message=False,
+        per_message=True,
     )
     app.add_handler(edit_conv)
 
