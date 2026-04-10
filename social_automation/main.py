@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from social_automation.database.db import init_db
 from social_automation.scheduler import create_scheduler
-from social_automation.telegram.bot import create_bot
+from social_automation.tg_bot.bot import create_bot
 
 logging.basicConfig(
     level=logging.INFO,

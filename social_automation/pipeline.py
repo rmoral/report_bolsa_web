@@ -20,9 +20,9 @@ logger = logging.getLogger(__name__)
 
 async def _notify_telegram(run_id: str, news_count: int, posts) -> None:
     """Send Telegram notification with news summary and post approval prompts."""
-    from social_automation.telegram.bot import send_admin_message
-    from social_automation.telegram.handlers import _send_post_for_approval
-    from social_automation.telegram.bot import create_bot
+    from social_automation.tg_bot.bot import send_admin_message
+    from social_automation.tg_bot.handlers import _send_post_for_approval
+    from social_automation.tg_bot.bot import create_bot
 
     summary = (
         f"🌅 *Proceso matutino completado*\n\n"
@@ -120,7 +120,7 @@ async def run_pipeline(triggered_by: str = "scheduler") -> None:
         )
         # Alert admin via Telegram
         try:
-            from social_automation.telegram.bot import send_admin_message
+            from social_automation.tg_bot.bot import send_admin_message
             await send_admin_message(
                 f"❌ *Error en el proceso automático*\n\n`{str(exc)[:500]}`"
             )

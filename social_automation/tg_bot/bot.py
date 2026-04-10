@@ -6,7 +6,7 @@ import logging
 from telegram.ext import Application
 
 from social_automation.config import config
-from social_automation.telegram.handlers import register_handlers
+from social_automation.tg_bot.handlers import register_handlers
 
 logger = logging.getLogger(__name__)
 

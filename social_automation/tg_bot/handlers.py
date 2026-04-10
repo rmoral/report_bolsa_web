@@ -17,7 +17,7 @@ from telegram.ext import (
 
 from social_automation.database import db
 from social_automation.database.models import Platform, Post, PostStatus
-from social_automation.telegram.keyboards import (
+from social_automation.tg_bot.keyboards import (
     PLATFORM_EMOJIS, confirm_edit_keyboard, pagination_keyboard, post_approval_keyboard,
 )
 from social_automation.config import config
