@@ -1,5 +1,6 @@
 """
 Fetches top global news from multiple sources:
+  - Brave Search News API (economic, political, market headlines)
   - NewsAPI (economic, political, market headlines)
   - RSS feeds (Reuters, FT, Bloomberg, AP, Yahoo Finance)
 """
@@ -48,6 +49,15 @@ NEWSAPI_QUERIES = [
     ("stock market S&P nasdaq dow wall street trading", "market"),
 ]
 
+# Brave Search News queries
+BRAVE_QUERIES = [
+    ("global economy inflation interest rates GDP", "economic"),
+    ("world politics government elections geopolitics", "political"),
+    ("stock market nasdaq dow jones S&P 500 trading", "market"),
+]
+
+BRAVE_NEWS_URL = "https://api.search.brave.com/res/v1/news/search"
+
 
 async def _fetch_rss(
     session: aiohttp.ClientSession, url: str, category: str, run_id: str
@@ -82,6 +92,53 @@ async def _fetch_rss(
             )
     except Exception as exc:
         logger.warning("RSS fetch failed for %s: %s", url, exc)
+    return items
+
+
+async def _fetch_brave(run_id: str) -> List[NewsItem]:
+    """Fetch news from Brave Search News API."""
+    if not config.brave_api_key:
+        return []
+    items: List[NewsItem] = []
+    headers = {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip",
+        "X-Subscription-Token": config.brave_api_key,
+    }
+    async with aiohttp.ClientSession(headers=headers) as session:
+        for query, category in BRAVE_QUERIES:
+            try:
+                params = {"q": query, "count": 10, "freshness": "pd"}
+                async with session.get(
+                    BRAVE_NEWS_URL, params=params, timeout=aiohttp.ClientTimeout(total=20)
+                ) as resp:
+                    data = await resp.json()
+                for article in data.get("results", []):
+                    pub_date = None
+                    age_str = article.get("page_fetched") or article.get("age")
+                    if age_str:
+                        try:
+                            pub_date = datetime.fromisoformat(age_str.replace("Z", "+00:00"))
+                        except (ValueError, AttributeError):
+                            pass
+                    source_name = (
+                        article.get("meta_url", {}).get("hostname")
+                        or article.get("source", "")
+                    )
+                    items.append(
+                        NewsItem(
+                            title=(article.get("title") or "")[:500],
+                            description=(article.get("description") or "")[:2000],
+                            url=(article.get("url") or "")[:1000],
+                            source=source_name[:200],
+                            category=category,
+                            published_at=pub_date,
+                            run_id=run_id,
+                        )
+                    )
+            except Exception as exc:
+                logger.warning("Brave Search query failed (%s): %s", query[:30], exc)
+    logger.info("Brave Search fetched %d items", len(items))
     return items
 
 
@@ -153,8 +210,12 @@ async def fetch_all_news(run_id: str) -> List[NewsItem]:
         if isinstance(result, list):
             all_items.extend(result)
 
-    # NewsAPI
-    newsapi_items = await _fetch_newsapi(run_id)
+    # Brave Search and NewsAPI — in parallel
+    brave_items, newsapi_items = await asyncio.gather(
+        _fetch_brave(run_id),
+        _fetch_newsapi(run_id),
+    )
+    all_items.extend(brave_items)
     all_items.extend(newsapi_items)
 
     # Deduplicate by title similarity (simple: exact title match)

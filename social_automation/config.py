@@ -15,6 +15,7 @@ class Config:
 
     # News
     newsapi_key: str = field(default_factory=lambda: os.getenv("NEWSAPI_KEY", ""))
+    brave_api_key: str = field(default_factory=lambda: os.getenv("BRAVE_API_KEY", ""))
 
     # Telegram
     telegram_bot_token: str = field(default_factory=lambda: os.environ["TELEGRAM_BOT_TOKEN"])
