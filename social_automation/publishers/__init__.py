@@ -17,12 +17,11 @@ async def publish_post(post: Post) -> bool:
     Updates DB status and logs the result.
     Returns True on success.
     """
-    from social_automation.publishers import twitter, linkedin
+    from social_automation.publishers import twitter
 
-    # Instagram disabled until image generation is integrated
+    # LinkedIn disabled for testing. Instagram disabled until image generation is integrated.
     publishers: dict[Platform, Callable] = {
         Platform.TWITTER: twitter.publish,
-        Platform.LINKEDIN: linkedin.publish,
     }
 
     publisher_fn = publishers.get(post.platform)

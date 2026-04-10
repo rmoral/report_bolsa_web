@@ -163,8 +163,8 @@ def _generate_for_platform_sync(news: NewsItem, platform: Platform) -> Post:
     )
 
 
-# Instagram disabled until image generation is integrated
-ACTIVE_PLATFORMS = [Platform.TWITTER, Platform.LINKEDIN]
+# LinkedIn disabled for testing. Instagram disabled until image generation is integrated.
+ACTIVE_PLATFORMS = [Platform.TWITTER]
 
 
 async def generate_posts_for_news(news: NewsItem) -> List[Post]:
