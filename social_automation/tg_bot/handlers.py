@@ -119,6 +119,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "/stats — Estadísticas de publicación\n"
         "/status — Estado del sistema y plataformas\n"
         "/blog — Generar artículo para el blog\n"
+        "/youtube — Generar guion de vídeo semanal\n"
         "/help — Ayuda completa"
     )
     await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
@@ -140,7 +141,8 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "`/news [n]` — Ver las últimas n noticias (default 10)\n"
         "`/stats` — Estadísticas de los últimos 7 días\n"
         "`/status` — Estado de conexión de plataformas\n"
-        "`/blog` — Generar artículo SEO para el blog desde tweets\n\n"
+        "`/blog` — Generar artículo SEO para el blog desde tweets\n"
+        "`/youtube [días]` — Generar guion de vídeo semanal (default 7 días)\n\n"
         "*Aprobar publicaciones:*\n"
         "Cuando el bot te mande una publicación, usa los botones:\n"
         "✅ *Aprobar* — Publicar inmediatamente\n"
@@ -533,3 +535,7 @@ def register_handlers(app) -> None:
     # Blog generation handlers
     from social_automation.blog.handlers import register_blog_handlers
     register_blog_handlers(app)
+
+    # YouTube script generation handlers
+    from social_automation.youtube.handlers import register_youtube_handlers
+    register_youtube_handlers(app)

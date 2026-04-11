@@ -69,6 +69,11 @@ class Config:
     payload_email: str = field(default_factory=lambda: os.getenv("PAYLOAD_EMAIL", ""))
     payload_password: str = field(default_factory=lambda: os.getenv("PAYLOAD_PASSWORD", ""))
 
+    # YouTube
+    youtube_channel_name: str = field(
+        default_factory=lambda: os.getenv("YOUTUBE_CHANNEL_NAME", "Early Market Reports")
+    )
+
     # Database
     database_url: str = field(
         default_factory=lambda: os.getenv(
