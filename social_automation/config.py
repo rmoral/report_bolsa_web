@@ -68,6 +68,8 @@ class Config:
     payload_api_url: str = field(default_factory=lambda: os.getenv("PAYLOAD_API_URL", ""))
     payload_email: str = field(default_factory=lambda: os.getenv("PAYLOAD_EMAIL", ""))
     payload_password: str = field(default_factory=lambda: os.getenv("PAYLOAD_PASSWORD", ""))
+    # URL path segment for blog posts, e.g. "blog" → https://site.com/blog/{slug}
+    blog_url_prefix: str = field(default_factory=lambda: os.getenv("BLOG_URL_PREFIX", "blog"))
 
     # YouTube — channel metadata
     youtube_channel_name: str = field(

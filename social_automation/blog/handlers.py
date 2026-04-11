@@ -232,20 +232,58 @@ async def cb_blog_publish(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         from social_automation.blog.publisher import publish_blog_post
         slug = await publish_blog_post(blog, image_path)
         _blog_sessions.pop(chat_id, None)
+
+        from social_automation.config import config as _cfg
+        article_url = f"{_cfg.website_url.rstrip('/')}/{_cfg.blog_url_prefix.strip('/')}/{slug}"
+
         await context.bot.send_message(
             chat_id=chat_id,
             text=(
                 f"Articulo publicado en el blog.\n\n"
                 f"<b>Titulo:</b> {html.escape(blog.title)}\n"
-                f"<b>Slug:</b> <code>{html.escape(slug)}</code>"
+                f"<b>URL:</b> {html.escape(article_url)}"
             ),
             parse_mode=ParseMode.HTML,
         )
+
+        # Auto-announce on Twitter if enabled
+        if _cfg.twitter_enabled:
+            asyncio.create_task(
+                _announce_on_twitter(blog, slug, image_path, chat_id, context.bot)
+            )
+
     except Exception as exc:
         logger.error("Blog publish failed: %s", exc)
         await context.bot.send_message(
             chat_id=chat_id,
             text=f"Error publicando el articulo: {html.escape(str(exc))}",
+            parse_mode=ParseMode.HTML,
+        )
+
+
+async def _announce_on_twitter(
+    blog, slug: str, image_path: Optional[str], chat_id: int, bot
+) -> None:
+    """Post a blog announcement tweet and notify the admin in Telegram."""
+    try:
+        from social_automation.blog.announcer import announce_blog_post
+        loop = asyncio.get_event_loop()
+        tweet_id = await loop.run_in_executor(
+            None, announce_blog_post, blog, slug, image_path
+        )
+        await bot.send_message(
+            chat_id=chat_id,
+            text=(
+                f"Tweet de anuncio publicado.\n"
+                f"ID: <code>{html.escape(tweet_id)}</code>"
+            ),
+            parse_mode=ParseMode.HTML,
+        )
+    except Exception as exc:
+        logger.error("Blog Twitter announcement failed: %s", exc)
+        await bot.send_message(
+            chat_id=chat_id,
+            text=f"No se pudo publicar el tweet de anuncio: {html.escape(str(exc))}",
             parse_mode=ParseMode.HTML,
         )
 
