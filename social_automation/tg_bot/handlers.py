@@ -326,6 +326,10 @@ async def _generate_and_send_secondary_posts(
         for p in secondary_posts:
             saved.append(await _db.get_post(p.id))
 
+        # Generate images for secondary posts
+        from social_automation.content.image_generator import generate_images_for_posts
+        await generate_images_for_posts(saved)
+
         await bot.send_message(
             chat_id=chat_id,
             text=f"📝 *{len(saved)}* publicación(es) adicional(es) lista(s) para revisar:",

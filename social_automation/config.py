@@ -13,6 +13,10 @@ class Config:
     # OpenAI
     openai_api_key: str = field(default_factory=lambda: os.environ["OPENAI_API_KEY"])
     openai_model: str = field(default_factory=lambda: os.getenv("OPENAI_MODEL", "gpt-4.1-mini"))
+    openai_image_model: str = field(default_factory=lambda: os.getenv("OPENAI_IMAGE_MODEL", "dall-e-3"))
+    generate_images: bool = field(
+        default_factory=lambda: os.getenv("GENERATE_IMAGES", "true").lower() == "true"
+    )
 
     # News
     newsapi_key: str = field(default_factory=lambda: os.getenv("NEWSAPI_KEY", ""))

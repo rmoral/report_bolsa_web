@@ -90,7 +90,12 @@ async def run_pipeline(triggered_by: str = "scheduler") -> None:
         # Re-fetch posts with news_item eagerly loaded (avoids lazy-load errors)
         posts = await db.get_posts_by_run(run_id)
 
-        # ── 4. Auto-publish or notify Telegram ───────────────────────────────
+        # ── 4. Generate images ───────────────────────────────────────────────
+        from social_automation.content.image_generator import generate_images_for_posts
+        logger.info("[%s] Generating images for %d posts…", run_id, len(posts))
+        await generate_images_for_posts(posts)
+
+        # ── 5. Auto-publish or notify Telegram ───────────────────────────────
         if config.auto_publish:
             logger.info("[%s] AUTO_PUBLISH=true, publishing without approval…", run_id)
             from social_automation.publishers import publish_post

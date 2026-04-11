@@ -154,6 +154,13 @@ async def update_post_content(post_id: int, content: str, hashtags: str = "") ->
         )
 
 
+async def update_image_path(post_id: int, image_path: str) -> None:
+    async with get_session() as session:
+        await session.execute(
+            update(Post).where(Post.id == post_id).values(image_path=image_path)
+        )
+
+
 # ── Daily Runs ──────────────────────────────────────────────────────────────
 
 async def create_daily_run(run_id: str) -> DailyRun:

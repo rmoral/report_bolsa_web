@@ -23,4 +23,10 @@ pnpm-debug.log*
 # OS files
 .DS_Store
 
+# Social automation
+social_automation/images/
+social_automation/.venv/
+social_automation/*.db
+social_automation/*.log
+
 
