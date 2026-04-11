@@ -1,6 +1,17 @@
 """
 Publishes SEO blog posts to Payload CMS via REST API.
 Handles JWT authentication, optional featured image upload, and post creation.
+
+Field mapping (from earlymarketreports/src/payload.config.ts):
+  title         → text, required, localized
+  slug          → text, required, unique, localized
+  excerpt       → textarea, localized  (maps to meta_description)
+  featuredImage → upload relationship to media
+  status        → select: "draft" | "published"  (custom field, NOT Payload drafts)
+  publishedAt   → date
+  content       → richText (Lexical), localized
+
+Note: title/slug/content/excerpt are localized → always pass ?locale=en
 """
 import logging
 import mimetypes
@@ -51,10 +62,7 @@ def _auth_headers(token: str) -> dict:
 async def _upload_image(
     client: httpx.AsyncClient, token: str, image_path: str
 ) -> Optional[str]:
-    """
-    Upload an image to Payload /api/media.
-    Returns the document ID of the uploaded media, or None on failure.
-    """
+    """Upload an image to Payload /api/media. Returns the media document ID."""
     path = Path(image_path)
     if not path.exists():
         logger.warning("Image not found, skipping upload: %s", image_path)
@@ -63,18 +71,17 @@ async def _upload_image(
     mime = mimetypes.guess_type(str(path))[0] or "image/png"
     try:
         with open(path, "rb") as f:
-            files = {"file": (path.name, f, mime)}
             resp = await client.post(
                 f"{_base()}/api/media",
                 headers=_auth_headers(token),
-                files=files,
+                files={"file": (path.name, f, mime)},
                 timeout=60,
             )
         resp.raise_for_status()
         doc = resp.json().get("doc", {})
         media_id = doc.get("id")
         if media_id:
-            logger.info("Uploaded featured image to Payload media id=%s", media_id)
+            logger.info("Uploaded featured image: id=%s", media_id)
         return media_id
     except Exception as exc:
         logger.warning("Payload image upload failed: %s", exc)
@@ -86,17 +93,17 @@ def _build_payload_post(
     lexical_content: dict,
     media_id: Optional[str],
 ) -> dict:
-    """Assemble the Payload CMS post document."""
+    """
+    Assemble the Payload CMS post document using the exact field names
+    defined in earlymarketreports/src/payload.config.ts.
+    """
     doc: dict = {
         "title": blog.title,
         "slug": blog.slug,
-        "content": lexical_content,
-        "meta": {
-            "title": blog.title,
-            "description": blog.meta_description,
-        },
-        "_status": "published",
+        "excerpt": blog.meta_description,   # maps to the 'excerpt' textarea field
+        "status": "published",              # custom select field: "draft" | "published"
         "publishedAt": datetime.now(timezone.utc).isoformat(),
+        "content": lexical_content,         # richText (Lexical), localized
     }
     if media_id:
         doc["featuredImage"] = media_id
@@ -108,11 +115,13 @@ async def publish_blog_post(
 ) -> str:
     """
     Publish a BlogPost to Payload CMS.
-    Returns the URL of the created post (slug-based), or the document ID.
-    Raises on non-recoverable errors.
+    Returns the slug of the created post.
     """
     if not config.payload_enabled:
-        raise RuntimeError("Payload CMS not configured (PAYLOAD_API_URL / PAYLOAD_EMAIL / PAYLOAD_PASSWORD missing)")
+        raise RuntimeError(
+            "Payload CMS not configured "
+            "(PAYLOAD_API_URL / PAYLOAD_EMAIL / PAYLOAD_PASSWORD missing)"
+        )
 
     lexical_content = markdown_to_lexical(blog.content_markdown)
 
@@ -125,35 +134,49 @@ async def publish_blog_post(
 
         payload = _build_payload_post(blog, lexical_content, media_id)
 
+        logger.debug(
+            "Sending to Payload CMS: title=%r slug=%r status=%s content_chars=%d",
+            payload.get("title"),
+            payload.get("slug"),
+            payload.get("status"),
+            len(blog.content_markdown),
+        )
+
         resp = await client.post(
             f"{_base()}/api/posts",
             headers={**_auth_headers(token), "Content-Type": "application/json"},
             json=payload,
-            params={"draft": "false"},
+            # locale=en required because title, slug, excerpt and content are localized
+            params={"locale": "en"},
             timeout=30,
         )
+
+        if not resp.is_success:
+            logger.error(
+                "Payload API error %d: %s", resp.status_code, resp.text[:500]
+            )
         resp.raise_for_status()
-        doc = resp.json().get("doc", resp.json())
+
+        data = resp.json()
+        doc = data.get("doc", data)
         post_id = doc.get("id", "")
         slug = doc.get("slug", blog.slug)
-        logger.info("Published blog post to Payload: id=%s slug=%s", post_id, slug)
+        logger.info("Published blog post: id=%s slug=%s", post_id, slug)
         return slug
 
 
 async def publish_draft_by_slug(slug: str) -> bool:
     """
     Find a post saved as draft by slug and publish it.
-    Useful to recover posts that were created without ?draft=false.
-    Returns True if published successfully.
+    Useful to recover posts created with status='draft'.
     """
     async with httpx.AsyncClient() as client:
         token = await _get_token(client)
 
-        # Find the post (drafts are returned when authenticated)
         search = await client.get(
             f"{_base()}/api/posts",
             headers=_auth_headers(token),
-            params={"where[slug][equals]": slug, "draft": "true", "limit": 1},
+            params={"where[slug][equals]": slug, "locale": "en", "limit": 1},
             timeout=15,
         )
         search.raise_for_status()
@@ -163,16 +186,15 @@ async def publish_draft_by_slug(slug: str) -> bool:
 
         post_id = docs[0]["id"]
 
-        # Patch to published
         resp = await client.patch(
             f"{_base()}/api/posts/{post_id}",
             headers={**_auth_headers(token), "Content-Type": "application/json"},
-            json={"_status": "published"},
-            params={"draft": "false"},
+            json={"status": "published"},
+            params={"locale": "en"},
             timeout=15,
         )
         resp.raise_for_status()
-        logger.info("Published draft post: slug=%s id=%s", slug, post_id)
+        logger.info("Published draft: slug=%s id=%s", slug, post_id)
         return True
 
 
