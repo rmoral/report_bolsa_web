@@ -97,6 +97,31 @@ async def get_posts_by_run(run_id: str) -> List[Post]:
         return list(result.scalars().all())
 
 
+async def get_published_twitter_posts(limit: int = 50) -> List[Post]:
+    """Return the most recent published Twitter posts, newest first."""
+    async with get_session() as session:
+        result = await session.execute(
+            select(Post)
+            .options(selectinload(Post.news_item))
+            .where(Post.platform == Platform.TWITTER, Post.status == PostStatus.PUBLISHED)
+            .order_by(Post.published_at.desc())
+            .limit(limit)
+        )
+        return list(result.scalars().all())
+
+
+async def get_posts_by_news_item(news_item_id: int) -> List[Post]:
+    """Return all posts for a given news item."""
+    async with get_session() as session:
+        result = await session.execute(
+            select(Post)
+            .options(selectinload(Post.news_item))
+            .where(Post.news_item_id == news_item_id)
+            .order_by(Post.platform)
+        )
+        return list(result.scalars().all())
+
+
 async def update_post_status(
     post_id: int,
     status: PostStatus,

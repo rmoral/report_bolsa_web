@@ -191,6 +191,93 @@ async def generate_posts_for_news(news: NewsItem) -> List[Post]:
     return posts
 
 
+# Platforms to generate AFTER a Twitter post is published (secondary flow).
+# Add Platform.LINKEDIN or Platform.INSTAGRAM here when ready to activate them.
+SECONDARY_PLATFORMS: List[Platform] = [Platform.LINKEDIN]
+
+
+def _build_secondary_prompt(
+    news: NewsItem, tweet_post: Post, platform: Platform, language: str
+) -> str:
+    """Prompt for secondary platforms that references the already-published tweet."""
+    spec = PLATFORM_SPECS[platform]
+    lang_name = LANGUAGE_NAMES.get(language, "English")
+    return (
+        f"Create a {spec['name']} post in {lang_name} based on this news.\n\n"
+        f"NEWS TITLE: {news.title}\n"
+        f"SOURCE: {news.source}\n"
+        f"DESCRIPTION: {news.description or 'No additional details.'}\n\n"
+        f"REFERENCE — this was already published on X/Twitter about the same news:\n"
+        f"\"\"\"\n{tweet_post.full_content}\n\"\"\"\n\n"
+        f"Expand and adapt the above for {spec['name']}. "
+        f"Do NOT simply copy the tweet — use it as a starting point and develop it "
+        f"according to the platform's style and audience.\n\n"
+        f"Style guidelines: {spec['style']}\n\n"
+        f"{spec['format']}"
+    )
+
+
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
+def _generate_secondary_sync(news: NewsItem, tweet_post: Post, platform: Platform) -> Post:
+    """Generate a secondary platform post referencing the published tweet."""
+    response = _client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=1024,
+        system=SYSTEM_PROMPT,
+        messages=[
+            {
+                "role": "user",
+                "content": _build_secondary_prompt(
+                    news, tweet_post, platform, config.content_language
+                ),
+            }
+        ],
+    )
+    raw_text = response.content[0].text
+    content, hashtags, image_prompt = _parse_response(raw_text)
+
+    if not content:
+        raise ValueError(f"Empty content for secondary platform={platform}")
+
+    return Post(
+        news_item_id=news.id,
+        platform=platform,
+        content=content,
+        hashtags=hashtags,
+        image_prompt=image_prompt,
+        run_id=news.run_id,
+    )
+
+
+async def generate_secondary_posts(tweet_post: Post) -> List[Post]:
+    """
+    Generate posts for SECONDARY_PLATFORMS using a published tweet as reference.
+    Called automatically after a Twitter post is successfully published.
+    """
+    if not SECONDARY_PLATFORMS:
+        return []
+
+    news = tweet_post.news_item
+    if not news:
+        logger.warning("tweet_post id=%d has no news_item loaded", tweet_post.id)
+        return []
+
+    loop = asyncio.get_event_loop()
+    tasks = [
+        loop.run_in_executor(None, _generate_secondary_sync, news, tweet_post, platform)
+        for platform in SECONDARY_PLATFORMS
+    ]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    posts: List[Post] = []
+    for platform, result in zip(SECONDARY_PLATFORMS, results):
+        if isinstance(result, Exception):
+            logger.error("Secondary generation failed platform=%s: %s", platform, result)
+        else:
+            posts.append(result)
+            logger.info("Generated secondary %s post from tweet id=%d", platform, tweet_post.id)
+    return posts
+
+
 async def generate_all_posts(news_items: List[NewsItem]) -> List[Post]:
     """
     Generate posts for all news items. Processes items sequentially to avoid

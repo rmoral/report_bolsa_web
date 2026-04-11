@@ -127,6 +127,7 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "*Comandos:*\n"
         "`/run` — Lanzar proceso manualmente\n"
         "`/pending` — Publicaciones esperando aprobación\n"
+        "`/published` — Ver tweets publicados recientemente\n"
         "`/news [n]` — Ver las últimas n noticias (default 10)\n"
         "`/stats` — Estadísticas de los últimos 7 días\n"
         "`/status` — Estado de conexión de plataformas\n\n"
@@ -262,6 +263,77 @@ async def cmd_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
 
+@admin_only
+async def cmd_published(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Show recently published Twitter posts."""
+    posts = await db.get_published_twitter_posts(limit=10)
+    if not posts:
+        await update.message.reply_text("No hay tweets publicados todavía.")
+        return
+
+    lines = [f"*Tweets publicados* 𝕏 ({len(posts)} recientes)\n"]
+    for i, post in enumerate(posts, 1):
+        ts = post.published_at.strftime("%d/%m %H:%M") if post.published_at else "?"
+        news_title = textwrap.shorten(
+            post.news_item.title if post.news_item else "?", width=60, placeholder="…"
+        )
+        content_preview = textwrap.shorten(post.content, width=80, placeholder="…")
+        lines.append(f"{i}. [{ts}] _{news_title}_\n   {content_preview}")
+
+    await update.message.reply_text("\n\n".join(lines), parse_mode=ParseMode.MARKDOWN)
+
+
+# ── Secondary platform generation ───────────────────────────────────────────
+
+async def _generate_and_send_secondary_posts(
+    tweet_post: Post, chat_id: int, bot
+) -> None:
+    """
+    After a Twitter post is published, generate content for secondary platforms
+    (LinkedIn, Instagram) using the tweet as reference, then send for approval.
+    """
+    from social_automation.content.generator import generate_secondary_posts, SECONDARY_PLATFORMS
+    from social_automation.database import db as _db
+
+    if not SECONDARY_PLATFORMS:
+        return
+
+    try:
+        platform_names = ", ".join(p.value.capitalize() for p in SECONDARY_PLATFORMS)
+        await bot.send_message(
+            chat_id=chat_id,
+            text=(
+                f"🔄 Generando contenido para *{platform_names}* "
+                f"basado en el tweet publicado…"
+            ),
+            parse_mode="Markdown",
+        )
+        secondary_posts = await generate_secondary_posts(tweet_post)
+        if not secondary_posts:
+            return
+
+        await _db.save_posts(secondary_posts)
+        # Reload with relationships
+        saved = []
+        for p in secondary_posts:
+            saved.append(await _db.get_post(p.id))
+
+        await bot.send_message(
+            chat_id=chat_id,
+            text=f"📝 *{len(saved)}* publicación(es) adicional(es) lista(s) para revisar:",
+            parse_mode="Markdown",
+        )
+        for p in saved:
+            await _send_post_for_approval(bot, p, chat_id)
+
+    except Exception as exc:
+        logger.error("Failed to generate secondary posts: %s", exc)
+        await bot.send_message(
+            chat_id=chat_id,
+            text=f"⚠️ Error generando posts secundarios: {exc}",
+        )
+
+
 # ── Approval Callbacks ───────────────────────────────────────────────────────
 
 async def cb_approve(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -289,6 +361,9 @@ async def cb_approve(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
             text=f"🎉 Publicado en *{_platform_label(post.platform)}* correctamente.",
             parse_mode=ParseMode.MARKDOWN,
         )
+        # If this was a Twitter post, generate secondary platform posts from it
+        if post.platform.value == "twitter":
+            await _generate_and_send_secondary_posts(post, update.effective_chat.id, context.bot)
     else:
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
@@ -418,6 +493,7 @@ def register_handlers(app) -> None:
     app.add_handler(CommandHandler("pending", cmd_pending))
     app.add_handler(CommandHandler("news", cmd_news))
     app.add_handler(CommandHandler("stats", cmd_stats))
+    app.add_handler(CommandHandler("published", cmd_published))
 
     # Edit conversation
     edit_conv = ConversationHandler(
