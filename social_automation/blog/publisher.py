@@ -129,6 +129,7 @@ async def publish_blog_post(
             f"{_base()}/api/posts",
             headers={**_auth_headers(token), "Content-Type": "application/json"},
             json=payload,
+            params={"draft": "false"},
             timeout=30,
         )
         resp.raise_for_status()
@@ -137,6 +138,42 @@ async def publish_blog_post(
         slug = doc.get("slug", blog.slug)
         logger.info("Published blog post to Payload: id=%s slug=%s", post_id, slug)
         return slug
+
+
+async def publish_draft_by_slug(slug: str) -> bool:
+    """
+    Find a post saved as draft by slug and publish it.
+    Useful to recover posts that were created without ?draft=false.
+    Returns True if published successfully.
+    """
+    async with httpx.AsyncClient() as client:
+        token = await _get_token(client)
+
+        # Find the post (drafts are returned when authenticated)
+        search = await client.get(
+            f"{_base()}/api/posts",
+            headers=_auth_headers(token),
+            params={"where[slug][equals]": slug, "draft": "true", "limit": 1},
+            timeout=15,
+        )
+        search.raise_for_status()
+        docs = search.json().get("docs", [])
+        if not docs:
+            raise ValueError(f"No post found with slug '{slug}'")
+
+        post_id = docs[0]["id"]
+
+        # Patch to published
+        resp = await client.patch(
+            f"{_base()}/api/posts/{post_id}",
+            headers={**_auth_headers(token), "Content-Type": "application/json"},
+            json={"_status": "published"},
+            params={"draft": "false"},
+            timeout=15,
+        )
+        resp.raise_for_status()
+        logger.info("Published draft post: slug=%s id=%s", slug, post_id)
+        return True
 
 
 def invalidate_token() -> None:
