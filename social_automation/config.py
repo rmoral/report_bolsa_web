@@ -10,8 +10,9 @@ load_dotenv()
 
 @dataclass
 class Config:
-    # Anthropic
-    anthropic_api_key: str = field(default_factory=lambda: os.environ["ANTHROPIC_API_KEY"])
+    # OpenAI
+    openai_api_key: str = field(default_factory=lambda: os.environ["OPENAI_API_KEY"])
+    openai_model: str = field(default_factory=lambda: os.getenv("OPENAI_MODEL", "gpt-4.1-mini"))
 
     # News
     newsapi_key: str = field(default_factory=lambda: os.getenv("NEWSAPI_KEY", ""))

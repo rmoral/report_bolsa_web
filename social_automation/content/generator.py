@@ -1,12 +1,12 @@
 """
-Uses the Anthropic Claude API to generate platform-specific social media content
-from news items. Implements prompt caching and retry logic.
+Uses the OpenAI API to generate platform-specific social media content
+from news items.
 """
 import asyncio
 import logging
 from typing import List, Tuple
 
-import anthropic
+from openai import OpenAI
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 from social_automation.config import config
@@ -14,10 +14,8 @@ from social_automation.database.models import NewsItem, Platform, Post
 
 logger = logging.getLogger(__name__)
 
-# Anthropic client (sync; run in thread executor for async contexts)
-_client = anthropic.Anthropic(api_key=config.anthropic_api_key)
-
-LANGUAGE_NAMES = {"es": "Spanish", "en": "English"}
+# OpenAI client (sync; run in thread executor for async contexts)
+_client = OpenAI(api_key=config.openai_api_key)
 
 # ── Platform prompt templates ──────────────────────────────────────────────
 
@@ -157,20 +155,16 @@ def _parse_response(text: str) -> Tuple[str, str, str]:
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 def _generate_for_platform_sync(news: NewsItem, platform: Platform) -> Post:
-    """Synchronous call to Claude with retry logic."""
-    spec = PLATFORM_SPECS[platform]
-    response = _client.messages.create(
-        model="claude-sonnet-4-6",
+    """Synchronous call to OpenAI with retry logic."""
+    response = _client.chat.completions.create(
+        model=config.openai_model,
         max_tokens=1024,
-        system=SYSTEM_PROMPT,
         messages=[
-            {
-                "role": "user",
-                "content": _build_user_prompt(news, platform),
-            }
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": _build_user_prompt(news, platform)},
         ],
     )
-    raw_text = response.content[0].text
+    raw_text = response.choices[0].message.content or ""
     content, hashtags, image_prompt = _parse_response(raw_text)
 
     if not content:
@@ -240,18 +234,15 @@ def _build_secondary_prompt(news: NewsItem, tweet_post: Post, platform: Platform
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 def _generate_secondary_sync(news: NewsItem, tweet_post: Post, platform: Platform) -> Post:
     """Generate a secondary platform post referencing the published tweet."""
-    response = _client.messages.create(
-        model="claude-sonnet-4-6",
+    response = _client.chat.completions.create(
+        model=config.openai_model,
         max_tokens=1024,
-        system=SYSTEM_PROMPT,
         messages=[
-            {
-                "role": "user",
-                "content": _build_secondary_prompt(news, tweet_post, platform),
-            }
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": _build_secondary_prompt(news, tweet_post, platform)},
         ],
     )
-    raw_text = response.content[0].text
+    raw_text = response.choices[0].message.content or ""
     content, hashtags, image_prompt = _parse_response(raw_text)
 
     if not content:
