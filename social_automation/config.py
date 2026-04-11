@@ -51,7 +51,7 @@ class Config:
 
     # Content
     max_news_items: int = field(default_factory=lambda: int(os.getenv("MAX_NEWS_ITEMS", "5")))
-    content_language: str = field(default_factory=lambda: os.getenv("CONTENT_LANGUAGE", "es"))
+    content_language: str = field(default_factory=lambda: os.getenv("CONTENT_LANGUAGE", "en"))
     auto_publish: bool = field(
         default_factory=lambda: os.getenv("AUTO_PUBLISH", "false").lower() == "true"
     )
