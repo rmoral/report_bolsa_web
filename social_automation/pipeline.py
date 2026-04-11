@@ -87,6 +87,9 @@ async def run_pipeline(triggered_by: str = "scheduler") -> None:
             status="awaiting_approval",
         )
 
+        # Re-fetch posts with news_item eagerly loaded (avoids lazy-load errors)
+        posts = await db.get_posts_by_run(run_id)
+
         # ── 4. Auto-publish or notify Telegram ───────────────────────────────
         if config.auto_publish:
             logger.info("[%s] AUTO_PUBLISH=true, publishing without approval…", run_id)
