@@ -8,8 +8,8 @@ Wants=network-online.target
 Type=simple
 User=ubuntu
 Group=ubuntu
-WorkingDirectory=/home/ubuntu/report_bolsa_web/social_automation
-ExecStart=/home/ubuntu/report_bolsa_web/social_automation/venv/bin/python main.py
+WorkingDirectory=/home/ubuntu/web/report_bolsa_web/social_automation
+ExecStart=/home/ubuntu/web/report_bolsa_web/.venv/bin/python main.py
 Restart=always
 RestartSec=15
 # Limit restart loops: max 5 restarts in 5 minutes
@@ -17,7 +17,7 @@ StartLimitBurst=5
 StartLimitIntervalSec=300
 
 # Environment
-EnvironmentFile=/home/ubuntu/report_bolsa_web/social_automation/.env
+EnvironmentFile=/home/ubuntu/web/report_bolsa_web/social_automation/.env
 
 # Logging — readable with: journalctl -u social-automation -f
 StandardOutput=journal
