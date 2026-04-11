@@ -26,64 +26,87 @@ PLATFORM_SPECS = {
         "name": "X (Twitter)",
         "max_chars": 280,
         "style": (
-            "Concise, punchy, uses 2-3 relevant hashtags. "
-            "Engages with questions or bold statements. "
-            "No fluff. Every word must earn its place."
+            "Write one sharp, self-contained statement that captures the core of the news. "
+            "Maximum 240 characters excluding hashtags. "
+            "No emojis, no dashes, no exclamation marks. "
+            "State the fact plainly, then optionally add a brief implication or question. "
+            "2-3 hashtags, lowercase, specific to the topic (not generic like #news or #finance). "
+            "Sound like a market analyst tweeting from a terminal, not a brand account."
         ),
         "format": (
             "Return ONLY:\n"
-            "TEXT: <tweet text, max 240 chars without hashtags>\n"
+            "TEXT: <tweet text, max 240 chars, no hashtags here>\n"
             "HASHTAGS: <2-3 hashtags>\n"
-            "IMAGE_PROMPT: <DALL-E style description for a visual>"
+            "IMAGE_PROMPT: <photorealistic scene or chart that illustrates this news>"
         ),
     },
     Platform.LINKEDIN: {
         "name": "LinkedIn",
         "max_chars": 3000,
         "style": (
-            "Professional, insightful, and analytical. "
-            "3-5 paragraphs. Opens with a hook. Includes key data/numbers. "
-            "Ends with a thought-provoking question for engagement. "
-            "Uses 3-5 relevant hashtags at the end."
+            "Write 3 to 4 paragraphs for a professional audience of investors, executives, "
+            "and analysts. "
+            "Open with the single most important fact of the story, no preamble. "
+            "Second paragraph provides context: why this matters, what preceded it. "
+            "Third paragraph offers a concrete implication for markets, policy, or business. "
+            "Optional fourth paragraph closes with a direct, specific question for discussion. "
+            "No bullet points, no numbered lists, no emojis, no dashes as decoration. "
+            "Paragraphs separated by a single blank line. "
+            "3-5 hashtags at the very end on their own line, no other decoration. "
+            "Tone: authoritative, measured, direct. Like a piece you would read in the FT."
         ),
         "format": (
             "Return ONLY:\n"
-            "TEXT: <full LinkedIn post>\n"
+            "TEXT: <full LinkedIn post, plain paragraphs>\n"
             "HASHTAGS: <3-5 hashtags>\n"
-            "IMAGE_PROMPT: <description for a professional infographic or chart>"
+            "IMAGE_PROMPT: <description of a clean data visualization or news photograph>"
         ),
     },
     Platform.INSTAGRAM: {
         "name": "Instagram",
         "max_chars": 2200,
         "style": (
-            "Visual-first mindset. Engaging, accessible, slightly informal. "
-            "Starts with an attention-grabbing first line (visible before 'more'). "
-            "Uses emojis strategically. "
-            "Ends with a call-to-action. Uses 5-10 relevant hashtags."
+            "Write a caption for a financially literate but general audience. "
+            "First sentence must be a standalone hook visible before the fold, no emojis. "
+            "Follow with 2-3 short paragraphs explaining the news and its relevance. "
+            "Close with one direct question to drive comments. "
+            "No emojis, no decorative symbols. "
+            "5-8 specific, lowercase hashtags at the end."
         ),
         "format": (
             "Return ONLY:\n"
             "TEXT: <Instagram caption>\n"
-            "HASHTAGS: <5-10 hashtags>\n"
-            "IMAGE_PROMPT: <vivid visual description for an eye-catching image>"
+            "HASHTAGS: <5-8 hashtags>\n"
+            "IMAGE_PROMPT: <vivid, photorealistic visual that could accompany this story>"
         ),
     },
 }
 
-SYSTEM_PROMPT = """You are an expert social media content creator specializing in
-economic, financial, and geopolitical news. Your content is factual, engaging,
-and tailored to each platform's audience and format.
-You never fabricate data — you work only with the information provided.
-You always write in the requested language."""
+SYSTEM_PROMPT = """You are a senior financial journalist and social media strategist with 15 years \
+of experience covering global markets, economics, and geopolitics for institutional audiences.
+
+Your writing rules — follow them without exception:
+- Always write in English, regardless of the source language of the news.
+- Write as a knowledgeable human professional, not as an AI assistant.
+- Never use emojis, bullet points, numbered lists, or decorative symbols.
+- Never use double dashes (--) or em dashes (—) as stylistic devices.
+- Never use filler phrases like "In conclusion", "It is worth noting", "Notably", \
+"It's important to highlight", "Dive into", "Game-changer", or "Landscape".
+- Never use vague superlatives like "significant", "crucial", "pivotal", or "transformative" \
+unless backed by specific data.
+- Lead with the most important fact. Do not bury the news in context.
+- Use precise numbers, percentages, and named sources when available.
+- Write in short, declarative sentences. Vary sentence length for rhythm.
+- Sound like a Reuters or FT journalist, not a marketing copywriter.
+- Never fabricate data. Only use information explicitly provided.
+"""
 
 
-def _build_user_prompt(news: NewsItem, platform: Platform, language: str) -> str:
+def _build_user_prompt(news: NewsItem, platform: Platform) -> str:
     spec = PLATFORM_SPECS[platform]
-    lang_name = LANGUAGE_NAMES.get(language, "English")
-    return f"""Create a {spec['name']} post in {lang_name} about this news:
+    return f"""Write a {spec['name']} post in English about the following news story.
 
-TITLE: {news.title}
+NEWS TITLE: {news.title}
 SOURCE: {news.source}
 CATEGORY: {news.category}
 DESCRIPTION: {news.description or 'No additional details available.'}
@@ -143,7 +166,7 @@ def _generate_for_platform_sync(news: NewsItem, platform: Platform) -> Post:
         messages=[
             {
                 "role": "user",
-                "content": _build_user_prompt(news, platform, config.content_language),
+                "content": _build_user_prompt(news, platform),
             }
         ],
     )
@@ -196,22 +219,19 @@ async def generate_posts_for_news(news: NewsItem) -> List[Post]:
 SECONDARY_PLATFORMS: List[Platform] = [Platform.LINKEDIN]
 
 
-def _build_secondary_prompt(
-    news: NewsItem, tweet_post: Post, platform: Platform, language: str
-) -> str:
+def _build_secondary_prompt(news: NewsItem, tweet_post: Post, platform: Platform) -> str:
     """Prompt for secondary platforms that references the already-published tweet."""
     spec = PLATFORM_SPECS[platform]
-    lang_name = LANGUAGE_NAMES.get(language, "English")
     return (
-        f"Create a {spec['name']} post in {lang_name} based on this news.\n\n"
+        f"Write a {spec['name']} post in English based on this news story.\n\n"
         f"NEWS TITLE: {news.title}\n"
         f"SOURCE: {news.source}\n"
         f"DESCRIPTION: {news.description or 'No additional details.'}\n\n"
-        f"REFERENCE — this was already published on X/Twitter about the same news:\n"
+        f"This was already published on X/Twitter about the same story — use it as "
+        f"a factual reference only, do not copy its phrasing:\n"
         f"\"\"\"\n{tweet_post.full_content}\n\"\"\"\n\n"
-        f"Expand and adapt the above for {spec['name']}. "
-        f"Do NOT simply copy the tweet — use it as a starting point and develop it "
-        f"according to the platform's style and audience.\n\n"
+        f"Expand and rewrite for {spec['name']}. The tone and structure must match "
+        f"the platform's audience. Do not reproduce the tweet verbatim.\n\n"
         f"Style guidelines: {spec['style']}\n\n"
         f"{spec['format']}"
     )
@@ -227,9 +247,7 @@ def _generate_secondary_sync(news: NewsItem, tweet_post: Post, platform: Platfor
         messages=[
             {
                 "role": "user",
-                "content": _build_secondary_prompt(
-                    news, tweet_post, platform, config.content_language
-                ),
+                "content": _build_secondary_prompt(news, tweet_post, platform),
             }
         ],
     )
