@@ -29,4 +29,9 @@ social_automation/.venv/
 social_automation/*.db
 social_automation/*.log
 
+# Python bytecode
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+
 
