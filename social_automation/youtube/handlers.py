@@ -71,6 +71,13 @@ def _script_keyboard(chat_id: int) -> InlineKeyboardMarkup:
                 callback_data=f"yt_generate:{chat_id}",
             )
         ])
+    if config.heygen_enabled:
+        rows.append([
+            InlineKeyboardButton(
+                "Solo generar vídeo (sin YouTube)",
+                callback_data=f"yt_generate_only:{chat_id}",
+            )
+        ])
     rows.append([
         InlineKeyboardButton("Regenerar guion", callback_data=f"yt_regen:{chat_id}"),
         InlineKeyboardButton("Cancelar", callback_data=f"yt_cancel:{chat_id}"),
@@ -348,6 +355,43 @@ async def cb_yt_generate(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     )
 
 
+async def cb_yt_generate_only(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Generate the video with HeyGen only — no YouTube upload."""
+    query = update.callback_query
+    await query.answer()
+    chat_id = update.effective_chat.id
+    session = _yt_sessions.get(chat_id)
+
+    if not session or not session.get("last_script"):
+        await query.edit_message_text(
+            "Sesión expirada. Usa /youtube para empezar de nuevo."
+        )
+        return
+
+    script = session["last_script"]
+
+    if not config.heygen_enabled:
+        await query.edit_message_text(
+            "HeyGen no está configurado.\n"
+            "Añade HEYGEN_API_KEY, HEYGEN_AVATAR_ID y HEYGEN_VOICE_ID al .env"
+        )
+        return
+
+    mode = "TEST (con marca de agua, gratuito)" if config.heygen_test_mode else "PRODUCCIÓN"
+    await query.edit_message_text(
+        f"Generando vídeo con HeyGen [{mode}]:\n"
+        f"<b>{_e(script.youtube_title or script.title)}</b>\n\n"
+        "Recibirás actualizaciones de progreso aquí.\n"
+        "El proceso tarda entre 5 y 30 minutos.",
+        parse_mode=ParseMode.HTML,
+    )
+
+    from social_automation.youtube.pipeline import run_heygen_only_pipeline
+    asyncio.create_task(
+        run_heygen_only_pipeline(script, chat_id, query.message.message_id, context.bot)
+    )
+
+
 async def cb_yt_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Cancel and clear session."""
     query = update.callback_query
@@ -427,6 +471,7 @@ def register_youtube_handlers(app) -> None:
 
     # Inline button callbacks
     app.add_handler(CallbackQueryHandler(cb_yt_generate, pattern=r"^yt_generate:"))
+    app.add_handler(CallbackQueryHandler(cb_yt_generate_only, pattern=r"^yt_generate_only:"))
     app.add_handler(CallbackQueryHandler(cb_yt_regen, pattern=r"^yt_regen:"))
     app.add_handler(CallbackQueryHandler(cb_yt_cancel, pattern=r"^yt_cancel:"))
 
