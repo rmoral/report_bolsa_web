@@ -118,6 +118,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "/news — Ver noticias del último proceso\n"
         "/stats — Estadísticas de publicación\n"
         "/status — Estado del sistema y plataformas\n"
+        "/blog — Generar artículo para el blog\n"
         "/help — Ayuda completa"
     )
     await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
@@ -138,7 +139,8 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "`/published` — Ver tweets publicados recientemente\n"
         "`/news [n]` — Ver las últimas n noticias (default 10)\n"
         "`/stats` — Estadísticas de los últimos 7 días\n"
-        "`/status` — Estado de conexión de plataformas\n\n"
+        "`/status` — Estado de conexión de plataformas\n"
+        "`/blog` — Generar artículo SEO para el blog desde tweets\n\n"
         "*Aprobar publicaciones:*\n"
         "Cuando el bot te mande una publicación, usa los botones:\n"
         "✅ *Aprobar* — Publicar inmediatamente\n"
@@ -527,3 +529,7 @@ def register_handlers(app) -> None:
     # Approval callbacks (outside conversation)
     app.add_handler(CallbackQueryHandler(cb_approve, pattern=r"^approve:\d+$"))
     app.add_handler(CallbackQueryHandler(cb_reject, pattern=r"^reject:\d+$"))
+
+    # Blog generation handlers
+    from social_automation.blog.handlers import register_blog_handlers
+    register_blog_handlers(app)

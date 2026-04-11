@@ -100,6 +100,29 @@ async def generate_images_for_posts(posts: list[Post]) -> None:
             post.image_path = result
 
 
+async def generate_image_from_prompt(prompt: str, filename_stem: str) -> Optional[str]:
+    """
+    Generate an image from a raw prompt and save it.
+    filename_stem: used for the file name (e.g. 'blog_12345').
+    Returns the local file path, or None on failure.
+    """
+    if not config.generate_images:
+        return None
+    if not prompt or not prompt.strip():
+        return None
+
+    image_path = IMAGES_DIR / f"{filename_stem}.png"
+    try:
+        loop = asyncio.get_event_loop()
+        image_url = await loop.run_in_executor(None, _call_dalle_sync, prompt)
+        await _download_image(image_url, image_path)
+        logger.info("Generated image: %s", image_path)
+        return str(image_path)
+    except Exception as exc:
+        logger.error("Image generation failed (%s): %s", filename_stem, exc)
+        return None
+
+
 def cleanup_old_images(days: int = 7) -> None:
     """Delete images older than N days to avoid disk buildup."""
     import time

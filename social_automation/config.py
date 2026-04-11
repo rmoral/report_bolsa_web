@@ -64,6 +64,11 @@ class Config:
         default_factory=lambda: os.getenv("WEBSITE_URL", "https://earlymarketreports.com")
     )
 
+    # Payload CMS
+    payload_api_url: str = field(default_factory=lambda: os.getenv("PAYLOAD_API_URL", ""))
+    payload_email: str = field(default_factory=lambda: os.getenv("PAYLOAD_EMAIL", ""))
+    payload_password: str = field(default_factory=lambda: os.getenv("PAYLOAD_PASSWORD", ""))
+
     # Database
     database_url: str = field(
         default_factory=lambda: os.getenv(
@@ -89,6 +94,10 @@ class Config:
     @property
     def newsapi_enabled(self) -> bool:
         return bool(self.newsapi_key)
+
+    @property
+    def payload_enabled(self) -> bool:
+        return bool(self.payload_api_url and self.payload_email and self.payload_password)
 
 
 # Singleton
