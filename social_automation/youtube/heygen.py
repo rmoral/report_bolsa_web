@@ -147,6 +147,7 @@ def _build_clip_input(text: str) -> dict:
 async def create_video(clips: list[SceneClip]) -> str:
     """
     Submit a video generation job to HeyGen.
+    Tries multiple known endpoint paths in case the API version has changed.
     Returns the video_id to be used for polling.
     """
     video_inputs = [_build_clip_input(c.text) for c in clips]
@@ -157,21 +158,54 @@ async def create_video(clips: list[SceneClip]) -> str:
         "test": config.heygen_test_mode,
     }
 
+    # HeyGen has changed endpoint paths across versions — try each in order
+    endpoints = [
+        "/v2/video/generate",
+        "/v1/video.generate",
+        "/v2/video.generate",
+    ]
+
     async with httpx.AsyncClient(timeout=30) as client:
-        resp = await client.post(
-            f"{HEYGEN_BASE}/v2/video/generate",
-            headers=_headers(),
-            json=payload,
-        )
-        resp.raise_for_status()
-        data = resp.json()
+        last_error = None
+        for endpoint in endpoints:
+            try:
+                resp = await client.post(
+                    f"{HEYGEN_BASE}{endpoint}",
+                    headers=_headers(),
+                    json=payload,
+                )
+                if resp.status_code == 404:
+                    logger.debug("HeyGen endpoint %s → 404, trying next", endpoint)
+                    last_error = f"404 on {endpoint}"
+                    continue
+                resp.raise_for_status()
+                data = resp.json()
+                video_id = (
+                    data.get("data", {}).get("video_id")
+                    or data.get("video_id", "")
+                )
+                if not video_id:
+                    raise ValueError(f"HeyGen returned no video_id. Response: {data}")
+                logger.info(
+                    "HeyGen video job created via %s: video_id=%s (%d clips)",
+                    endpoint, video_id, len(clips),
+                )
+                return video_id
+            except (httpx.HTTPStatusError, ValueError):
+                raise
+            except Exception as exc:
+                last_error = str(exc)
+                continue
 
-    video_id = data.get("data", {}).get("video_id") or data.get("video_id", "")
-    if not video_id:
-        raise ValueError(f"HeyGen did not return a video_id. Response: {data}")
-
-    logger.info("HeyGen video job created: video_id=%s (%d clips)", video_id, len(clips))
-    return video_id
+    raise RuntimeError(
+        f"No HeyGen video generation endpoint responded successfully.\n"
+        f"Last error: {last_error}\n\n"
+        "Possible causes:\n"
+        "• Your HeyGen plan may not include API video generation\n"
+        "  (requires Creator plan or higher)\n"
+        "• Check your HEYGEN_API_KEY in .env\n"
+        "• Visit app.heygen.com → Settings → API to verify access"
+    )
 
 
 # ── Status polling ────────────────────────────────────────────────────────────
