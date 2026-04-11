@@ -1,6 +1,13 @@
 """
 Converts structured text content into Payload CMS Lexical JSON format.
 Payload uses @payloadcms/richtext-lexical and expects a specific node tree.
+
+Node spec (Payload CMS v3 / Lexical 0.14+):
+  - All container nodes (paragraph, heading, listitem, list) require:
+      textFormat: 0   — bitmask, 0 = no formatting
+      textStyle: ""   — inline style string
+  - Text nodes use format as integer bitmask (0 = plain, 1 = bold, 2 = italic…)
+  - Missing textFormat causes silent validation failure on the whole richText field.
 """
 from typing import Any
 
@@ -23,6 +30,8 @@ def _paragraph(text: str) -> dict:
         "direction": "ltr",
         "format": "",
         "indent": 0,
+        "textFormat": 0,
+        "textStyle": "",
         "type": "paragraph",
         "version": 1,
     }
@@ -35,32 +44,38 @@ def _heading(text: str, tag: str = "h2") -> dict:
         "format": "",
         "indent": 0,
         "tag": tag,
+        "textFormat": 0,
+        "textStyle": "",
         "type": "heading",
         "version": 1,
     }
 
 
-def _list_item(text: str) -> dict:
+def _list_item(text: str, value: int = 1) -> dict:
     return {
         "children": [_text_node(text)],
         "direction": "ltr",
         "format": "",
         "indent": 0,
+        "textFormat": 0,
+        "textStyle": "",
         "type": "listitem",
-        "value": 1,
+        "value": value,
         "version": 1,
     }
 
 
 def _unordered_list(items: list[str]) -> dict:
     return {
-        "children": [_list_item(i) for i in items],
+        "children": [_list_item(item, i + 1) for i, item in enumerate(items)],
         "direction": "ltr",
         "format": "",
         "indent": 0,
         "listType": "bullet",
         "start": 1,
         "tag": "ul",
+        "textFormat": 0,
+        "textStyle": "",
         "type": "list",
         "version": 1,
     }
@@ -68,9 +83,9 @@ def _unordered_list(items: list[str]) -> dict:
 
 def markdown_to_lexical(text: str) -> dict[str, Any]:
     """
-    Convert simple markdown-like text to Payload Lexical JSON.
+    Convert simple markdown-like text to Payload CMS Lexical JSON.
     Supports: # H1, ## H2, ### H3, blank-line-separated paragraphs,
-    and - bullet list items.
+    and - / * bullet list items.
     """
     children = []
     lines = text.strip().split("\n")
@@ -85,7 +100,6 @@ def markdown_to_lexical(text: str) -> dict[str, Any]:
     while i < len(lines):
         line = lines[i].rstrip()
 
-        # Heading levels
         if line.startswith("### "):
             flush_bullets()
             children.append(_heading(line[4:].strip(), "h3"))
@@ -95,17 +109,11 @@ def markdown_to_lexical(text: str) -> dict[str, Any]:
         elif line.startswith("# "):
             flush_bullets()
             children.append(_heading(line[2:].strip(), "h1"))
-
-        # Bullet list items
         elif line.startswith("- ") or line.startswith("* "):
             bullet_buffer.append(line[2:].strip())
-
-        # Non-empty line = paragraph
         elif line.strip():
             flush_bullets()
             children.append(_paragraph(line.strip()))
-
-        # Empty line (paragraph separator) — flush bullets
         else:
             flush_bullets()
 
