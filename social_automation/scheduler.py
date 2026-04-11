@@ -1,5 +1,13 @@
 """
-APScheduler configuration: runs the daily pipeline at the configured time.
+APScheduler configuration.
+
+Registers two daily pipeline jobs:
+  • Morning  — DAILY_RUN_HOUR:DAILY_RUN_MINUTE       (default 09:00)
+  • Afternoon — AFTERNOON_RUN_HOUR:AFTERNOON_RUN_MINUTE (default 14:00)
+
+Set AFTERNOON_RUN_HOUR=-1 in .env to disable the afternoon job.
+Both jobs call run_pipeline() which fetches news, generates posts and
+sends them to Telegram for approval.
 """
 import asyncio
 import logging
@@ -19,6 +27,7 @@ def create_scheduler() -> AsyncIOScheduler:
     tz = pytz.timezone(config.timezone)
     scheduler = AsyncIOScheduler(timezone=tz)
 
+    # ── Morning run ──────────────────────────────────────────────────────────
     scheduler.add_job(
         _scheduled_pipeline,
         trigger=CronTrigger(
@@ -26,19 +35,39 @@ def create_scheduler() -> AsyncIOScheduler:
             minute=config.daily_run_minute,
             timezone=tz,
         ),
-        id="daily_pipeline",
-        name="Daily social media pipeline",
+        id="morning_pipeline",
+        name="Morning social media pipeline",
         replace_existing=True,
-        misfire_grace_time=3600,  # Allow up to 1h late start
-        coalesce=True,            # Skip missed runs if multiple pile up
+        misfire_grace_time=3600,
+        coalesce=True,
+    )
+    logger.info(
+        "Scheduler: morning pipeline at %02d:%02d %s",
+        config.daily_run_hour, config.daily_run_minute, config.timezone,
     )
 
-    logger.info(
-        "Scheduler configured: daily at %02d:%02d %s",
-        config.daily_run_hour,
-        config.daily_run_minute,
-        config.timezone,
-    )
+    # ── Afternoon run (optional) ─────────────────────────────────────────────
+    if config.afternoon_run_hour >= 0:
+        scheduler.add_job(
+            _scheduled_pipeline,
+            trigger=CronTrigger(
+                hour=config.afternoon_run_hour,
+                minute=config.afternoon_run_minute,
+                timezone=tz,
+            ),
+            id="afternoon_pipeline",
+            name="Afternoon social media pipeline",
+            replace_existing=True,
+            misfire_grace_time=3600,
+            coalesce=True,
+        )
+        logger.info(
+            "Scheduler: afternoon pipeline at %02d:%02d %s",
+            config.afternoon_run_hour, config.afternoon_run_minute, config.timezone,
+        )
+    else:
+        logger.info("Scheduler: afternoon pipeline disabled (AFTERNOON_RUN_HOUR=-1)")
+
     return scheduler
 
 

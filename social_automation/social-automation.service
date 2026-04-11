@@ -1,21 +1,31 @@
 [Unit]
 Description=Social Media Automation System
+Documentation=https://github.com/rmoral/report_bolsa_web
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-User=www-data
-WorkingDirectory=/opt/report_bolsa_web/social_automation
-ExecStart=/opt/report_bolsa_web/social_automation/.venv/bin/python main.py
-Restart=on-failure
-RestartSec=30
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/report_bolsa_web/social_automation
+ExecStart=/home/ubuntu/report_bolsa_web/social_automation/venv/bin/python main.py
+Restart=always
+RestartSec=15
+# Limit restart loops: max 5 restarts in 5 minutes
+StartLimitBurst=5
+StartLimitIntervalSec=300
+
+# Environment
+EnvironmentFile=/home/ubuntu/report_bolsa_web/social_automation/.env
+
+# Logging — readable with: journalctl -u social-automation -f
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=social-automation
 
-# Environment file path (adjust to your server)
-EnvironmentFile=/opt/report_bolsa_web/social_automation/.env
+# Give the process time to shut down gracefully (Telegram bot needs ~10 s)
+TimeoutStopSec=30
 
 [Install]
 WantedBy=multi-user.target

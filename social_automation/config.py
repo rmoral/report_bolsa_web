@@ -49,9 +49,12 @@ class Config:
     instagram_username: str = field(default_factory=lambda: os.getenv("INSTAGRAM_USERNAME", ""))
     instagram_password: str = field(default_factory=lambda: os.getenv("INSTAGRAM_PASSWORD", ""))
 
-    # Scheduling
-    daily_run_hour: int = field(default_factory=lambda: int(os.getenv("DAILY_RUN_HOUR", "7")))
+    # Scheduling — morning run
+    daily_run_hour: int = field(default_factory=lambda: int(os.getenv("DAILY_RUN_HOUR", "9")))
     daily_run_minute: int = field(default_factory=lambda: int(os.getenv("DAILY_RUN_MINUTE", "0")))
+    # Scheduling — afternoon run (set AFTERNOON_RUN_HOUR=-1 to disable)
+    afternoon_run_hour: int = field(default_factory=lambda: int(os.getenv("AFTERNOON_RUN_HOUR", "14")))
+    afternoon_run_minute: int = field(default_factory=lambda: int(os.getenv("AFTERNOON_RUN_MINUTE", "0")))
     timezone: str = field(default_factory=lambda: os.getenv("TIMEZONE", "Europe/Madrid"))
 
     # Content
