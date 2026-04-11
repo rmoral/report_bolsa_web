@@ -9,7 +9,7 @@ Type=simple
 User=ubuntu
 Group=ubuntu
 WorkingDirectory=/home/ubuntu/web/report_bolsa_web/social_automation
-ExecStart=/home/ubuntu/web/report_bolsa_web/.venv/bin/python main.py
+ExecStart=/home/ubuntu/web/report_bolsa_web/social_automation/.venv/bin/python main.py
 Restart=always
 RestartSec=15
 # Limit restart loops: max 5 restarts in 5 minutes
