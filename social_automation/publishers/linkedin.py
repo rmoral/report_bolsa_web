@@ -36,7 +36,8 @@ def _build_ugc_payload(post: Post, image_asset: Optional[str] = None) -> dict:
             }
         ]
 
-    content_text = post.full_content[:3000]
+    url = config.website_url
+    content_text = f"{post.full_content}\n\n{url}"[:3000]
 
     payload: dict = {
         "author": config.linkedin_person_urn,

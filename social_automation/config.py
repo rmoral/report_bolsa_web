@@ -60,6 +60,9 @@ class Config:
     auto_publish: bool = field(
         default_factory=lambda: os.getenv("AUTO_PUBLISH", "false").lower() == "true"
     )
+    website_url: str = field(
+        default_factory=lambda: os.getenv("WEBSITE_URL", "https://earlymarketreports.com")
+    )
 
     # Database
     database_url: str = field(

@@ -57,8 +57,11 @@ def publish(post: Post) -> str:
         except Exception as exc:
             logger.warning("Image upload failed, tweeting without image: %s", exc)
 
-    # Combine text + hashtags, respect 280 char limit
-    tweet_text = post.full_content[:280]
+    # Twitter counts any URL as 23 chars (t.co shortening).
+    # Reserve space: 280 - 23 (URL) - 1 (space) = 256 chars for text+hashtags.
+    url = config.website_url
+    body = post.full_content[:256]
+    tweet_text = f"{body}\n{url}"
 
     response = client.create_tweet(text=tweet_text, media_ids=media_ids)
     tweet_id = str(response.data["id"])
