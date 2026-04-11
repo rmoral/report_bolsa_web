@@ -3,6 +3,7 @@ All Telegram bot command and callback handlers.
 Provides full control over the automation pipeline via chat.
 """
 import asyncio
+import html
 import logging
 import textwrap
 import warnings
@@ -36,6 +37,13 @@ WAITING_EDIT_TEXT, CONFIRM_EDIT = range(2)
 
 # Temporary storage for edit sessions {post_id: new_content}
 _edit_sessions: dict[int, str] = {}
+
+
+# ── Helpers ─────────────────────────────────────────────────────────────────
+
+def _e(text) -> str:
+    """Escape a value for safe use in HTML Telegram messages."""
+    return html.escape(str(text))
 
 
 # ── Guard ───────────────────────────────────────────────────────────────────
@@ -163,21 +171,21 @@ async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     last_run_text = "Ninguno"
     if last_run:
         ts = last_run.started_at.strftime("%d/%m/%Y %H:%M") if last_run.started_at else "?"
-        last_run_text = f"{ts} — {last_run.status}"
+        last_run_text = f"{_e(ts)} — {_e(last_run.status)}"
 
     text = (
-        "*Estado del Sistema* ⚙️\n\n"
-        f"*Plataformas:*\n" + "\n".join(f"  {p}" for p in platforms_status) + "\n\n"
-        f"*Base de datos:*\n"
+        "<b>Estado del Sistema</b> ⚙️\n\n"
+        "<b>Plataformas:</b>\n" + "\n".join(f"  {_e(p)}" for p in platforms_status) + "\n\n"
+        "<b>Base de datos:</b>\n"
         f"  Total posts generados: {stats['total_posts']}\n"
         f"  Publicados: {stats['published']}\n"
         f"  Pendientes: {stats['pending']}\n"
         f"  Fallidos: {stats['failed']}\n"
         f"  Ejecuciones totales: {stats['total_runs']}\n\n"
-        f"*Último proceso:* {last_run_text}\n\n"
-        f"*Horario automático:* {config.daily_run_hour:02d}:{config.daily_run_minute:02d} {config.timezone}"
+        f"<b>Último proceso:</b> {last_run_text}\n\n"
+        f"<b>Horario automático:</b> {config.daily_run_hour:02d}:{config.daily_run_minute:02d} {_e(config.timezone)}"
     )
-    await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
+    await update.message.reply_text(text, parse_mode=ParseMode.HTML)
 
 
 @admin_only
@@ -228,15 +236,15 @@ async def cmd_news(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text("No hay noticias en el último proceso.")
         return
 
-    lines = [f"*Noticias del último proceso* ({runs[0].started_at.strftime('%d/%m %H:%M')})\n"]
+    lines = [f"<b>Noticias del último proceso</b> ({_e(runs[0].started_at.strftime('%d/%m %H:%M'))})\n"]
     for i, item in enumerate(news_items, 1):
         score = f"{item.impact_score:.1f}" if item.impact_score else "?"
-        title = textwrap.shorten(item.title, width=80, placeholder="…")
-        source = item.source or "?"
-        category = item.category or "?"
-        lines.append(f"{i}. [{score}] *{title}*\n   📡 {source} | 📂 {category}")
+        title = _e(textwrap.shorten(item.title, width=80, placeholder="…"))
+        source = _e(item.source or "?")
+        category = _e(item.category or "?")
+        lines.append(f"{i}. [{score}] <b>{title}</b>\n   📡 {source} | 📂 {category}")
 
-    await update.message.reply_text("\n\n".join(lines), parse_mode=ParseMode.MARKDOWN)
+    await update.message.reply_text("\n\n".join(lines), parse_mode=ParseMode.HTML)
 
 
 @admin_only
@@ -253,14 +261,14 @@ async def cmd_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
 
     text = (
-        "*Estadísticas de publicación* 📊\n\n"
-        f"*Global:*\n"
+        "<b>Estadísticas de publicación</b> 📊\n\n"
+        "<b>Global:</b>\n"
         f"  Posts publicados: {stats['published']}\n"
         f"  Posts fallidos: {stats['failed']}\n"
         f"  Ejecuciones totales: {stats['total_runs']}\n\n"
-        f"*Últimas 7 ejecuciones:*\n" + "\n".join(run_lines or ["  Sin datos"])
+        "<b>Últimas 7 ejecuciones:</b>\n" + "\n".join(run_lines or ["  Sin datos"])
     )
-    await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
+    await update.message.reply_text(text, parse_mode=ParseMode.HTML)
 
 
 @admin_only
@@ -271,16 +279,16 @@ async def cmd_published(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         await update.message.reply_text("No hay tweets publicados todavía.")
         return
 
-    lines = [f"*Tweets publicados* 𝕏 ({len(posts)} recientes)\n"]
+    lines = [f"<b>Tweets publicados 𝕏</b> ({len(posts)} recientes)\n"]
     for i, post in enumerate(posts, 1):
         ts = post.published_at.strftime("%d/%m %H:%M") if post.published_at else "?"
-        news_title = textwrap.shorten(
+        news_title = _e(textwrap.shorten(
             post.news_item.title if post.news_item else "?", width=60, placeholder="…"
-        )
-        content_preview = textwrap.shorten(post.content, width=80, placeholder="…")
-        lines.append(f"{i}. [{ts}] _{news_title}_\n   {content_preview}")
+        ))
+        content_preview = _e(textwrap.shorten(post.content, width=80, placeholder="…"))
+        lines.append(f"{i}. [{ts}] <i>{news_title}</i>\n   {content_preview}")
 
-    await update.message.reply_text("\n\n".join(lines), parse_mode=ParseMode.MARKDOWN)
+    await update.message.reply_text("\n\n".join(lines), parse_mode=ParseMode.HTML)
 
 
 # ── Secondary platform generation ───────────────────────────────────────────
