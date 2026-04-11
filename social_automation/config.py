@@ -69,9 +69,29 @@ class Config:
     payload_email: str = field(default_factory=lambda: os.getenv("PAYLOAD_EMAIL", ""))
     payload_password: str = field(default_factory=lambda: os.getenv("PAYLOAD_PASSWORD", ""))
 
-    # YouTube
+    # YouTube — channel metadata
     youtube_channel_name: str = field(
         default_factory=lambda: os.getenv("YOUTUBE_CHANNEL_NAME", "Early Market Reports")
+    )
+    youtube_client_secrets_file: str = field(
+        default_factory=lambda: os.getenv("YOUTUBE_CLIENT_SECRETS_FILE", "youtube_client_secrets.json")
+    )
+    youtube_token_file: str = field(
+        default_factory=lambda: os.getenv("YOUTUBE_TOKEN_FILE", "youtube_token.json")
+    )
+    youtube_default_privacy: str = field(
+        default_factory=lambda: os.getenv("YOUTUBE_DEFAULT_PRIVACY", "private")
+    )
+
+    # HeyGen — AI video generation
+    heygen_api_key: str = field(default_factory=lambda: os.getenv("HEYGEN_API_KEY", ""))
+    heygen_avatar_id: str = field(default_factory=lambda: os.getenv("HEYGEN_AVATAR_ID", ""))
+    heygen_voice_id: str = field(default_factory=lambda: os.getenv("HEYGEN_VOICE_ID", ""))
+    heygen_background_color: str = field(
+        default_factory=lambda: os.getenv("HEYGEN_BACKGROUND_COLOR", "#1a1a2e")
+    )
+    heygen_test_mode: bool = field(
+        default_factory=lambda: os.getenv("HEYGEN_TEST_MODE", "true").lower() == "true"
     )
 
     # Database
@@ -103,6 +123,15 @@ class Config:
     @property
     def payload_enabled(self) -> bool:
         return bool(self.payload_api_url and self.payload_email and self.payload_password)
+
+    @property
+    def heygen_enabled(self) -> bool:
+        return bool(self.heygen_api_key and self.heygen_avatar_id and self.heygen_voice_id)
+
+    @property
+    def youtube_enabled(self) -> bool:
+        from pathlib import Path
+        return Path(self.youtube_token_file).exists()
 
 
 # Singleton

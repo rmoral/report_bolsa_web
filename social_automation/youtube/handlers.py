@@ -61,13 +61,21 @@ def _week_label() -> str:
     )
 
 
-def _regen_keyboard(chat_id: int) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton("Regenerar guion", callback_data=f"yt_regen:{chat_id}"),
-            InlineKeyboardButton("Cancelar", callback_data=f"yt_cancel:{chat_id}"),
-        ]
+def _script_keyboard(chat_id: int) -> InlineKeyboardMarkup:
+    """Keyboard shown after the script is generated."""
+    rows = []
+    if config.heygen_enabled and config.youtube_enabled:
+        rows.append([
+            InlineKeyboardButton(
+                "Generar y subir a YouTube",
+                callback_data=f"yt_generate:{chat_id}",
+            )
+        ])
+    rows.append([
+        InlineKeyboardButton("Regenerar guion", callback_data=f"yt_regen:{chat_id}"),
+        InlineKeyboardButton("Cancelar", callback_data=f"yt_cancel:{chat_id}"),
     ])
+    return InlineKeyboardMarkup(rows)
 
 
 async def _get_weekly_posts(days: int = 7) -> list[Post]:
@@ -236,7 +244,7 @@ async def _generate_and_send_script(
             message_id=progress_msg_id,
             text=summary,
             parse_mode=ParseMode.HTML,
-            reply_markup=_regen_keyboard(chat_id),
+            reply_markup=_script_keyboard(chat_id),
         )
 
         # --- Send full script as .txt document ---
@@ -298,6 +306,48 @@ async def cb_yt_regen(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     )
 
 
+async def cb_yt_generate(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Start the HeyGen + YouTube upload pipeline."""
+    query = update.callback_query
+    await query.answer()
+    chat_id = update.effective_chat.id
+    session = _yt_sessions.get(chat_id)
+
+    if not session or not session.get("last_script"):
+        await query.edit_message_text(
+            "Sesión expirada o guion no disponible. Usa /youtube para empezar de nuevo."
+        )
+        return
+
+    script = session["last_script"]
+
+    if not config.heygen_enabled:
+        await query.edit_message_text(
+            "HeyGen no está configurado.\n"
+            "Añade HEYGEN_API_KEY, HEYGEN_AVATAR_ID y HEYGEN_VOICE_ID al .env"
+        )
+        return
+
+    if not config.youtube_enabled:
+        await query.edit_message_text(
+            "YouTube no está autorizado.\n"
+            "Ejecuta: python social_automation/youtube/setup_oauth.py"
+        )
+        return
+
+    await query.edit_message_text(
+        f"Iniciando pipeline de vídeo:\n<b>{_e(script.youtube_title or script.title)}</b>\n\n"
+        "Las actualizaciones de progreso aparecerán aquí.\n"
+        "El proceso tarda entre 10 y 35 minutos.",
+        parse_mode=ParseMode.HTML,
+    )
+
+    from social_automation.youtube.pipeline import run_video_pipeline
+    asyncio.create_task(
+        run_video_pipeline(script, chat_id, query.message.message_id, context.bot)
+    )
+
+
 async def cb_yt_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Cancel and clear session."""
     query = update.callback_query
@@ -305,6 +355,52 @@ async def cb_yt_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     chat_id = update.effective_chat.id
     _yt_sessions.pop(chat_id, None)
     await query.edit_message_text("Generación de guion cancelada.")
+
+
+@_admin_only
+async def cmd_yt_avatars(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """List available HeyGen avatars."""
+    if not config.heygen_enabled:
+        await update.message.reply_text("HeyGen no está configurado (falta HEYGEN_API_KEY).")
+        return
+    try:
+        from social_automation.youtube.heygen import list_avatars
+        avatars = await list_avatars()
+        if not avatars:
+            await update.message.reply_text("No se encontraron avatares en tu cuenta HeyGen.")
+            return
+        lines = ["<b>Avatares HeyGen disponibles</b>\n"]
+        for av in avatars[:20]:
+            av_id = _e(av.get("avatar_id") or av.get("id", "?"))
+            name = _e(av.get("avatar_name") or av.get("name", "?"))
+            lines.append(f"• <code>{av_id}</code> — {name}")
+        await update.message.reply_text("\n".join(lines), parse_mode=ParseMode.HTML)
+    except Exception as exc:
+        await update.message.reply_text(f"Error obteniendo avatares: {_e(str(exc))}", parse_mode=ParseMode.HTML)
+
+
+@_admin_only
+async def cmd_yt_voices(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """List available HeyGen voices filtered to English."""
+    if not config.heygen_enabled:
+        await update.message.reply_text("HeyGen no está configurado (falta HEYGEN_API_KEY).")
+        return
+    try:
+        from social_automation.youtube.heygen import list_voices
+        voices = await list_voices()
+        # Filter English voices
+        en_voices = [v for v in voices if str(v.get("language", "")).lower().startswith("en")][:20]
+        if not en_voices:
+            en_voices = voices[:20]
+        lines = ["<b>Voces HeyGen (inglés)</b>\n"]
+        for v in en_voices:
+            v_id = _e(v.get("voice_id") or v.get("id", "?"))
+            name = _e(v.get("display_name") or v.get("name", "?"))
+            gender = _e(v.get("gender", ""))
+            lines.append(f"• <code>{v_id}</code> — {name} {gender}")
+        await update.message.reply_text("\n".join(lines), parse_mode=ParseMode.HTML)
+    except Exception as exc:
+        await update.message.reply_text(f"Error obteniendo voces: {_e(str(exc))}", parse_mode=ParseMode.HTML)
 
 
 async def yt_cmd_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -329,5 +425,11 @@ def register_youtube_handlers(app) -> None:
     )
     app.add_handler(yt_conv)
 
+    # Inline button callbacks
+    app.add_handler(CallbackQueryHandler(cb_yt_generate, pattern=r"^yt_generate:"))
     app.add_handler(CallbackQueryHandler(cb_yt_regen, pattern=r"^yt_regen:"))
     app.add_handler(CallbackQueryHandler(cb_yt_cancel, pattern=r"^yt_cancel:"))
+
+    # Utility commands
+    app.add_handler(CommandHandler("yt_avatars", cmd_yt_avatars))
+    app.add_handler(CommandHandler("yt_voices", cmd_yt_voices))
