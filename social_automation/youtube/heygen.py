@@ -247,16 +247,50 @@ async def download_video(url: str, filename_stem: str) -> Path:
 # ── Convenience helpers ────────────────────────────────────────────────────────
 
 async def list_avatars() -> list[dict]:
-    """Return available HeyGen avatars for the account."""
+    """
+    Return available HeyGen avatars. Tries v2 first, falls back to v1.
+    """
     async with httpx.AsyncClient(timeout=15) as client:
-        resp = await client.get(f"{HEYGEN_BASE}/v1/avatar.list", headers=_headers())
-        resp.raise_for_status()
-    return resp.json().get("data", {}).get("avatars", [])
+        # Try v2 endpoint first (current HeyGen API)
+        for endpoint, path in [
+            ("v2", "/v2/avatars"),
+            ("v1", "/v1/avatar.list"),
+        ]:
+            try:
+                resp = await client.get(f"{HEYGEN_BASE}{path}", headers=_headers())
+                if resp.status_code == 200:
+                    data = resp.json()
+                    # v2 returns {"data": {"avatars": [...]}}
+                    # v1 returns {"data": {"avatars": [...]}}
+                    avatars = (
+                        data.get("data", {}).get("avatars")
+                        or data.get("avatars")
+                        or data.get("data", [])
+                    )
+                    if isinstance(avatars, list):
+                        return avatars
+            except Exception:
+                continue
+    return []
 
 
 async def list_voices() -> list[dict]:
-    """Return available HeyGen voices."""
+    """
+    Return available HeyGen voices. Tries v2 first, falls back to v1.
+    """
     async with httpx.AsyncClient(timeout=15) as client:
-        resp = await client.get(f"{HEYGEN_BASE}/v1/voice.list", headers=_headers())
-        resp.raise_for_status()
-    return resp.json().get("data", {}).get("voices", [])
+        for path in ["/v2/voices", "/v1/voice.list"]:
+            try:
+                resp = await client.get(f"{HEYGEN_BASE}{path}", headers=_headers())
+                if resp.status_code == 200:
+                    data = resp.json()
+                    voices = (
+                        data.get("data", {}).get("voices")
+                        or data.get("voices")
+                        or data.get("data", [])
+                    )
+                    if isinstance(voices, list):
+                        return voices
+            except Exception:
+                continue
+    return []
