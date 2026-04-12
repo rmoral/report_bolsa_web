@@ -67,6 +67,13 @@ class Config:
         default_factory=lambda: os.getenv("WEBSITE_URL", "https://earlymarketreports.com")
     )
 
+    # Image generation provider: "dalle" | "imagen3"
+    image_provider: str = field(
+        default_factory=lambda: os.getenv("IMAGE_PROVIDER", "dalle").lower()
+    )
+    # Google AI API key (for Imagen 3 / Nano Banana) — get at aistudio.google.com
+    google_ai_api_key: str = field(default_factory=lambda: os.getenv("GOOGLE_AI_API_KEY", ""))
+
     # Payload CMS
     payload_api_url: str = field(default_factory=lambda: os.getenv("PAYLOAD_API_URL", ""))
     payload_email: str = field(default_factory=lambda: os.getenv("PAYLOAD_EMAIL", ""))
