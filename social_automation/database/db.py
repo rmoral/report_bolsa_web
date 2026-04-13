@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import AsyncGenerator, List, Optional
 
-from sqlalchemy import select, update
+from sqlalchemy import select, text, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import selectinload
 
@@ -22,10 +22,56 @@ async_session_factory = async_sessionmaker(engine, expire_on_commit=False)
 
 
 async def init_db() -> None:
-    """Create all tables if they don't exist."""
+    """Create all tables if they don't exist, then run any pending migrations."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    await _migrate_news_item_id_nullable()
     logger.info("Database initialized")
+
+
+async def _migrate_news_item_id_nullable() -> None:
+    """
+    SQLite migration: make posts.news_item_id nullable.
+
+    SQLite does not support ALTER COLUMN, so we use the rename-recreate-copy pattern.
+    This runs at every startup but is a no-op if the column is already nullable.
+    """
+    async with engine.begin() as conn:
+        # PRAGMA table_info returns rows: (cid, name, type, notnull, dflt_value, pk)
+        result = await conn.execute(text("PRAGMA table_info(posts)"))
+        columns = result.fetchall()
+        news_item_col = next((c for c in columns if c[1] == "news_item_id"), None)
+        if news_item_col is None or news_item_col[3] == 0:
+            # Column doesn't exist yet or is already nullable — nothing to do
+            return
+
+        logger.info("Migrating DB: making posts.news_item_id nullable...")
+        await conn.execute(text("PRAGMA foreign_keys=OFF"))
+        await conn.execute(text("""
+            CREATE TABLE posts_new (
+                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                news_item_id INTEGER REFERENCES news_items (id),
+                platform VARCHAR(9) NOT NULL,
+                content TEXT NOT NULL,
+                hashtags TEXT,
+                image_prompt TEXT,
+                image_path VARCHAR(500),
+                status VARCHAR(12) NOT NULL,
+                telegram_message_id INTEGER,
+                created_at DATETIME,
+                approved_at DATETIME,
+                published_at DATETIME,
+                platform_post_id VARCHAR(200),
+                error_message TEXT,
+                run_id VARCHAR(50)
+            )
+        """))
+        await conn.execute(text("INSERT INTO posts_new SELECT * FROM posts"))
+        await conn.execute(text("DROP TABLE posts"))
+        await conn.execute(text("ALTER TABLE posts_new RENAME TO posts"))
+        await conn.execute(text("CREATE INDEX IF NOT EXISTS ix_posts_run_id ON posts (run_id)"))
+        await conn.execute(text("PRAGMA foreign_keys=ON"))
+        logger.info("Migration complete: posts.news_item_id is now nullable")
 
 
 @asynccontextmanager
