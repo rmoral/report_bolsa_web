@@ -118,6 +118,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "`/pending` — Publicaciones pendientes de aprobación\n"
         "`/news` — Noticias del último proceso\n\n"
         "*Contenido bajo demanda:*\n"
+        "`/watchlist` — Watchlist diario de sesión para X\n"
         "`/educational` — Contenido formativo (X + LinkedIn + blog)\n"
         "`/blog` — Artículo de blog desde tweets publicados\n"
         "`/youtube` — Guion de vídeo semanal\n\n"
@@ -147,6 +148,10 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "  → Botón Descartar todos para limpiar la cola de golpe\n"
         "`/published` — Ver tweets publicados recientemente\n\n"
 
+        "*Watchlist de sesión:*\n"
+        "`/watchlist NVDA AAPL META MSFT TSLA` — Genera tweet de watchlist\n"
+        "  → Obtiene precio y % variación en tiempo real de cada ticker\n"
+        "  → GPT redacta el tweet y lo envía para aprobación\n\n"
         "*Contenido formativo:*\n"
         "`/educational` — Muestra 15 temas sugeridos para elegir\n"
         "`/educational [tema]` — Genera directamente sobre ese tema\n"
@@ -590,3 +595,7 @@ def register_handlers(app) -> None:
     # Educational content handlers
     from social_automation.tg_bot.educational_handlers import register_educational_handlers
     register_educational_handlers(app)
+
+    # Watchlist handlers
+    from social_automation.tg_bot.watchlist_handlers import register_watchlist_handlers
+    register_watchlist_handlers(app)

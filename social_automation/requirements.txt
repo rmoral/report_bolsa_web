@@ -43,3 +43,6 @@ google-auth-oauthlib>=1.2.0
 
 # Google Imagen 3 / Nano Banana (image generation via Gemini API)
 google-genai>=1.0.0
+
+# Market data for watchlist feature
+yfinance>=0.2.40
