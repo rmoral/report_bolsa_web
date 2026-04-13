@@ -99,8 +99,52 @@ def _parse_response(raw: str) -> BlogPost:
     )
 
 
+def _build_prompt_from_topic(topic: str) -> str:
+    return f"""Write a complete SEO-optimized educational blog article for earlymarketreports.com \
+about the following financial/market topic.
+
+TOPIC: {topic}
+
+Write an in-depth, informative piece that educates the reader from first principles.
+Include historical context, real-world examples, and practical implications for investors.
+Do not write about recent news — focus on the concept, how it works, and why it matters.
+
+Return your response in this EXACT format — do not add extra keys or change the labels:
+
+TITLE: <SEO title, 55-65 characters, includes focus keyword>
+SLUG: <URL-friendly slug, lowercase, hyphens only, 4-6 words>
+META_DESCRIPTION: <155 characters max, includes keyword, compelling>
+FOCUS_KEYWORD: <primary SEO keyword phrase, 2-4 words>
+IMAGE_PROMPT: <photorealistic editorial image description for DALL-E, no text>
+CONTENT:
+<Full article in Markdown. Use ## for section headings, ### for subsections. \
+Plain paragraphs only — no bullet lists in the main body. \
+Minimum 5 sections plus introduction and conclusion. \
+900-1200 words total.>"""
+
+
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=2, min=4, max=30))
-def generate_blog_post(posts: list[Post]) -> BlogPost:
+def generate_blog_post_from_topic(topic: str) -> BlogPost:
+    """
+    Generate a standalone educational blog post from a topic string.
+    Does not require any source social media posts.
+    """
+    response = _client.chat.completions.create(
+        model=config.openai_model,
+        max_tokens=2500,
+        messages=[
+            {"role": "system", "content": BLOG_SYSTEM_PROMPT},
+            {"role": "user", "content": _build_prompt_from_topic(topic)},
+        ],
+    )
+    raw = response.choices[0].message.content or ""
+    post = _parse_response(raw)
+
+    if not post.title or not post.content_markdown:
+        raise ValueError("Blog post generation returned empty title or content")
+
+    logger.info("Generated educational blog post: %r (keyword: %s)", post.title, post.focus_keyword)
+    return post
     """
     Generate a blog post from 2-3 published social posts.
     Returns a BlogPost dataclass with all fields populated.
