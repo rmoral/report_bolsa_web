@@ -1,6 +1,6 @@
 """
 Publishes SEO blog posts to Payload CMS via REST API.
-Handles JWT authentication, optional featured image upload, and post creation.
+Handles JWT authentication, optional featured image upload, and bilingual publishing.
 
 Field mapping (from earlymarketreports/src/payload.config.ts):
   title         → text, required, localized
@@ -11,7 +11,9 @@ Field mapping (from earlymarketreports/src/payload.config.ts):
   publishedAt   → date
   content       → richText (Lexical), localized
 
-Note: title/slug/content/excerpt are localized → always pass ?locale=en
+Publish flow:
+  1. POST /api/posts?locale=en  → creates document with English content → returns post_id
+  2. PATCH /api/posts/{id}?locale=es → adds Spanish translation to same document
 """
 import logging
 import mimetypes
@@ -40,9 +42,8 @@ async def _get_token(client: httpx.AsyncClient) -> str:
     if _TOKEN_CACHE:
         return _TOKEN_CACHE
 
-    url = f"{_base()}/api/users/login"
     resp = await client.post(
-        url,
+        f"{_base()}/api/users/login",
         json={"email": config.payload_email, "password": config.payload_password},
         timeout=15,
     )
@@ -56,7 +57,7 @@ async def _get_token(client: httpx.AsyncClient) -> str:
 
 
 def _auth_headers(token: str) -> dict:
-    return {"Authorization": f"Bearer {token}"}
+    return {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
 
 async def _upload_image(
@@ -73,13 +74,12 @@ async def _upload_image(
         with open(path, "rb") as f:
             resp = await client.post(
                 f"{_base()}/api/media",
-                headers=_auth_headers(token),
+                headers={"Authorization": f"Bearer {token}"},
                 files={"file": (path.name, f, mime)},
                 timeout=60,
             )
         resp.raise_for_status()
-        doc = resp.json().get("doc", {})
-        media_id = doc.get("id")
+        media_id = resp.json().get("doc", {}).get("id")
         if media_id:
             logger.info("Uploaded featured image: id=%s", media_id)
         return media_id
@@ -88,33 +88,40 @@ async def _upload_image(
         return None
 
 
-def _build_payload_post(
-    blog: BlogPost,
-    lexical_content: dict,
-    media_id: Optional[str],
-) -> dict:
-    """
-    Assemble the Payload CMS post document using the exact field names
-    defined in earlymarketreports/src/payload.config.ts.
-    """
+def _build_en_payload(blog: BlogPost, lexical_en: dict, media_id: Optional[str]) -> dict:
     doc: dict = {
         "title": blog.title,
         "slug": blog.slug,
-        "excerpt": blog.meta_description,   # maps to the 'excerpt' textarea field
-        "status": "published",              # custom select field: "draft" | "published"
+        "excerpt": blog.meta_description,
+        "status": "published",
         "publishedAt": datetime.now(timezone.utc).isoformat(),
-        "content": lexical_content,         # richText (Lexical), localized
+        "content": lexical_en,
     }
     if media_id:
         doc["featuredImage"] = media_id
     return doc
 
 
+def _build_es_payload(blog: BlogPost, lexical_es: dict) -> dict:
+    """Spanish locale payload — only localized fields; status/publishedAt already set."""
+    return {
+        "title": blog.title_es or blog.title,
+        "slug": blog.slug,                      # keep same slug across locales
+        "excerpt": blog.meta_description_es or blog.meta_description,
+        "content": lexical_es,
+    }
+
+
 async def publish_blog_post(
     blog: BlogPost, image_path: Optional[str] = None
 ) -> str:
     """
-    Publish a BlogPost to Payload CMS.
+    Publish a bilingual BlogPost to Payload CMS.
+
+    Steps:
+      1. POST ?locale=en  → create document with English content
+      2. PATCH ?locale=es → add Spanish translation to same document
+
     Returns the slug of the created post.
     """
     if not config.payload_enabled:
@@ -123,53 +130,66 @@ async def publish_blog_post(
             "(PAYLOAD_API_URL / PAYLOAD_EMAIL / PAYLOAD_PASSWORD missing)"
         )
 
-    lexical_content = markdown_to_lexical(blog.content_markdown)
+    lexical_en = markdown_to_lexical(blog.content_markdown)
 
     async with httpx.AsyncClient() as client:
         token = await _get_token(client)
+        headers = _auth_headers(token)
 
+        # ── Step 1: upload image (non-localized) ────────────────────────────
         media_id: Optional[str] = None
         if image_path:
             media_id = await _upload_image(client, token, image_path)
 
-        payload = _build_payload_post(blog, lexical_content, media_id)
-
-        logger.debug(
-            "Sending to Payload CMS: title=%r slug=%r status=%s content_chars=%d",
-            payload.get("title"),
-            payload.get("slug"),
-            payload.get("status"),
-            len(blog.content_markdown),
-        )
+        # ── Step 2: create document with English content ─────────────────────
+        en_payload = _build_en_payload(blog, lexical_en, media_id)
+        logger.debug("POST to Payload CMS: title=%r slug=%r", en_payload.get("title"), en_payload.get("slug"))
 
         resp = await client.post(
             f"{_base()}/api/posts",
-            headers={**_auth_headers(token), "Content-Type": "application/json"},
-            json=payload,
-            # locale=en required because title, slug, excerpt and content are localized
+            headers=headers,
+            json=en_payload,
             params={"locale": "en"},
             timeout=30,
         )
-
         if not resp.is_success:
-            logger.error(
-                "Payload API error %d: %s", resp.status_code, resp.text[:500]
-            )
+            logger.error("Payload API error %d: %s", resp.status_code, resp.text[:500])
         resp.raise_for_status()
 
         data = resp.json()
         doc = data.get("doc", data)
         post_id = doc.get("id", "")
         slug = doc.get("slug", blog.slug)
-        logger.info("Published blog post: id=%s slug=%s", post_id, slug)
+        logger.info("Published English blog post: id=%s slug=%s", post_id, slug)
+
+        # ── Step 3: add Spanish translation ──────────────────────────────────
+        if blog.content_markdown_es and post_id:
+            lexical_es = markdown_to_lexical(blog.content_markdown_es)
+            es_payload = _build_es_payload(blog, lexical_es)
+            logger.debug("PATCH Spanish translation: id=%s title_es=%r", post_id, es_payload.get("title"))
+
+            resp_es = await client.patch(
+                f"{_base()}/api/posts/{post_id}",
+                headers=headers,
+                json=es_payload,
+                params={"locale": "es"},
+                timeout=30,
+            )
+            if not resp_es.is_success:
+                logger.warning(
+                    "Spanish translation patch failed %d: %s",
+                    resp_es.status_code, resp_es.text[:300],
+                )
+            else:
+                logger.info("Published Spanish translation: id=%s", post_id)
+        else:
+            logger.warning("No Spanish translation available for post id=%s", post_id)
+
         return slug
 
 
 async def publish_draft_by_slug(slug: str) -> bool:
-    """
-    Find a post saved as draft by slug and publish it.
-    Useful to recover posts created with status='draft'.
-    """
+    """Find a post saved as draft by slug and publish it."""
     async with httpx.AsyncClient() as client:
         token = await _get_token(client)
 
@@ -185,10 +205,9 @@ async def publish_draft_by_slug(slug: str) -> bool:
             raise ValueError(f"No post found with slug '{slug}'")
 
         post_id = docs[0]["id"]
-
         resp = await client.patch(
             f"{_base()}/api/posts/{post_id}",
-            headers={**_auth_headers(token), "Content-Type": "application/json"},
+            headers=_auth_headers(token),
             json={"status": "published"},
             params={"locale": "en"},
             timeout=15,
