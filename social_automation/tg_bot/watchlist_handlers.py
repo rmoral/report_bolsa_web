@@ -125,14 +125,13 @@ async def _generate_and_send(
         )
 
         # Show data summary before the tweet
+        from social_automation.watchlist.fetcher import format_market_cap
         lines = ["<b>Datos de mercado:</b>"]
         for t in ticker_data:
             price_str = f"${t.price:.2f}" if t.price else "N/A"
-            change_str = ""
-            if t.change_pct is not None:
-                sign = "+" if t.change_pct >= 0 else ""
-                change_str = f" ({sign}{t.change_pct:.1f}%)"
-            lines.append(f"  <code>${t.symbol}</code> {html.escape(t.name)} — {price_str}{change_str}")
+            mcap_str = format_market_cap(t)
+            mcap_display = f" | Cap: {mcap_str}" if mcap_str else ""
+            lines.append(f"  <code>${t.symbol}</code> {html.escape(t.name)} — {price_str}{mcap_display}")
 
         await bot.edit_message_text(
             chat_id=chat_id,
