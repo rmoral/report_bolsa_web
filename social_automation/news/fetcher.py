@@ -1,8 +1,10 @@
 """
-Fetches top global news from multiple sources:
-  - Brave Search News API (economic, political, market headlines)
-  - NewsAPI (economic, political, market headlines)
-  - RSS feeds (Reuters, FT, Bloomberg, AP, Yahoo Finance)
+Fetches top news from multiple sources, focused on:
+  - US stock market (S&P 500, Nasdaq, earnings, Fed)
+  - Economic indicators (inflation, GDP, interest rates, jobs)
+  - Geopolitics with direct market impact (sanctions, trade wars, energy)
+
+Sources: Brave Search API, NewsAPI, curated RSS feeds.
 """
 import asyncio
 import logging
@@ -20,45 +22,49 @@ from social_automation.database.models import NewsItem
 
 logger = logging.getLogger(__name__)
 
-# SSL context using certifi — fixes macOS certificate verification errors
 _ssl_context = ssl.create_default_context(cafile=certifi.where())
 
-# High-quality RSS feeds by category
+# ── RSS feeds — quality financial and geopolitical sources ────────────────────
 RSS_FEEDS = {
+    "market": [
+        "https://feeds.reuters.com/reuters/businessNews",
+        "https://feeds.marketwatch.com/marketwatch/topstories/",
+        "https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml",
+        "https://feeds.cnbc.com/financial-news",
+        "https://finance.yahoo.com/news/rssindex",
+    ],
     "economic": [
         "https://feeds.reuters.com/reuters/businessNews",
         "https://feeds.bloomberg.com/markets/news.rss",
         "https://feeds.ft.com/rss/home/us",
-        "https://finance.yahoo.com/news/rssindex",
         "https://www.investing.com/rss/news_25.rss",
     ],
-    "political": [
+    "geopolitical": [
         "https://feeds.reuters.com/Reuters/worldNews",
+        "https://feeds.a.dj.com/rss/RSSWorldNews.xml",
         "https://feeds.bbci.co.uk/news/world/rss.xml",
         "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
-        "https://feeds.a.dj.com/rss/RSSWorldNews.xml",
-    ],
-    "market": [
-        "https://feeds.reuters.com/reuters/businessNews",
-        "https://feeds.marketwatch.com/marketwatch/topstories/",
-        "https://finance.yahoo.com/news/rssindex",
-        "https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml",
-        "https://feeds.cnbc.com/financial-news",
     ],
 }
 
-# NewsAPI query config
-NEWSAPI_QUERIES = [
-    ("economy stocks market finance inflation GDP", "economic"),
-    ("politics government president election policy", "political"),
-    ("stock market S&P nasdaq dow wall street trading", "market"),
+# ── Brave Search queries — focused on US markets and geopolitics ─────────────
+BRAVE_QUERIES = [
+    # US stock market — highest priority
+    ("S&P 500 Nasdaq earnings Fed interest rates Wall Street", "market"),
+    ("US stocks market rally correction earnings report guidance", "market"),
+    # Economic indicators
+    ("US inflation CPI jobs report GDP Federal Reserve rate decision", "economic"),
+    ("global economy recession growth central bank monetary policy", "economic"),
+    # Geopolitics with market impact
+    ("US China trade tariffs sanctions geopolitical conflict energy oil", "geopolitical"),
+    ("war ceasefire sanctions OPEC oil supply disruption commodity", "geopolitical"),
 ]
 
-# Brave Search News queries
-BRAVE_QUERIES = [
-    ("global economy inflation interest rates GDP", "economic"),
-    ("world politics government elections geopolitics", "political"),
-    ("stock market nasdaq dow jones S&P 500 trading", "market"),
+# ── NewsAPI queries ────────────────────────────────────────────────────────────
+NEWSAPI_QUERIES = [
+    ("S&P 500 Nasdaq dow jones stock market earnings", "market"),
+    ("Federal Reserve interest rates inflation CPI jobs", "economic"),
+    ("US China trade war tariffs sanctions geopolitics", "geopolitical"),
 ]
 
 BRAVE_NEWS_URL = "https://api.search.brave.com/res/v1/news/search"
@@ -67,7 +73,6 @@ BRAVE_NEWS_URL = "https://api.search.brave.com/res/v1/news/search"
 async def _fetch_rss(
     session: aiohttp.ClientSession, url: str, category: str, run_id: str
 ) -> List[NewsItem]:
-    """Fetch and parse a single RSS feed."""
     items: List[NewsItem] = []
     try:
         async with session.get(url, timeout=aiohttp.ClientTimeout(total=15)) as resp:
@@ -84,24 +89,21 @@ async def _fetch_rss(
                 )
                 if pub_date < cutoff:
                     continue
-            items.append(
-                NewsItem(
-                    title=entry.get("title", "")[:500],
-                    description=(entry.get("summary") or entry.get("description") or "")[:2000],
-                    url=entry.get("link", "")[:1000],
-                    source=source,
-                    category=category,
-                    published_at=pub_date,
-                    run_id=run_id,
-                )
-            )
+            items.append(NewsItem(
+                title=entry.get("title", "")[:500],
+                description=(entry.get("summary") or entry.get("description") or "")[:2000],
+                url=entry.get("link", "")[:1000],
+                source=source,
+                category=category,
+                published_at=pub_date,
+                run_id=run_id,
+            ))
     except Exception as exc:
         logger.warning("RSS fetch failed for %s: %s", url, exc)
     return items
 
 
 async def _fetch_brave(run_id: str) -> List[NewsItem]:
-    """Fetch news from Brave Search News API."""
     if not config.brave_api_key:
         return []
     items: List[NewsItem] = []
@@ -131,25 +133,22 @@ async def _fetch_brave(run_id: str) -> List[NewsItem]:
                         article.get("meta_url", {}).get("hostname")
                         or article.get("source", "")
                     )
-                    items.append(
-                        NewsItem(
-                            title=(article.get("title") or "")[:500],
-                            description=(article.get("description") or "")[:2000],
-                            url=(article.get("url") or "")[:1000],
-                            source=source_name[:200],
-                            category=category,
-                            published_at=pub_date,
-                            run_id=run_id,
-                        )
-                    )
+                    items.append(NewsItem(
+                        title=(article.get("title") or "")[:500],
+                        description=(article.get("description") or "")[:2000],
+                        url=(article.get("url") or "")[:1000],
+                        source=source_name[:200],
+                        category=category,
+                        published_at=pub_date,
+                        run_id=run_id,
+                    ))
             except Exception as exc:
-                logger.warning("Brave Search query failed (%s): %s", query[:30], exc)
+                logger.warning("Brave Search query failed (%s): %s", query[:40], exc)
     logger.info("Brave Search fetched %d items", len(items))
     return items
 
 
 async def _fetch_newsapi(run_id: str) -> List[NewsItem]:
-    """Fetch top headlines from NewsAPI."""
     if not config.newsapi_enabled:
         return []
     items: List[NewsItem] = []
@@ -179,27 +178,25 @@ async def _fetch_newsapi(run_id: str) -> List[NewsItem]:
                             pub_date = datetime.fromisoformat(pub_str.replace("Z", "+00:00"))
                         except ValueError:
                             pass
-                    items.append(
-                        NewsItem(
-                            title=(article.get("title") or "")[:500],
-                            description=(
-                                article.get("description") or article.get("content") or ""
-                            )[:2000],
-                            url=(article.get("url") or "")[:1000],
-                            source=(article.get("source", {}).get("name") or "")[:200],
-                            category=category,
-                            published_at=pub_date,
-                            run_id=run_id,
-                        )
-                    )
+                    items.append(NewsItem(
+                        title=(article.get("title") or "")[:500],
+                        description=(
+                            article.get("description") or article.get("content") or ""
+                        )[:2000],
+                        url=(article.get("url") or "")[:1000],
+                        source=(article.get("source", {}).get("name") or "")[:200],
+                        category=category,
+                        published_at=pub_date,
+                        run_id=run_id,
+                    ))
             except Exception as exc:
-                logger.warning("NewsAPI query failed (%s): %s", query[:30], exc)
+                logger.warning("NewsAPI query failed (%s): %s", query[:40], exc)
     return items
 
 
 async def fetch_all_news(run_id: str) -> List[NewsItem]:
     """
-    Fetch news from all configured sources concurrently.
+    Fetch news from all sources concurrently.
     Returns deduplicated list of NewsItem objects (not yet saved to DB).
     """
     logger.info("Fetching news for run_id=%s", run_id)
@@ -225,7 +222,7 @@ async def fetch_all_news(run_id: str) -> List[NewsItem]:
     all_items.extend(brave_items)
     all_items.extend(newsapi_items)
 
-    # Deduplicate by title similarity (simple: exact title match)
+    # Deduplicate by title (first 100 chars, case-insensitive)
     seen_titles: set = set()
     unique_items: List[NewsItem] = []
     for item in all_items:

@@ -41,6 +41,13 @@ def pagination_keyboard(page: int, total_pages: int, prefix: str) -> InlineKeybo
     return InlineKeyboardMarkup(buttons)
 
 
+def pending_header_keyboard() -> InlineKeyboardMarkup:
+    """Header keyboard shown with the pending posts count message."""
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("Descartar todos", callback_data="discard_all_pending")],
+    ])
+
+
 def platform_filter_keyboard() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup([
         [

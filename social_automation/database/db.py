@@ -81,9 +81,27 @@ async def get_pending_posts() -> List[Post]:
             select(Post)
             .options(selectinload(Post.news_item))
             .where(Post.status == PostStatus.PENDING)
-            .order_by(Post.created_at.desc())
+            .order_by(Post.created_at.asc())   # oldest first
         )
         return list(result.scalars().all())
+
+
+async def discard_all_pending_posts() -> int:
+    """Mark all pending posts as REJECTED. Returns the number discarded."""
+    from sqlalchemy import func
+    async with get_session() as session:
+        count = (
+            await session.execute(
+                select(func.count(Post.id)).where(Post.status == PostStatus.PENDING)
+            )
+        ).scalar_one()
+        if count:
+            await session.execute(
+                update(Post)
+                .where(Post.status == PostStatus.PENDING)
+                .values(status=PostStatus.REJECTED)
+            )
+    return count
 
 
 async def get_posts_by_run(run_id: str) -> List[Post]:

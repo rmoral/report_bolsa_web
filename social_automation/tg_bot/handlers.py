@@ -26,7 +26,8 @@ warnings.filterwarnings("ignore", message=".*per_message=True.*", category=PTBUs
 from social_automation.database import db
 from social_automation.database.models import Platform, Post, PostStatus
 from social_automation.tg_bot.keyboards import (
-    PLATFORM_EMOJIS, confirm_edit_keyboard, pagination_keyboard, post_approval_keyboard,
+    PLATFORM_EMOJIS, confirm_edit_keyboard, pagination_keyboard,
+    pending_header_keyboard, post_approval_keyboard,
 )
 from social_automation.config import config
 
@@ -120,6 +121,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "/status — Estado del sistema y plataformas\n"
         "/blog — Generar artículo para el blog\n"
         "/youtube — Generar guion de vídeo semanal\n"
+        "/educational — Generar contenido formativo\n"
         "/help — Ayuda completa"
     )
     await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
@@ -142,7 +144,8 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "`/stats` — Estadísticas de los últimos 7 días\n"
         "`/status` — Estado de conexión de plataformas\n"
         "`/blog` — Generar artículo SEO para el blog desde tweets\n"
-        "`/youtube [días]` — Generar guion de vídeo semanal (default 7 días)\n\n"
+        "`/youtube [días]` — Generar guion de vídeo semanal (default 7 días)\n"
+        "`/educational [tema]` — Generar contenido formativo para X, LinkedIn y blog\n\n"
         "*Aprobar publicaciones:*\n"
         "Cuando el bot te mande una publicación, usa los botones:\n"
         "✅ *Aprobar* — Publicar inmediatamente\n"
@@ -206,16 +209,32 @@ async def cmd_run(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 @admin_only
 async def cmd_pending(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Show all pending posts and re-send approval messages."""
+    """Show all pending posts (oldest first) with a Discard All button."""
     posts = await db.get_pending_posts()
     if not posts:
-        await update.message.reply_text("✅ No hay publicaciones pendientes de aprobación.")
+        await update.message.reply_text("No hay publicaciones pendientes de aprobación.")
         return
     await update.message.reply_text(
-        f"📋 Hay *{len(posts)}* publicación(es) pendiente(s):", parse_mode=ParseMode.MARKDOWN
+        f"Hay <b>{len(posts)}</b> publicación(es) pendiente(s) (orden cronológico):",
+        parse_mode=ParseMode.HTML,
+        reply_markup=pending_header_keyboard(),
     )
     for post in posts:
         await _send_post_for_approval(context.bot, post, update.effective_chat.id)
+
+
+async def cb_discard_all(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Discard (reject) all pending posts at once."""
+    query = update.callback_query
+    await query.answer()
+    count = await db.discard_all_pending_posts()
+    if count:
+        await query.edit_message_text(
+            f"Descartadas <b>{count}</b> publicación(es) pendiente(s).",
+            parse_mode=ParseMode.HTML,
+        )
+    else:
+        await query.edit_message_text("No había publicaciones pendientes.")
 
 
 @admin_only
@@ -531,6 +550,7 @@ def register_handlers(app) -> None:
     # Approval callbacks (outside conversation)
     app.add_handler(CallbackQueryHandler(cb_approve, pattern=r"^approve:\d+$"))
     app.add_handler(CallbackQueryHandler(cb_reject, pattern=r"^reject:\d+$"))
+    app.add_handler(CallbackQueryHandler(cb_discard_all, pattern=r"^discard_all_pending$"))
 
     # Blog generation handlers
     from social_automation.blog.handlers import register_blog_handlers
@@ -539,3 +559,7 @@ def register_handlers(app) -> None:
     # YouTube script generation handlers
     from social_automation.youtube.handlers import register_youtube_handlers
     register_youtube_handlers(app)
+
+    # Educational content handlers
+    from social_automation.tg_bot.educational_handlers import register_educational_handlers
+    register_educational_handlers(app)

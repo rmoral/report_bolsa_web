@@ -55,7 +55,7 @@ class Post(Base):
     __tablename__ = "posts"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    news_item_id = Column(Integer, ForeignKey("news_items.id"), nullable=False)
+    news_item_id = Column(Integer, ForeignKey("news_items.id"), nullable=True)  # NULL for educational posts
     platform = Column(Enum(Platform), nullable=False)
     content = Column(Text, nullable=False)           # Generated text content
     hashtags = Column(Text)                          # Space-separated hashtags
