@@ -111,18 +111,21 @@ async def _send_post_for_approval(
 @admin_only
 async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     text = (
-        "*Sistema de Publicación Automatizada* 🤖\n\n"
+        "*Sistema de Publicación Automatizada*\n\n"
         "Controla tus redes sociales desde aquí.\n\n"
-        "*Comandos disponibles:*\n"
-        "/run — Iniciar proceso de búsqueda y generación\n"
-        "/pending — Ver publicaciones pendientes de aprobación\n"
-        "/news — Ver noticias del último proceso\n"
-        "/stats — Estadísticas de publicación\n"
-        "/status — Estado del sistema y plataformas\n"
-        "/blog — Generar artículo para el blog\n"
-        "/youtube — Generar guion de vídeo semanal\n"
-        "/educational — Generar contenido formativo\n"
-        "/help — Ayuda completa"
+        "*Automatización diaria:*\n"
+        "`/run` — Lanzar proceso manualmente\n"
+        "`/pending` — Publicaciones pendientes de aprobación\n"
+        "`/news` — Noticias del último proceso\n\n"
+        "*Contenido bajo demanda:*\n"
+        "`/educational` — Contenido formativo (X + LinkedIn + blog)\n"
+        "`/blog` — Artículo de blog desde tweets publicados\n"
+        "`/youtube` — Guion de vídeo semanal\n\n"
+        "*Utilidades:*\n"
+        "`/published` — Tweets publicados recientemente\n"
+        "`/stats` — Estadísticas de publicación\n"
+        "`/status` — Estado del sistema y plataformas\n"
+        "`/help` — Ayuda completa"
     )
     await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
@@ -130,28 +133,52 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 @admin_only
 async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     text = (
-        "*Ayuda del sistema* 📖\n\n"
-        "*Proceso automático:*\n"
-        "Cada mañana a las %02d:%02d (%s) el sistema:\n"
-        "1. Busca las noticias más impactantes\n"
-        "2. Genera contenido para LinkedIn, X e Instagram\n"
-        "3. Te envía aquí para aprobación\n\n"
-        "*Comandos:*\n"
-        "`/run` — Lanzar proceso manualmente\n"
-        "`/pending` — Publicaciones esperando aprobación\n"
-        "`/published` — Ver tweets publicados recientemente\n"
-        "`/news [n]` — Ver las últimas n noticias (default 10)\n"
-        "`/stats` — Estadísticas de los últimos 7 días\n"
-        "`/status` — Estado de conexión de plataformas\n"
-        "`/blog` — Generar artículo SEO para el blog desde tweets\n"
-        "`/youtube [días]` — Generar guion de vídeo semanal (default 7 días)\n"
-        "`/educational [tema]` — Generar contenido formativo para X, LinkedIn y blog\n\n"
+        "*Ayuda completa del sistema*\n\n"
+
+        "*Proceso automático diario:*\n"
+        "El sistema se ejecuta a las %02d:%02d y las %02d:%02d (%s).\n"
+        "Busca noticias de alto impacto (mercado US, macro, geopolítica),\n"
+        "genera contenido y te lo envía aquí para aprobación.\n\n"
+
+        "*Noticias y pipeline:*\n"
+        "`/run` — Lanzar búsqueda y generación manualmente\n"
+        "`/news [n]` — Ver las últimas n noticias procesadas (default 10)\n"
+        "`/pending` — Ver pendientes de aprobación (más antiguo primero)\n"
+        "  → Botón Descartar todos para limpiar la cola de golpe\n"
+        "`/published` — Ver tweets publicados recientemente\n\n"
+
+        "*Contenido formativo:*\n"
+        "`/educational` — Muestra 15 temas sugeridos para elegir\n"
+        "`/educational [tema]` — Genera directamente sobre ese tema\n"
+        "  → Genera post para X (≤240 chars) + LinkedIn (4-5 párrafos)\n"
+        "  → Ofrece generar también artículo de blog sobre el mismo tema\n\n"
+
+        "*Blog:*\n"
+        "`/blog` — Selecciona tweets publicados para generar artículo SEO\n"
+        "  → Preview con Publicar / Regenerar / Cancelar\n"
+        "  → Al publicar, anuncia automáticamente en X si está configurado\n\n"
+
+        "*YouTube:*\n"
+        "`/youtube [días]` — Guion de vídeo semanal (default 7 días)\n"
+        "  → Selecciona noticias publicadas → genera guion completo con\n"
+        "     escenas, narración, B-roll, música, descripción y tags\n"
+        "  → Opciones: subir a YouTube (requiere OAuth) o solo generar vídeo\n"
+        "`/yt_avatars` — Ver avatares disponibles en HeyGen\n"
+        "`/yt_voices` — Ver voces disponibles en HeyGen\n\n"
+
         "*Aprobar publicaciones:*\n"
-        "Cuando el bot te mande una publicación, usa los botones:\n"
-        "✅ *Aprobar* — Publicar inmediatamente\n"
-        "❌ *Rechazar* — Descartar sin publicar\n"
-        "✏️ *Editar* — Modificar el texto antes de publicar"
-    ) % (config.daily_run_hour, config.daily_run_minute, config.timezone)
+        "Aprobar — Publica inmediatamente en la plataforma\n"
+        "Rechazar — Descarta sin publicar\n"
+        "Editar — Modifica el texto antes de publicar\n\n"
+
+        "*Estadísticas y estado:*\n"
+        "`/stats` — Estadísticas de los últimos 7 días\n"
+        "`/status` — Estado de conexión de plataformas y BD"
+    ) % (
+        config.daily_run_hour, config.daily_run_minute,
+        config.afternoon_run_hour, config.afternoon_run_minute,
+        config.timezone,
+    )
     await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
 
