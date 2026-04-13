@@ -133,56 +133,59 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 @admin_only
 async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    h1 = config.daily_run_hour
+    m1 = config.daily_run_minute
+    h2 = config.afternoon_run_hour
+    m2 = config.afternoon_run_minute
+    tz = config.timezone
     text = (
-        "*Ayuda completa del sistema*\n\n"
+        f"*Ayuda completa del sistema*\n\n"
 
-        "*Proceso automático diario:*\n"
-        "El sistema se ejecuta a las %02d:%02d y las %02d:%02d (%s).\n"
-        "Busca noticias de alto impacto (mercado US, macro, geopolítica),\n"
-        "genera contenido y te lo envía aquí para aprobación.\n\n"
+        f"*Proceso automático diario:*\n"
+        f"El sistema se ejecuta a las {h1:02d}:{m1:02d} y las {h2:02d}:{m2:02d} ({tz}).\n"
+        f"Busca noticias de alto impacto (mercado US, macro, geopolítica),\n"
+        f"genera contenido y te lo envía aquí para aprobación.\n\n"
 
-        "*Noticias y pipeline:*\n"
-        "`/run` — Lanzar búsqueda y generación manualmente\n"
-        "`/news [n]` — Ver las últimas n noticias procesadas (default 10)\n"
-        "`/pending` — Ver pendientes de aprobación (más antiguo primero)\n"
-        "  → Botón Descartar todos para limpiar la cola de golpe\n"
-        "`/published` — Ver tweets publicados recientemente\n\n"
+        f"*Noticias y pipeline:*\n"
+        f"`/run` — Lanzar búsqueda y generación manualmente\n"
+        f"`/news [n]` — Ver las últimas n noticias procesadas (default 10)\n"
+        f"`/pending` — Ver pendientes de aprobación (más antiguo primero)\n"
+        f"  → Botón Descartar todos para limpiar la cola de golpe\n"
+        f"`/published` — Ver tweets publicados recientemente\n\n"
 
-        "*Watchlist de sesión:*\n"
-        "`/watchlist NVDA AAPL META MSFT TSLA` — Genera tweet de watchlist\n"
-        "  → Obtiene precio y % variación en tiempo real de cada ticker\n"
-        "  → GPT redacta el tweet y lo envía para aprobación\n\n"
-        "*Contenido formativo:*\n"
-        "`/educational` — Muestra 15 temas sugeridos para elegir\n"
-        "`/educational [tema]` — Genera directamente sobre ese tema\n"
-        "  → Genera post para X (≤240 chars) + LinkedIn (4-5 párrafos)\n"
-        "  → Ofrece generar también artículo de blog sobre el mismo tema\n\n"
+        f"*Watchlist de sesión:*\n"
+        f"`/watchlist NVDA AAPL META MSFT TSLA` — Genera tweet de watchlist\n"
+        f"  → Obtiene precio y capitalización de mercado de cada ticker\n"
+        f"  → GPT redacta el tweet y lo envía para aprobación\n\n"
 
-        "*Blog:*\n"
-        "`/blog` — Selecciona tweets publicados para generar artículo SEO\n"
-        "  → Preview con Publicar / Regenerar / Cancelar\n"
-        "  → Al publicar, anuncia automáticamente en X si está configurado\n\n"
+        f"*Contenido formativo:*\n"
+        f"`/educational` — Muestra 15 temas sugeridos para elegir\n"
+        f"`/educational [tema]` — Genera directamente sobre ese tema\n"
+        f"  → Genera post para X (240 chars) + LinkedIn (4-5 párrafos)\n"
+        f"  → Ofrece generar también artículo de blog sobre el mismo tema\n\n"
 
-        "*YouTube:*\n"
-        "`/youtube [días]` — Guion de vídeo semanal (default 7 días)\n"
-        "  → Selecciona noticias publicadas → genera guion completo con\n"
-        "     escenas, narración, B-roll, música, descripción y tags\n"
-        "  → Opciones: subir a YouTube (requiere OAuth) o solo generar vídeo\n"
-        "`/yt_avatars` — Ver avatares disponibles en HeyGen\n"
-        "`/yt_voices` — Ver voces disponibles en HeyGen\n\n"
+        f"*Blog:*\n"
+        f"`/blog` — Selecciona tweets publicados para generar artículo SEO\n"
+        f"  → Preview con Publicar / Regenerar / Cancelar\n"
+        f"  → Al publicar, anuncia automáticamente en X si está configurado\n"
+        f"  → Genera versión en inglés y español automáticamente\n\n"
 
-        "*Aprobar publicaciones:*\n"
-        "Aprobar — Publica inmediatamente en la plataforma\n"
-        "Rechazar — Descarta sin publicar\n"
-        "Editar — Modifica el texto antes de publicar\n\n"
+        f"*YouTube:*\n"
+        f"`/youtube [días]` — Guion de vídeo semanal (default 7 días)\n"
+        f"  → Selecciona noticias publicadas, genera guion completo con\n"
+        f"     escenas, narración, B-roll, música, descripción y tags\n"
+        f"  → Opciones: subir a YouTube (requiere OAuth) o solo generar vídeo\n"
+        f"`/yt_avatars` — Ver avatares disponibles en HeyGen\n"
+        f"`/yt_voices` — Ver voces disponibles en HeyGen\n\n"
 
-        "*Estadísticas y estado:*\n"
-        "`/stats` — Estadísticas de los últimos 7 días\n"
-        "`/status` — Estado de conexión de plataformas y BD"
-    ) % (
-        config.daily_run_hour, config.daily_run_minute,
-        config.afternoon_run_hour, config.afternoon_run_minute,
-        config.timezone,
+        f"*Aprobar publicaciones:*\n"
+        f"Aprobar — Publica inmediatamente en la plataforma\n"
+        f"Rechazar — Descarta sin publicar\n"
+        f"Editar — Modifica el texto antes de publicar\n\n"
+
+        f"*Estadísticas y estado:*\n"
+        f"`/stats` — Estadísticas de los últimos 7 días\n"
+        f"`/status` — Estado de conexión de plataformas y BD"
     )
     await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
