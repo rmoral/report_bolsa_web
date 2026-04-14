@@ -364,6 +364,10 @@ async def _generate_and_send_secondary_posts(
     if not SECONDARY_PLATFORMS:
         return
 
+    # Watchlist and educational posts have no linked news item — skip secondary generation
+    if tweet_post.news_item is None:
+        return
+
     try:
         platform_names = ", ".join(p.value.capitalize() for p in SECONDARY_PLATFORMS)
         await bot.send_message(
@@ -435,10 +439,14 @@ async def cb_approve(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         if post.platform.value == "twitter":
             await _generate_and_send_secondary_posts(post, update.effective_chat.id, context.bot)
     else:
+        failed = await db.get_post(post_id)
+        error_detail = (failed.error_message or "desconocido") if failed else "desconocido"
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text=f"❌ Error al publicar en *{_platform_label(post.platform)}*. "
-                 "Revisa los logs con /status",
+            text=(
+                f"❌ Error al publicar en *{_platform_label(post.platform)}*\n"
+                f"`{error_detail[:300]}`"
+            ),
             parse_mode=ParseMode.MARKDOWN,
         )
 
@@ -527,10 +535,17 @@ async def cb_confirm_edit(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     from social_automation.publishers import publish_post
     success = await publish_post(post)
-    status_msg = "🎉 Publicado correctamente." if success else "❌ Error al publicar. Revisa /status"
-    await context.bot.send_message(
-        chat_id=update.effective_chat.id, text=status_msg
-    )
+    if success:
+        status_msg = "🎉 Publicado correctamente."
+        await context.bot.send_message(chat_id=update.effective_chat.id, text=status_msg)
+    else:
+        failed = await db.get_post(post_id)
+        error_detail = (failed.error_message or "desconocido") if failed else "desconocido"
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=f"❌ Error al publicar.\n`{error_detail[:300]}`",
+            parse_mode=ParseMode.MARKDOWN,
+        )
     context.user_data.pop("editing_post_id", None)
     return ConversationHandler.END
 
