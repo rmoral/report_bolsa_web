@@ -40,8 +40,17 @@ async def publish_post(post: Post) -> bool:
         logger.info("Post id=%d published to %s", post.id, post.platform)
         return True
     except Exception as exc:
-        error_msg = str(exc)
+        # Unwrap tenacity RetryError to expose the actual underlying exception
+        try:
+            from tenacity import RetryError
+            if isinstance(exc, RetryError) and exc.last_attempt.failed:
+                cause = exc.last_attempt.exception()
+                error_msg = f"{type(cause).__name__}: {cause}"
+            else:
+                error_msg = str(exc)
+        except Exception:
+            error_msg = str(exc)
         await db.update_post_status(post.id, PostStatus.FAILED, error_message=error_msg)
         await db.log_action(post.id, post.platform, "publish", False, error_msg)
-        logger.error("Publish failed post id=%d platform=%s: %s", post.id, post.platform, exc)
+        logger.error("Publish failed post id=%d platform=%s: %s", post.id, post.platform, error_msg)
         return False
