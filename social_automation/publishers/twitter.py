@@ -36,6 +36,24 @@ def _get_api_v1() -> tweepy.API:
     return tweepy.API(auth)
 
 
+def _tweepy_error_detail(exc: Exception) -> str:
+    """Extract the most useful error message from a Tweepy exception."""
+    try:
+        # tweepy.errors.HTTPException subclasses carry api_errors / api_codes
+        if hasattr(exc, "api_errors") and exc.api_errors:
+            parts = []
+            for err in exc.api_errors:
+                code = err.get("code", "")
+                msg = err.get("message", "")
+                parts.append(f"code={code} {msg}".strip())
+            return f"{type(exc).__name__}: {'; '.join(parts)}"
+        if hasattr(exc, "response") and exc.response is not None:
+            return f"{type(exc).__name__} {exc.response.status_code}: {exc.response.text[:300]}"
+    except Exception:
+        pass
+    return str(exc)
+
+
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=2, min=5, max=30))
 def publish(post: Post) -> str:
     """
@@ -58,12 +76,30 @@ def publish(post: Post) -> str:
             logger.warning("Image upload failed, tweeting without image: %s", exc)
 
     # Twitter counts any URL as 23 chars (t.co shortening).
-    # Reserve space: 280 - 23 (URL) - 1 (space) = 256 chars for text+hashtags.
+    # Reserve space: 280 - 23 (URL) - 1 (newline) = 256 chars for text+hashtags.
     url = config.website_url
     body = post.full_content[:256]
-    tweet_text = f"{body}\n{url}"
+    tweet_text = f"{body}\n{url}" if url else body
 
-    response = client.create_tweet(text=tweet_text, media_ids=media_ids)
+    logger.info(
+        "Sending tweet (post_id=%d, len=%d, has_image=%s): %s…",
+        post.id, len(tweet_text), media_ids is not None, tweet_text[:80],
+    )
+
+    try:
+        # user_auth=True forces OAuth 1.0a (User Context) instead of Bearer Token.
+        # Without this, Tweepy 4.x may fall back to app-only auth for text-only
+        # tweets, which returns 403 Forbidden because app-only auth cannot write.
+        response = client.create_tweet(
+            text=tweet_text,
+            media_ids=media_ids,
+            user_auth=True,
+        )
+    except tweepy.errors.TweepyException as exc:
+        detail = _tweepy_error_detail(exc)
+        logger.error("Twitter API error (post_id=%d): %s", post.id, detail)
+        raise RuntimeError(detail) from exc
+
     tweet_id = str(response.data["id"])
-    logger.info("Published tweet id=%s", tweet_id)
+    logger.info("Published tweet id=%s (post_id=%d)", tweet_id, post.id)
     return tweet_id
