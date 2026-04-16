@@ -1,33 +1,32 @@
 """
-LinkedIn OAuth 2.0 helper — run on your LOCAL machine, not the server.
+LinkedIn OAuth 2.0 — obtener access token y person URN.
 
-Usage:
-    python get_linkedin_token.py
+Ejecutar en el SERVIDOR (no necesita navegador en el servidor):
 
-The script starts a temporary HTTP server on localhost:8000 to automatically
-capture the OAuth redirect, so you don't need to copy/paste any URL.
+    .venv/bin/python get_linkedin_token.py
 
-Requirements in .env (or export before running):
+Flujo:
+  1. El script imprime una URL de autorización
+  2. Abre esa URL en TU NAVEGADOR (en tu ordenador, no en el servidor)
+  3. Inicia sesión en LinkedIn y autoriza la app
+  4. El navegador intenta redirigir a http://localhost:8000/callback
+     → verás "Esta página no está disponible" — ES NORMAL
+     → copia la URL COMPLETA de la barra del navegador
+  5. Pega esa URL aquí en el terminal del servidor
+  6. El script obtiene el token y el URN automáticamente
+
+Requisitos previos en .env:
     LINKEDIN_CLIENT_ID=...
     LINKEDIN_CLIENT_SECRET=...
 
-ALTERNATIVE (simpler — no script needed):
-    1. Go to https://www.linkedin.com/developers/tools/oauth/token-generator
-    2. Select your app, check scopes: openid, profile, w_member_social
-    3. Click "Request access token" — copy the token shown
-    4. Get your URN:
-         curl -H "Authorization: Bearer TOKEN" https://api.linkedin.com/v2/userinfo
-       Copy the "sub" field → your URN is: urn:li:person:<sub>
-    5. Add both to your server .env and restart the service
+Y en el portal de LinkedIn (linkedin.com/developers/apps → Auth):
+    Redirect URL registrada: http://localhost:8000/callback
 """
 import os
+import re
 import sys
-import json
 import secrets
-import threading
 import urllib.parse
-import webbrowser
-from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import requests
 from dotenv import load_dotenv
@@ -39,43 +38,15 @@ CLIENT_SECRET = os.getenv("LINKEDIN_CLIENT_SECRET", "").strip()
 REDIRECT_URI = "http://localhost:8000/callback"
 SCOPES = ["openid", "profile", "w_member_social"]
 
-_received_code = None
-_received_state = None
-
-
-class _CallbackHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        global _received_code, _received_state
-        parsed = urllib.parse.urlparse(self.path)
-        params = urllib.parse.parse_qs(parsed.query)
-        _received_code = params.get("code", [None])[0]
-        _received_state = params.get("state", [None])[0]
-
-        self.send_response(200)
-        self.send_header("Content-Type", "text/html")
-        self.end_headers()
-        if _received_code:
-            body = b"<h2>Authorized! You can close this tab and return to the terminal.</h2>"
-        else:
-            error = params.get("error_description", params.get("error", ["Unknown error"]))[0]
-            body = f"<h2>Error: {error}</h2>".encode()
-        self.wfile.write(body)
-
-    def log_message(self, *args):
-        pass  # suppress request logs
-
 
 def main():
     if not CLIENT_ID or not CLIENT_SECRET:
         print(
-            "ERROR: LINKEDIN_CLIENT_ID and LINKEDIN_CLIENT_SECRET must be set.\n"
-            "Add them to .env or export them before running this script.\n\n"
-            "SIMPLER ALTERNATIVE — no script needed:\n"
-            "  1. https://www.linkedin.com/developers/tools/oauth/token-generator\n"
-            "  2. Select app, check: openid profile w_member_social\n"
-            "  3. Click 'Request access token' and copy the token\n"
-            "  4. curl -H 'Authorization: Bearer TOKEN' https://api.linkedin.com/v2/userinfo\n"
-            "     → copy the 'sub' value → URN is urn:li:person:<sub>\n"
+            "\nERROR: Faltan credenciales.\n"
+            "Añade al .env del servidor:\n"
+            "  LINKEDIN_CLIENT_ID=tu_client_id\n"
+            "  LINKEDIN_CLIENT_SECRET=tu_client_secret\n"
+            "\nEncuéntralos en: linkedin.com/developers/apps → tu app → Auth"
         )
         sys.exit(1)
 
@@ -93,35 +64,56 @@ def main():
         + urllib.parse.urlencode(auth_params)
     )
 
-    # Start temporary HTTP server in a background thread
-    server = HTTPServer(("localhost", 8000), _CallbackHandler)
-    thread = threading.Thread(target=server.handle_request)
-    thread.daemon = True
-    thread.start()
+    print("\n" + "=" * 68)
+    print("PASO 1 — Abre esta URL en tu navegador (en tu ordenador):")
+    print("=" * 68)
+    print(auth_url)
+    print("=" * 68)
+    print(
+        "\nDespués de autorizar, el navegador mostrará un error de conexión"
+        "\n(no hay nada en localhost:8000). Eso es correcto."
+        "\nCopia la URL COMPLETA de la barra del navegador. Tendrá este formato:"
+        f"\n  http://localhost:8000/callback?code=AQT...&state={state[:8]}..."
+        "\n"
+    )
 
-    print("\nOpening LinkedIn authorization in your browser…")
-    print("If the browser does not open automatically, go to:\n")
-    print(f"  {auth_url}\n")
-    webbrowser.open(auth_url)
+    redirect_url = input("PASO 2 — Pega aquí la URL completa del navegador: ").strip()
 
-    print("Waiting for LinkedIn to redirect back…")
-    thread.join(timeout=120)
-    server.server_close()
+    # Extract code and state from redirect URL
+    parsed = urllib.parse.urlparse(redirect_url)
+    params = urllib.parse.parse_qs(parsed.query)
 
-    if not _received_code:
-        print("ERROR: No authorization code received within 2 minutes.")
+    if "error" in params:
+        desc = params.get("error_description", params.get("error", ["error desconocido"]))[0]
+        print(f"\nERROR de LinkedIn: {desc}")
         sys.exit(1)
 
-    if _received_state != state:
-        print("WARNING: State mismatch — potential CSRF. Aborting.")
+    code = params.get("code", [None])[0]
+    returned_state = params.get("state", [None])[0]
+
+    if not code:
+        print("\nERROR: No se encontró el parámetro 'code' en la URL.")
+        print("Asegúrate de copiar la URL completa de la barra del navegador.")
         sys.exit(1)
 
-    # Exchange code for token
+    if returned_state != state:
+        print(
+            f"\nAVISO: El parámetro state no coincide."
+            f"\n  Esperado: {state}"
+            f"\n  Recibido: {returned_state}"
+            "\nSi copiaste la URL correctamente, continúa de todos modos (y/n): ",
+            end=""
+        )
+        if input().strip().lower() != "y":
+            sys.exit(1)
+
+    print("\nIntercambiando código por token…")
+
     token_resp = requests.post(
         "https://www.linkedin.com/oauth/v2/accessToken",
         data={
             "grant_type": "authorization_code",
-            "code": _received_code,
+            "code": code,
             "redirect_uri": REDIRECT_URI,
             "client_id": CLIENT_ID,
             "client_secret": CLIENT_SECRET,
@@ -129,39 +121,75 @@ def main():
         headers={"Content-Type": "application/x-www-form-urlencoded"},
         timeout=30,
     )
-    token_resp.raise_for_status()
+
+    if not token_resp.ok:
+        print(f"\nERROR al obtener token: {token_resp.status_code} {token_resp.text}")
+        sys.exit(1)
+
     token_data = token_resp.json()
     access_token = token_data.get("access_token")
     expires_days = token_data.get("expires_in", 0) // 86400
 
     if not access_token:
-        print(f"ERROR: {token_data}")
+        print(f"\nERROR: Respuesta inesperada: {token_data}")
         sys.exit(1)
 
-    # Get person URN
-    userinfo = requests.get(
+    print("Token obtenido. Obteniendo tu Person URN…")
+
+    # Get person URN via OpenID userinfo endpoint
+    userinfo_resp = requests.get(
         "https://api.linkedin.com/v2/userinfo",
         headers={"Authorization": f"Bearer {access_token}"},
         timeout=15,
     )
+
     sub = None
     name = ""
-    if userinfo.ok:
-        data = userinfo.json()
-        sub = data.get("sub")
-        name = data.get("name", "")
+    if userinfo_resp.ok:
+        udata = userinfo_resp.json()
+        sub = udata.get("sub")
+        name = udata.get("name", "")
+    else:
+        # Fallback: v2/me
+        me_resp = requests.get(
+            "https://api.linkedin.com/v2/me",
+            headers={
+                "Authorization": f"Bearer {access_token}",
+                "X-Restli-Protocol-Version": "2.0.0",
+            },
+            timeout=15,
+        )
+        if me_resp.ok:
+            mdata = me_resp.json()
+            sub = mdata.get("id")
+            first = mdata.get("localizedFirstName", "")
+            last = mdata.get("localizedLastName", "")
+            name = f"{first} {last}".strip()
 
-    person_urn = f"urn:li:person:{sub}" if sub else "urn:li:person:REPLACE_WITH_SUB"
+    person_urn = f"urn:li:person:{sub}" if sub else None
 
-    print("\n" + "=" * 65)
-    print("Add these to your server .env, then restart the service:")
-    print("=" * 65)
+    print("\n" + "=" * 68)
+    print("Añade estas líneas al .env del servidor y reinicia el servicio:")
+    print("=" * 68)
     print(f"LINKEDIN_ACCESS_TOKEN={access_token}")
-    print(f"LINKEDIN_PERSON_URN={person_urn}")
-    print("=" * 65)
+    if person_urn:
+        print(f"LINKEDIN_PERSON_URN={person_urn}")
+    else:
+        print("LINKEDIN_PERSON_URN=urn:li:person:REEMPLAZA_CON_TU_ID")
+    print("=" * 68)
     if name:
-        print(f"Authenticated as: {name}")
-    print(f"Token valid for ~{expires_days} days. Re-run before expiry.")
+        print(f"Cuenta: {name}")
+    print(f"El token expira en ~{expires_days} días.")
+    print("Vuelve a ejecutar este script antes de que expire y actualiza el .env.")
+
+    if not person_urn:
+        print(
+            "\nNo se pudo obtener el Person URN automáticamente."
+            "\nObtenlo manualmente con:"
+            f"\n  curl -s -H 'Authorization: Bearer {access_token[:20]}...'"
+            "\n       https://api.linkedin.com/v2/userinfo"
+            "\nBusca el campo 'sub' en la respuesta."
+        )
 
 
 if __name__ == "__main__":
