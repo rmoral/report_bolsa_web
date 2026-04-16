@@ -1,6 +1,14 @@
 """
 LinkedIn publisher using the UGC Posts REST API v2 with OAuth 2.0.
-Requires: LINKEDIN_ACCESS_TOKEN and LINKEDIN_PERSON_URN in .env
+
+Required in .env:
+    LINKEDIN_ACCESS_TOKEN   — OAuth 2.0 access token
+    LINKEDIN_PERSON_URN     — urn:li:person:XXX  (obtained via get_linkedin_token.py)
+
+Optional (publish as company page instead of personal profile):
+    LINKEDIN_ORGANIZATION_URN — urn:li:organization:XXX
+    When set, this takes priority over LINKEDIN_PERSON_URN as the post author.
+    The authenticated user must be an admin of that company page.
 """
 import logging
 from typing import Optional
@@ -40,7 +48,7 @@ def _build_ugc_payload(post: Post, image_asset: Optional[str] = None) -> dict:
     content_text = f"{post.full_content}\n\n{url}"[:3000]
 
     payload: dict = {
-        "author": config.linkedin_person_urn,
+        "author": config.linkedin_author_urn,
         "lifecycleState": "PUBLISHED",
         "specificContent": {
             "com.linkedin.ugc.ShareContent": {
@@ -64,7 +72,7 @@ def _upload_image(image_path: str) -> Optional[str]:
         register_body = {
             "registerUploadRequest": {
                 "recipes": ["urn:li:digitalmediaRecipe:feedshare-image"],
-                "owner": config.linkedin_person_urn,
+                "owner": config.linkedin_author_urn,
                 "serviceRelationships": [
                     {
                         "relationshipType": "OWNER",

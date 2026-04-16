@@ -42,6 +42,8 @@ class Config:
     linkedin_client_secret: str = field(default_factory=lambda: os.getenv("LINKEDIN_CLIENT_SECRET", ""))
     linkedin_access_token: str = field(default_factory=lambda: os.getenv("LINKEDIN_ACCESS_TOKEN", ""))
     linkedin_person_urn: str = field(default_factory=lambda: os.getenv("LINKEDIN_PERSON_URN", ""))
+    # When set, posts are published as the company page instead of the personal profile
+    linkedin_organization_urn: str = field(default_factory=lambda: os.getenv("LINKEDIN_ORGANIZATION_URN", ""))
 
     # Instagram
     instagram_access_token: str = field(default_factory=lambda: os.getenv("INSTAGRAM_ACCESS_TOKEN", ""))
@@ -118,8 +120,13 @@ class Config:
         return bool(self.twitter_api_key and self.twitter_access_token)
 
     @property
+    def linkedin_author_urn(self) -> str:
+        """URN used as the post author — company page takes priority over personal profile."""
+        return self.linkedin_organization_urn or self.linkedin_person_urn
+
+    @property
     def linkedin_enabled(self) -> bool:
-        return bool(self.linkedin_access_token and self.linkedin_person_urn)
+        return bool(self.linkedin_access_token and self.linkedin_author_urn)
 
     @property
     def instagram_enabled(self) -> bool:

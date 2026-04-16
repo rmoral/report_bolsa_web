@@ -36,7 +36,7 @@ load_dotenv()
 CLIENT_ID = os.getenv("LINKEDIN_CLIENT_ID", "").strip()
 CLIENT_SECRET = os.getenv("LINKEDIN_CLIENT_SECRET", "").strip()
 REDIRECT_URI = "http://localhost:8000/callback"
-SCOPES = ["openid", "profile", "w_member_social"]
+SCOPES = ["openid", "profile", "w_member_social", "w_organization_social", "r_organization_social"]
 
 
 def main():
@@ -168,6 +168,10 @@ def main():
 
     person_urn = f"urn:li:person:{sub}" if sub else None
 
+    # Fetch company pages the user administers
+    org_urn = None
+    orgs = _get_admin_organizations(access_token)
+
     print("\n" + "=" * 68)
     print("Añade estas líneas al .env del servidor y reinicia el servicio:")
     print("=" * 68)
@@ -176,20 +180,76 @@ def main():
         print(f"LINKEDIN_PERSON_URN={person_urn}")
     else:
         print("LINKEDIN_PERSON_URN=urn:li:person:REEMPLAZA_CON_TU_ID")
+
+    if orgs:
+        print("\n# Páginas de empresa que administras (elige una para publicar como empresa):")
+        for org in orgs:
+            print(f"LINKEDIN_ORGANIZATION_URN={org['urn']}  # {org['name']}")
+    else:
+        print("\n# Para publicar como empresa añade también:")
+        print("# LINKEDIN_ORGANIZATION_URN=urn:li:organization:TU_ID_EMPRESA")
+        print("# (ve a linkedin.com/company/TU-EMPRESA/admin/ y copia el ID numérico de la URL)")
+
     print("=" * 68)
     if name:
-        print(f"Cuenta: {name}")
+        print(f"Cuenta autenticada: {name}")
     print(f"El token expira en ~{expires_days} días.")
     print("Vuelve a ejecutar este script antes de que expire y actualiza el .env.")
 
     if not person_urn:
         print(
             "\nNo se pudo obtener el Person URN automáticamente."
-            "\nObtenlo manualmente con:"
-            f"\n  curl -s -H 'Authorization: Bearer {access_token[:20]}...'"
-            "\n       https://api.linkedin.com/v2/userinfo"
-            "\nBusca el campo 'sub' en la respuesta."
+            "\nObtenlo con: curl -s -H 'Authorization: Bearer TOKEN'"
+            " https://api.linkedin.com/v2/userinfo"
         )
+
+
+def _get_admin_organizations(access_token: str) -> list:
+    """Return list of {urn, name} for company pages the user admins."""
+    try:
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "X-Restli-Protocol-Version": "2.0.0",
+        }
+        # Get organization ACLs where user is admin
+        acl_resp = requests.get(
+            "https://api.linkedin.com/v2/organizationalEntityAcls"
+            "?q=roleAssignee&role=ADMINISTRATOR&state=APPROVED&projection="
+            "(elements*(organizationalTarget,role))",
+            headers=headers,
+            timeout=15,
+        )
+        if not acl_resp.ok:
+            return []
+
+        elements = acl_resp.json().get("elements", [])
+        org_urns = [
+            e["organizationalTarget"]
+            for e in elements
+            if "organizationalTarget" in e
+        ]
+        if not org_urns:
+            return []
+
+        # Fetch names for each organization URN
+        results = []
+        for urn in org_urns:
+            org_id = urn.split(":")[-1]
+            org_resp = requests.get(
+                f"https://api.linkedin.com/v2/organizations/{org_id}"
+                "?projection=(id,localizedName)",
+                headers=headers,
+                timeout=15,
+            )
+            if org_resp.ok:
+                odata = org_resp.json()
+                results.append({
+                    "urn": urn,
+                    "name": odata.get("localizedName", org_id),
+                })
+        return results
+    except Exception:
+        return []
 
 
 if __name__ == "__main__":
