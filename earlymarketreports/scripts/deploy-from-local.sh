@@ -65,6 +65,7 @@ rsync -avz --delete "${RSYNC_SSH_OPTS[@]}" \
   --exclude '.env*' \
   --exclude '*.log' \
   --exclude '.DS_Store' \
+  --exclude 'media' \
   "$PROJECT_ROOT/" "$REMOTE:$DEPLOY_REMOTE_PATH/"
 
 if [ $? -ne 0 ]; then
