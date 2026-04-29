@@ -36,7 +36,7 @@ load_dotenv()
 CLIENT_ID = os.getenv("LINKEDIN_CLIENT_ID", "").strip()
 CLIENT_SECRET = os.getenv("LINKEDIN_CLIENT_SECRET", "").strip()
 REDIRECT_URI = "http://localhost:8000/callback"
-SCOPES = ["openid", "profile", "w_member_social"]
+SCOPES = ["openid", "profile", "w_member_social", "w_organization_social", "r_organization_social"]
 
 
 def main():
@@ -85,8 +85,32 @@ def main():
 
     if "error" in params:
         desc = params.get("error_description", params.get("error", ["error desconocido"]))[0]
-        print(f"\nERROR de LinkedIn: {desc}")
-        sys.exit(1)
+        error_code = params.get("error", [""])[0]
+        if error_code == "unauthorized_scope_error" and "w_organization_social" in desc:
+            print(
+                f"\nAVISO: {desc}"
+                "\n→ Tu app aún no tiene 'Community Management API' aprobada."
+                "\n  Reintentando sin ese scope (publicación como perfil personal)...\n"
+            )
+            # Retry with only personal scopes
+            fallback_params = {**auth_params, "scope": "openid profile w_member_social"}
+            fallback_url = (
+                "https://www.linkedin.com/oauth/v2/authorization?"
+                + urllib.parse.urlencode(fallback_params)
+            )
+            print("Abre esta URL alternativa en tu navegador:")
+            print(fallback_url)
+            print()
+            redirect_url = input("Pega la URL de redirección: ").strip()
+            parsed = urllib.parse.urlparse(redirect_url)
+            params = urllib.parse.parse_qs(parsed.query)
+            if "error" in params:
+                desc2 = params.get("error_description", params.get("error", ["?"]))[0]
+                print(f"\nERROR: {desc2}")
+                sys.exit(1)
+        else:
+            print(f"\nERROR de LinkedIn: {desc}")
+            sys.exit(1)
 
     code = params.get("code", [None])[0]
     returned_state = params.get("state", [None])[0]
