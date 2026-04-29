@@ -116,8 +116,8 @@ def publish(post: Post) -> str:
     Publish a LinkedIn post. Returns the LinkedIn post URN as string.
 
     If LINKEDIN_ORGANIZATION_URN is set, tries to post as the company page first.
-    Falls back to personal profile if the org post is rejected (the app may
-    need 'Marketing Developer Platform' approval for w_organization_social).
+    On 403 (insufficient permissions), re-uploads image with person URN and falls
+    back to the personal profile so author and image owner always match.
     """
     if not config.linkedin_enabled:
         raise RuntimeError("LinkedIn not configured")
@@ -125,31 +125,30 @@ def publish(post: Post) -> str:
     org_urn = config.linkedin_organization_urn
     person_urn = config.linkedin_person_urn
 
-    # Upload image using the primary author's URN as owner
-    primary_urn = org_urn or person_urn
-    image_asset: Optional[str] = None
-    if post.image_path:
-        image_asset = _upload_image(post.image_path, primary_urn)
-
-    # Try org URN first, fall back to personal if LinkedIn rejects it
     if org_urn:
+        # Upload image owned by the org, attempt org post
+        org_image = _upload_image(post.image_path, org_urn) if post.image_path else None
         try:
-            payload = _build_ugc_payload(post, org_urn, image_asset)
+            payload = _build_ugc_payload(post, org_urn, org_image)
             urn = _post_ugc(payload)
             logger.info("Published LinkedIn post as org %s: %s", org_urn, urn)
             return urn
         except RuntimeError as exc:
-            if "403" in str(exc) or "INSUFFICIENT_PERMISSION" in str(exc):
+            if "403" in str(exc) or "INSUFFICIENT" in str(exc) or "not authorized" in str(exc).lower():
                 logger.warning(
                     "Org post rejected (%s) — falling back to personal profile. "
-                    "To post as company page, request 'Marketing Developer Platform' "
-                    "approval at linkedin.com/developers/apps → Products.",
+                    "Request 'Marketing Developer Platform' at "
+                    "linkedin.com/developers/apps → Products to enable org posting.",
                     exc,
                 )
             else:
                 raise
+        # Org post failed: fall through to personal post below.
+        # Re-upload image with person URN so owner matches the new author.
+        image_asset = _upload_image(post.image_path, person_urn) if post.image_path else None
+    else:
+        image_asset = _upload_image(post.image_path, person_urn) if post.image_path else None
 
-    # Personal profile post
     payload = _build_ugc_payload(post, person_urn, image_asset)
     urn = _post_ugc(payload)
     logger.info("Published LinkedIn post as person %s: %s", person_urn, urn)
