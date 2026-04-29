@@ -36,7 +36,7 @@ load_dotenv()
 CLIENT_ID = os.getenv("LINKEDIN_CLIENT_ID", "").strip()
 CLIENT_SECRET = os.getenv("LINKEDIN_CLIENT_SECRET", "").strip()
 REDIRECT_URI = "http://localhost:8000/callback"
-SCOPES = ["openid", "profile", "w_member_social", "w_organization_social", "r_organization_social"]
+SCOPES = ["openid", "profile", "w_member_social"]
 
 
 def main():
