@@ -36,6 +36,35 @@ def _get_api_v1() -> tweepy.API:
     return tweepy.API(auth)
 
 
+def _get_client_for_account(account_id: Optional[str]) -> tweepy.Client:
+    """Build a tweepy.Client for the given account id (defaults to "1")."""
+    account = config.twitter_account_by_id(account_id or "1")
+    if account is None:
+        raise RuntimeError(f"Twitter account '{account_id}' not configured")
+    return tweepy.Client(
+        bearer_token=account.bearer_token,
+        consumer_key=account.api_key,
+        consumer_secret=account.api_secret,
+        access_token=account.access_token,
+        access_token_secret=account.access_token_secret,
+        wait_on_rate_limit=True,
+    )
+
+
+def _get_api_v1_for_account(account_id: Optional[str]) -> tweepy.API:
+    """Build a tweepy.API (v1.1) for the given account id (defaults to "1")."""
+    account = config.twitter_account_by_id(account_id or "1")
+    if account is None:
+        raise RuntimeError(f"Twitter account '{account_id}' not configured")
+    auth = tweepy.OAuth1UserHandler(
+        account.api_key,
+        account.api_secret,
+        account.access_token,
+        account.access_token_secret,
+    )
+    return tweepy.API(auth)
+
+
 def _tweepy_error_detail(exc: Exception) -> str:
     """Extract the most useful error message from a Tweepy exception."""
     try:
@@ -60,16 +89,18 @@ def publish(post: Post) -> str:
     Publish a tweet. Returns the tweet ID as string.
     Raises on failure (tenacity will retry).
     """
-    if not config.twitter_enabled:
-        raise RuntimeError("Twitter not configured")
+    account_id = post.account_id or "1"
+    account = config.twitter_account_by_id(account_id)
+    if account is None:
+        raise RuntimeError(f"Twitter account '{account_id}' not configured")
 
-    client = _get_client()
+    client = _get_client_for_account(account_id)
     media_ids: Optional[list] = None
 
     # Upload image if available
     if post.image_path:
         try:
-            api_v1 = _get_api_v1()
+            api_v1 = _get_api_v1_for_account(account_id)
             media = api_v1.media_upload(post.image_path)
             media_ids = [media.media_id]
         except Exception as exc:

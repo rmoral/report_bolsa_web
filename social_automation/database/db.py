@@ -26,6 +26,7 @@ async def init_db() -> None:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     await _migrate_news_item_id_nullable()
+    await _migrate_add_account_id()
     logger.info("Database initialized")
 
 
@@ -72,6 +73,22 @@ async def _migrate_news_item_id_nullable() -> None:
         await conn.execute(text("CREATE INDEX IF NOT EXISTS ix_posts_run_id ON posts (run_id)"))
         await conn.execute(text("PRAGMA foreign_keys=ON"))
         logger.info("Migration complete: posts.news_item_id is now nullable")
+
+
+async def _migrate_add_account_id() -> None:
+    """
+    SQLite migration: add posts.account_id column if it doesn't exist yet.
+    SQLite supports ADD COLUMN directly.
+    """
+    async with engine.begin() as conn:
+        result = await conn.execute(text("PRAGMA table_info(posts)"))
+        columns = result.fetchall()
+        has_account_id = any(c[1] == "account_id" for c in columns)
+        if has_account_id:
+            return
+        logger.info("Migrating DB: adding posts.account_id column...")
+        await conn.execute(text("ALTER TABLE posts ADD COLUMN account_id VARCHAR(50)"))
+        logger.info("Migration complete: posts.account_id added")
 
 
 @asynccontextmanager
@@ -222,6 +239,13 @@ async def update_image_path(post_id: int, image_path: str) -> None:
     async with get_session() as session:
         await session.execute(
             update(Post).where(Post.id == post_id).values(image_path=image_path)
+        )
+
+
+async def update_post_account(post_id: int, account_id: str) -> None:
+    async with get_session() as session:
+        await session.execute(
+            update(Post).where(Post.id == post_id).values(account_id=account_id)
         )
 
 

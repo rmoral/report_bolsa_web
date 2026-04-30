@@ -149,7 +149,15 @@ async def _generate_and_send(topic: str, chat_id: int, bot, progress_msg_id: int
             parse_mode=ParseMode.HTML,
         )
         for post in saved:
-            await _send_post_for_approval(bot, post, chat_id)
+            if post.platform.value == "twitter" and len(config.twitter_accounts) > 1:
+                from social_automation.tg_bot.keyboards import account_selection_keyboard
+                await bot.send_message(
+                    chat_id=chat_id,
+                    text="¿En qué cuenta de X publicar este post?",
+                    reply_markup=account_selection_keyboard(config.twitter_accounts, post.id),
+                )
+            else:
+                await _send_post_for_approval(bot, post, chat_id)
 
         # Store topic and offer blog generation
         _edu_topics[chat_id] = topic

@@ -3,9 +3,26 @@ Central configuration loaded from environment variables.
 """
 import os
 from dataclasses import dataclass, field
+from typing import List, Optional
 from dotenv import load_dotenv
 
 load_dotenv()
+
+
+@dataclass
+class TwitterAccount:
+    """Credentials and metadata for a single Twitter/X account."""
+    id: str
+    name: str
+    api_key: str
+    api_secret: str
+    access_token: str
+    access_token_secret: str
+    bearer_token: str
+
+    @property
+    def enabled(self) -> bool:
+        return bool(self.api_key and self.access_token)
 
 
 @dataclass
@@ -118,6 +135,47 @@ class Config:
     @property
     def twitter_enabled(self) -> bool:
         return bool(self.twitter_api_key and self.twitter_access_token)
+
+    @property
+    def twitter_accounts(self) -> List[TwitterAccount]:
+        """Return all configured (enabled) Twitter accounts."""
+        candidates = [
+            TwitterAccount(
+                id="1",
+                name=os.getenv("TWITTER_ACCOUNT_NAME", "Account 1"),
+                api_key=self.twitter_api_key,
+                api_secret=self.twitter_api_secret,
+                access_token=self.twitter_access_token,
+                access_token_secret=self.twitter_access_token_secret,
+                bearer_token=self.twitter_bearer_token,
+            ),
+            TwitterAccount(
+                id="2",
+                name=os.getenv("TWITTER_2_NAME", "Account 2"),
+                api_key=os.getenv("TWITTER_2_API_KEY", ""),
+                api_secret=os.getenv("TWITTER_2_API_SECRET", ""),
+                access_token=os.getenv("TWITTER_2_ACCESS_TOKEN", ""),
+                access_token_secret=os.getenv("TWITTER_2_ACCESS_TOKEN_SECRET", ""),
+                bearer_token=os.getenv("TWITTER_2_BEARER_TOKEN", ""),
+            ),
+            TwitterAccount(
+                id="3",
+                name=os.getenv("TWITTER_3_NAME", "Account 3"),
+                api_key=os.getenv("TWITTER_3_API_KEY", ""),
+                api_secret=os.getenv("TWITTER_3_API_SECRET", ""),
+                access_token=os.getenv("TWITTER_3_ACCESS_TOKEN", ""),
+                access_token_secret=os.getenv("TWITTER_3_ACCESS_TOKEN_SECRET", ""),
+                bearer_token=os.getenv("TWITTER_3_BEARER_TOKEN", ""),
+            ),
+        ]
+        return [a for a in candidates if a.enabled]
+
+    def twitter_account_by_id(self, account_id: str) -> Optional[TwitterAccount]:
+        """Look up a Twitter account by its id string. Returns None if not found."""
+        for account in self.twitter_accounts:
+            if account.id == account_id:
+                return account
+        return None
 
     @property
     def linkedin_author_urn(self) -> str:

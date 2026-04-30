@@ -69,6 +69,7 @@ class Post(Base):
     platform_post_id = Column(String(200))           # ID returned by platform API after publish
     error_message = Column(Text)                     # Error details if failed
     run_id = Column(String(50), index=True)
+    account_id = Column(String(50), nullable=True)  # Twitter account id; None means "1" (default)
 
     news_item = relationship("NewsItem", back_populates="posts")
 

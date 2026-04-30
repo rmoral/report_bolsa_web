@@ -80,8 +80,15 @@ def _format_post_preview(post: Post, truncate: int = 600) -> str:
         content += "…"
     hashtags = f"\n\n{post.hashtags}" if post.hashtags else ""
     news_title = post.news_item.title[:100] if post.news_item else ""
+
+    account_line = ""
+    if post.platform == Platform.TWITTER and len(config.twitter_accounts) > 1:
+        account = config.twitter_account_by_id(post.account_id or "1")
+        if account:
+            account_line = f"\n🐦 _{account.name}_"
+
     return (
-        f"*{label}*\n"
+        f"*{label}*{account_line}\n"
         f"📰 _{news_title}_\n\n"
         f"{content}{hashtags}"
     )
@@ -270,6 +277,27 @@ async def cb_discard_all(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         )
     else:
         await query.edit_message_text("No había publicaciones pendientes.")
+
+
+async def cb_select_account(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle account_select:{post_id}:{account_id} callbacks."""
+    query = update.callback_query
+    await query.answer()
+    _, post_id_str, account_id = query.data.split(":", 2)
+    post_id = int(post_id_str)
+
+    if account_id == "cancel":
+        await query.edit_message_text("Cancelado.")
+        return
+
+    await db.update_post_account(post_id, account_id)
+    reloaded = await db.get_post(post_id)
+    if not reloaded:
+        await query.edit_message_text("⚠️ Publicación no encontrada.")
+        return
+
+    await query.delete_message()
+    await _send_post_for_approval(context.bot, reloaded, update.effective_chat.id)
 
 
 @admin_only
@@ -601,6 +629,7 @@ def register_handlers(app) -> None:
     app.add_handler(CallbackQueryHandler(cb_approve, pattern=r"^approve:\d+$"))
     app.add_handler(CallbackQueryHandler(cb_reject, pattern=r"^reject:\d+$"))
     app.add_handler(CallbackQueryHandler(cb_discard_all, pattern=r"^discard_all_pending$"))
+    app.add_handler(CallbackQueryHandler(cb_select_account, pattern=r"^account_select:\d+:.+$"))
 
     # Blog generation handlers
     from social_automation.blog.handlers import register_blog_handlers

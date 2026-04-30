@@ -64,3 +64,22 @@ PLATFORM_EMOJIS = {
     "linkedin": "🔵",
     "instagram": "📸",
 }
+
+
+def account_selection_keyboard(accounts: list, post_id: int) -> InlineKeyboardMarkup:
+    """One button per Twitter account plus a Cancel button."""
+    rows = []
+    for account in accounts:
+        rows.append([
+            InlineKeyboardButton(
+                account.name,
+                callback_data=f"account_select:{post_id}:{account.id}",
+            )
+        ])
+    rows.append([
+        InlineKeyboardButton(
+            "Cancelar",
+            callback_data=f"account_select:{post_id}:cancel",
+        )
+    ])
+    return InlineKeyboardMarkup(rows)

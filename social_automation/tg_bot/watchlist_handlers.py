@@ -151,7 +151,16 @@ async def _generate_and_send(
         )
         await db.save_posts([post])
         saved = await db.get_post(post.id)
-        await _send_post_for_approval(bot, saved, chat_id)
+
+        if len(config.twitter_accounts) > 1:
+            from social_automation.tg_bot.keyboards import account_selection_keyboard
+            await bot.send_message(
+                chat_id=chat_id,
+                text="¿En qué cuenta de X publicar el watchlist?",
+                reply_markup=account_selection_keyboard(config.twitter_accounts, saved.id),
+            )
+        else:
+            await _send_post_for_approval(bot, saved, chat_id)
 
     except Exception as exc:
         logger.error("Watchlist generation failed: %s", exc, exc_info=True)
