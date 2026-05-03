@@ -79,9 +79,7 @@ def _get_api_v1() -> tweepy.API:
 
 
 def _article_url(slug: str) -> str:
-    base = config.website_url.rstrip("/")
-    prefix = config.blog_url_prefix.strip("/")
-    return f"{base}/{prefix}/{slug}" if prefix else f"{base}/{slug}"
+    return config.blog_post_url(slug)
 
 
 def announce_blog_post(blog: BlogPost, slug: str, image_path: Optional[str] = None) -> str:

@@ -97,8 +97,11 @@ class Config:
     payload_api_url: str = field(default_factory=lambda: os.getenv("PAYLOAD_API_URL", ""))
     payload_email: str = field(default_factory=lambda: os.getenv("PAYLOAD_EMAIL", ""))
     payload_password: str = field(default_factory=lambda: os.getenv("PAYLOAD_PASSWORD", ""))
-    # URL path segment for blog posts, e.g. "blog" → https://site.com/blog/{slug}
+    # URL path segment for blog posts, e.g. "blog" → https://site.com/en/blog/{slug}
     blog_url_prefix: str = field(default_factory=lambda: os.getenv("BLOG_URL_PREFIX", "blog"))
+    # Locale segment inserted between domain and blog prefix, e.g. "en" → /en/blog/{slug}
+    # Set to "" to disable: https://site.com/blog/{slug}
+    blog_locale: str = field(default_factory=lambda: os.getenv("BLOG_LOCALE", "en"))
 
     # YouTube — channel metadata
     youtube_channel_name: str = field(
@@ -176,6 +179,16 @@ class Config:
             if account.id == account_id:
                 return account
         return None
+
+    def blog_post_url(self, slug: str) -> str:
+        """Build the public URL for a blog post slug."""
+        parts = [self.website_url.rstrip("/")]
+        if self.blog_locale:
+            parts.append(self.blog_locale.strip("/"))
+        if self.blog_url_prefix:
+            parts.append(self.blog_url_prefix.strip("/"))
+        parts.append(slug.strip("/"))
+        return "/".join(parts)
 
     @property
     def linkedin_author_urn(self) -> str:

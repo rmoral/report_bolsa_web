@@ -234,7 +234,7 @@ async def cb_blog_publish(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         _blog_sessions.pop(chat_id, None)
 
         from social_automation.config import config as _cfg
-        article_url = f"{_cfg.website_url.rstrip('/')}/{_cfg.blog_url_prefix.strip('/')}/{slug}"
+        article_url = _cfg.blog_post_url(slug)
 
         await context.bot.send_message(
             chat_id=chat_id,
