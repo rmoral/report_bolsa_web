@@ -53,8 +53,8 @@ export default function PricingClient() {
   const proPlan = {
     name: t("plan_pro_title"),
     description: t("pricing_pro_desc"),
-    monthlyPrice: "€10",
-    yearlyPrice: "€99",
+    monthlyPrice: "€199",
+    yearlyPrice: "€1.990",
     yearlySavings: t("pricing_save", { percentage: 17 }),
     cta: t("pricing_cta_pro"),
     ctaLink: "/subscribe?plan=pro",
