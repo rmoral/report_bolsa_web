@@ -16,6 +16,8 @@ export interface FirestoreUser {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
 }
 
 export async function createUser(userData: {
@@ -145,6 +147,30 @@ export async function updateUser(
     ...updates,
     updatedAt: new Date().toISOString(),
   });
+}
+
+export async function updateUserPlan(
+  userId: string,
+  plan: SubscriptionPlan,
+  stripeData?: { stripeCustomerId?: string; stripeSubscriptionId?: string }
+): Promise<void> {
+  await db.collection("users").doc(userId).update({
+    plan,
+    ...(stripeData?.stripeCustomerId && { stripeCustomerId: stripeData.stripeCustomerId }),
+    ...(stripeData?.stripeSubscriptionId && { stripeSubscriptionId: stripeData.stripeSubscriptionId }),
+    updatedAt: new Date().toISOString(),
+  });
+}
+
+export async function getUserByStripeCustomerId(customerId: string): Promise<FirestoreUser | null> {
+  const users = await db.collection("users")
+    .where("stripeCustomerId", "==", customerId)
+    .limit(1)
+    .get();
+
+  if (users.empty) return null;
+  const doc = users.docs[0];
+  return { id: doc.id, ...doc.data() } as FirestoreUser;
 }
 
 export async function updateUserRole(userId: string, role: UserRole): Promise<void> {
