@@ -181,10 +181,12 @@ def register_watchlist_handlers(app) -> None:
         entry_points=[CommandHandler("watchlist", cmd_watchlist)],
         states={
             WL_WAITING_TICKERS: [
+                CommandHandler("watchlist", cmd_watchlist),
                 MessageHandler(filters.TEXT & ~filters.COMMAND, wl_receive_tickers),
             ],
         },
         fallbacks=[CommandHandler("cancel", wl_cancel)],
         per_message=False,
+        allow_reentry=True,
     )
     app.add_handler(wl_conv)
