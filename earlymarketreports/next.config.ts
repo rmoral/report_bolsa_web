@@ -5,6 +5,10 @@ import path from 'path'
 const nextConfig: NextConfig = {
   // Fix: repo root has another pnpm-lock.yaml — tell Next.js the correct root
   outputFileTracingRoot: path.join(__dirname, '../'),
+  // Limit webpack workers to 1 to avoid OOM on low-RAM instances (t3.small / 2 GB)
+  experimental: {
+    cpus: 1,
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
