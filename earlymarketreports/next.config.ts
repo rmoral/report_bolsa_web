@@ -1,7 +1,10 @@
 import type { NextConfig } from 'next'
 import { withPayload } from '@payloadcms/next/withPayload'
+import path from 'path'
 
 const nextConfig: NextConfig = {
+  // Fix: repo root has another pnpm-lock.yaml — tell Next.js the correct root
+  outputFileTracingRoot: path.join(__dirname, '../'),
   eslint: {
     ignoreDuringBuilds: true,
   },
