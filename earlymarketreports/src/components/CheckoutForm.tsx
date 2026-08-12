@@ -42,7 +42,7 @@ export default function CheckoutForm({ onSuccess, onError }: CheckoutFormProps) 
     {
       id: 'pro_monthly' as SubscriptionPlan,
       name: t('plan_pro_title'),
-      price: '€10',
+      price: '€198',
       period: t('pricing_monthly'),
       description: t('pricing_pro_desc'),
       features: [
@@ -66,7 +66,7 @@ export default function CheckoutForm({ onSuccess, onError }: CheckoutFormProps) 
     {
       id: 'pro_annual' as SubscriptionPlan,
       name: t('plan_pro_title') + ' ' + t('pricing_annual'),
-      price: '€99',
+      price: '€1.980',
       period: t('pricing_annual'),
       description: t('pricing_pro_desc') + ' - ' + t('pricing_save', { percentage: 17 }),
       features: [

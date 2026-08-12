@@ -39,7 +39,7 @@ export async function createCheckoutSession({
 }) {
   try {
     // For Pro plans, use price_data directly (more reliable)
-    const amount = plan === 'pro_monthly' ? 1000 : 9900; // €10 or €99
+    const amount = plan === 'pro_monthly' ? 19800 : 198000; // €198 or €1980
     const interval = plan === 'pro_monthly' ? 'month' : 'year';
     
     const lineItems = [

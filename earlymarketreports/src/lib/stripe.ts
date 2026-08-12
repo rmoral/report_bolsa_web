@@ -50,7 +50,7 @@ export const SUBSCRIPTION_PLANS = {
   },
   pro_monthly: {
     name: 'Pro Monthly',
-    price: 10,
+    price: 198,
     currency: 'EUR',
     interval: 'month',
     features: [
@@ -68,7 +68,7 @@ export const SUBSCRIPTION_PLANS = {
   },
   pro_annual: {
     name: 'Pro Annual',
-    price: 99,
+    price: 1980,
     currency: 'EUR',
     interval: 'year',
     features: [
