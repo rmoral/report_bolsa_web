@@ -13,8 +13,8 @@ node scripts/setup-stripe-products.js
 
 This will create:
 - Lite product (€0)
-- Pro Monthly product (€10/month)
-- Pro Annual product (€99/year)
+- Pro Monthly product (€198/month)
+- Pro Annual product (€1980/year)
 
 Copy the output environment variables to your `.env.local` file.
 

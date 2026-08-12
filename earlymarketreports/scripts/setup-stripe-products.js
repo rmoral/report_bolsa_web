@@ -49,7 +49,7 @@ async function createProducts() {
 
     const proMonthlyPrice = await stripe.prices.create({
       product: proMonthlyProduct.id,
-      unit_amount: 1000, // €10.00
+      unit_amount: 19800, // €198.00
       currency: 'eur',
       recurring: {
         interval: 'month'
@@ -78,7 +78,7 @@ async function createProducts() {
 
     const proAnnualPrice = await stripe.prices.create({
       product: proAnnualProduct.id,
-      unit_amount: 9900, // €99.00
+      unit_amount: 198000, // €1980.00
       currency: 'eur',
       recurring: {
         interval: 'year'

@@ -151,8 +151,8 @@ export default function SubscriptionManager({ userId, customerId }: Subscription
       <div className="text-center py-8 space-y-4">
         <p className="text-gray-600">No hay ninguna suscripción activa.</p>
         <div className="flex justify-center gap-3">
-          <UpgradeButton plan="pro_monthly" label="Pro Mensual — €10/mes" className="btn-accent" />
-          <UpgradeButton plan="pro_annual" label="Pro Anual — €99/año" className="btn-primary" />
+          <UpgradeButton plan="pro_monthly" label="Pro Mensual — €198/mes" className="btn-accent" />
+          <UpgradeButton plan="pro_annual" label="Pro Anual — €1.980/año" className="btn-primary" />
         </div>
       </div>
     );

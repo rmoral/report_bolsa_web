@@ -109,8 +109,8 @@ export default function DashboardPage() {
             </p>
             {me.plan !== "pro" && (
               <div className="flex justify-center gap-3">
-                <UpgradeButton plan="pro_monthly" label="Pro Mensual — €10/mes" className="btn-accent" />
-                <UpgradeButton plan="pro_annual" label="Pro Anual — €99/año" className="btn-primary" />
+                <UpgradeButton plan="pro_monthly" label="Pro Mensual — €198/mes" className="btn-accent" />
+                <UpgradeButton plan="pro_annual" label="Pro Anual — €1.980/año" className="btn-primary" />
               </div>
             )}
           </div>
