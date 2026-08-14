@@ -26,6 +26,18 @@ export default buildConfig({
     {
       slug: 'users',
       auth: true,
+      // Endurecimiento: solo un usuario autenticado puede leer/crear/editar/borrar
+      // usuarios. Payload sigue permitiendo crear el PRIMER usuario cuando la
+      // colección está vacía (bootstrap), pero una vez existe un admin, el
+      // registro público queda cerrado. Crea el admin nada más desplegar,
+      // antes de exponer el puerto 443.
+      access: {
+        read: ({ req }) => Boolean(req.user),
+        create: ({ req }) => Boolean(req.user),
+        update: ({ req }) => Boolean(req.user),
+        delete: ({ req }) => Boolean(req.user),
+        admin: ({ req }) => Boolean(req.user),
+      },
       fields: [
         // añade campos extra si quieres (role, etc.)
       ],
@@ -38,7 +50,9 @@ export default buildConfig({
       },
       upload: {
         staticDir: 'media',
-        mimeTypes: ['image/*'],
+        // Lista explícita de tipos rasterizados. Se excluye image/svg+xml a
+        // propósito: un SVG puede llevar <script> y provocar XSS almacenado.
+        mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'],
         imageSizes: [
           { name: 'thumbnail', width: 400, height: 300, position: 'centre' },
           { name: 'card', width: 768, height: 1024, position: 'centre' },

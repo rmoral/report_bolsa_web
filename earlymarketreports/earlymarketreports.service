@@ -1,0 +1,39 @@
+[Unit]
+Description=EarlyMarketReports Next.js App
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Usuario de servicio DEDICADO y SIN sudo. Es la barrera clave: si la app
+# vuelve a ser explotada, la ejecución de código queda confinada a este
+# usuario sin privilegios, en lugar de convertirse en root instantáneo
+# (como pasó cuando corría como 'ubuntu', que tiene sudo sin contraseña).
+User=emrapp
+Group=emrapp
+WorkingDirectory=/home/ubuntu/web/report_bolsa_web/earlymarketreports
+EnvironmentFile=/home/ubuntu/web/report_bolsa_web/earlymarketreports/.env.production
+# Ajusta la versión de node a la instalada (nvm) o usa una ruta absoluta.
+ExecStart=/usr/bin/node node_modules/next/dist/bin/next start -p 3000
+Restart=always
+RestartSec=10
+
+# --- Endurecimiento del sandbox de systemd ---
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+# La app solo necesita escribir en la carpeta media/ (subidas de Payload)
+ReadWritePaths=/home/ubuntu/web/report_bolsa_web/earlymarketreports/media
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=earlymarketreports
+
+[Install]
+WantedBy=multi-user.target
